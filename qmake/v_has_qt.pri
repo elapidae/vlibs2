@@ -12,30 +12,16 @@
 
 
 #========================================================================================
-isEmpty(qi_vcat) {
-    qi_vcat = 1;
-    isEmpty(qi_not_print_pri_messages): message("=== vcat appended ===")
-
-    isEmpty(VLIBS_DIR): error("vcat: Need VLIBS_DIR correct path.")
-
+isEmpty(qi_v_has_qt) {
+    qi_v_has_qt = 1;
+    isEmpty(qi_not_print_pri_messages): message("=== v_has_qt appended ===")
 
     #<<< Start your code here -----------------------------------------------------------
-    include( $$VLIBS_DIR/qmake/v_has_qt.pri )
-
-    HEADERS     += $$VLIBS_DIR/vcat/impl/_vcat_iface.h
-    HEADERS     += $$VLIBS_DIR/vcat/impl/containers.h
-    HEADERS     += $$VLIBS_DIR/vcat/impl/tuple.h
-
-    HEADERS     += $$VLIBS_DIR/vcat/impl/vcat_qt_deploy.h
-    SOURCES     += $$VLIBS_DIR/vcat/impl/vcat_qt_deploy.cpp
+    contains( CONFIG, qt ) {
+        DEFINES += V_HAS_QT
+        isEmpty(qi_not_print_pri_messages): message("=== macro V_HAS_QT added ===")
+    }
     #>>> Stop your code here ------------------------------------------------------------
-
-    INCLUDEPATH += $$VLIBS_DIR/vcat
-
-    
-    HEADERS     += $$VLIBS_DIR/vcat/vcat.h
-    SOURCES     += $$VLIBS_DIR/vcat/vcat.cpp 
 }
-# vcat.pri
+# v_has_qt.pri
 #========================================================================================
-

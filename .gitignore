@@ -1,0 +1,6 @@
+
+**/build-*_Qt_*
+build-*_Qt_*
+
+**/*.pro.user*
+**/CMakeLists.txt.user*

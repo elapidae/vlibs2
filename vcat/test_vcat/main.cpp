@@ -24,6 +24,14 @@
 #include <map>
 
 
+#ifdef V_HAS_QT
+    #include <QString>
+    #include <QByteArray>
+    #include <QPoint>
+    #include <QPointF>
+#endif // has qt
+
+
 using namespace std;
 
 
@@ -136,6 +144,17 @@ TEST_F( VCat_Test, simple_from_text )
     EXPECT_THROW( vcat::from_text<int>("ololo"), runtime_error );
 }
 
+//=======================================================================================
+
+#ifdef V_HAS_QT
+TEST_F( VCat_Test, simple_qt_test )
+{
+    EXPECT_EQ( vcat(QString{"qstring"}).str(), "qstring" );
+    EXPECT_EQ( vcat(QByteArray{"qbytearray"}).str(), "qbytearray" );
+    EXPECT_EQ( vcat(QPoint{1,-2}).str(), "QPoint(1,-2)" );
+    EXPECT_EQ( vcat(QPointF{1.5,-2.5}).str(), "QPointF(1.5,-2.5)" );
+}
+#endif // V_HAS_QT
 //=======================================================================================
 
 
