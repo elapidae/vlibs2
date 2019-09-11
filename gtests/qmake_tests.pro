@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 
 
-#SUBDIRS += vlibs/vcat/test_vcat
+SUBDIRS += vlibs/vcat/test_vcat
