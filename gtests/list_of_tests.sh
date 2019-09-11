@@ -1,8 +1,7 @@
 #!/bin/bash
 
 echo ====================================================================================
-echo waiting for the first test...
-#vlibs/vcat/test_vcat/test_vcat            || exit 1
+vlibs/vcat/test_vcat/test_vcat                          || exit 1
 echo ====================================================================================
 #vlibs/vgio/keyfile/test_keyfile/test_keyfile            || exit 1
 #echo ====================================================================================
