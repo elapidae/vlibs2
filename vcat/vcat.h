@@ -26,6 +26,8 @@
 #include "impl/_vcat_iface.h"
 #include "impl/containers.h"
 #include "impl/tuple.h"
+#include "impl/vcat_qt_deploy.h"
+
 
 //=======================================================================================
 /*      2018-03-20       VCAT

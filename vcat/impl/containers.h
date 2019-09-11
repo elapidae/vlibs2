@@ -1,5 +1,24 @@
-#ifndef IMPL_CONTAINERS_H
-#define IMPL_CONTAINERS_H
+/****************************************************************************************
+**
+**  VLIBS codebase, NIIAS
+**
+**  Authors:
+**  Alexandre Gromtsev aka elapidae     elapidae@yandex.ru
+**  Nadezhda Churikova aka claorisel    claorisel@gmail.com
+**  Ekaterina Boltenkova aka kataretta  kitkat52@yandex.ru
+**  Ivan Deylid aka sid1057             ivanov.dale@gmail.com>
+**
+**  GNU Lesser General Public License Usage
+**  This file may be used under the terms of the GNU Lesser General Public License
+**  version 3 as published by the Free Software Foundation and appearing in the file
+**  LICENSE.LGPL3 included in the packaging of this file. Please review the following
+**  information to ensure the GNU Lesser General Public License version 3 requirements
+**  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+****************************************************************************************/
+
+
+#ifndef VCAT_IMPL_CONTAINERS_H
+#define VCAT_IMPL_CONTAINERS_H
 
 #include <type_traits>
 #include <ostream>
@@ -48,6 +67,11 @@ namespace std
 }
 //=======================================================================================
 
+#ifdef V_HAS_QT
+ class QString;
+ class QByteArray;
+#endif // has qt
+
 //=======================================================================================
 namespace impl
 {
@@ -83,12 +107,17 @@ namespace impl
     template<typename C> constexpr
     bool is_container_not_string()
     {
-        return _is_container<C>::value &&
-               !std::is_base_of<std::string,C>::value;
+        return _is_container<C>::value
+                && !std::is_base_of<std::string,C>::value
+                #ifdef V_HAS_QT
+                    && !std::is_base_of<QString,C>::value
+                    && !std::is_base_of<QByteArray,C>::value
+                #endif // has qt
+               ;
     }
     //===================================================================================
 } // namespace impl
 //=======================================================================================
 
 
-#endif // IMPL_CONTAINERS_H
+#endif // VCAT_IMPL_CONTAINERS_H
