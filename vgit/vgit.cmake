@@ -23,9 +23,7 @@ if ( NOT  VGIT_INCLUDED )
 
     message( "=== About to include vgit... ===" )
 
-    #<<< Start your code here -----------------------------------------------------------
     include( "${VLIBS_DIR}/vgit/vgit_impl.cmake" )
-    #>>> Stop your code here ------------------------------------------------------------
 
     include_directories( "${VLIBS_DIR}/vgit/" )
 

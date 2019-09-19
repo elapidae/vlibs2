@@ -14,6 +14,7 @@
 #define VGIT_H
 
 #include <string>
+#include <tuple>
 
 //=======================================================================================
 class vgit
@@ -39,7 +40,44 @@ public:
     static void print_and_exit_if_need( int argc,
                                         const char * const * const argv,
                                         int retcode = 0 );
+
+    class entry
+    {
+    public:
+        std::string hash;
+        std::string revcount;
+        std::string branch;
+        std::string author;
+        std::string date;
+    };
+
+    static entry cur_entry();
 };
+//=======================================================================================
+
+
+//=======================================================================================
+//  Чтобы два раза не вставать, сразу сделаем сериализацию.
+namespace s11n
+{
+    template<typename T> struct Serial;
+
+    template<>
+    struct Serial< vgit::entry >
+    {
+        using _s = std::string;
+
+        static std::tuple<_s,_s,_s,_s,_s>
+        to_tuple( const vgit::entry& e )
+        {
+            return  std::make_tuple( e.hash,
+                                     e.revcount,
+                                     e.branch,
+                                     e.author,
+                                     e.date );
+        }
+    };
+} // s11n namespace
 //=======================================================================================
 
 #endif // VGIT_H
