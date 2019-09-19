@@ -23,6 +23,7 @@ if ( NOT  VGIT_INCLUDED )
 
     message( "=== About to include vgit... ===" )
 
+    include( "${VLIBS_DIR}/cmake/c++11.cmake" )     # need for old compiler...
     include( "${VLIBS_DIR}/vgit/vgit_impl.cmake" )
 
     include_directories( "${VLIBS_DIR}/vgit/" )

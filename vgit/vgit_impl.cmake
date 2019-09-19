@@ -81,11 +81,11 @@ if ( NOT  VGIT_IMPL_INCLUDED )
     add_definitions( -DVGIT_DATE_ELPD=${VGIT_DATE} )
 
     # -----------------------------------------------------------------------------------
-    message( "Catched git hash: ${VGIT_HASH}"
+    message( "=== Catched git hash: ${VGIT_HASH}"
                   ", rev-count: ${VGIT_REVCOUNT}"
                      ", branch: ${VGIT_BRANCH}"
                      ", author: ${VGIT_AUTHOR}"
-                       ", date: ${VGIT_DATE}" )
+                       ", date: ${VGIT_DATE} ===" )
 
     message( "=== vgit impl included ===" )
 
