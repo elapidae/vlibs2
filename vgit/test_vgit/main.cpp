@@ -110,7 +110,7 @@ TEST_F( VGit_Test, branch )
 
 //=======================================================================================
 
-TEST_F( VGit_Test, autor )
+TEST_F( VGit_Test, autor_name )
 {
     FILE* f = popen( "git log -n 1 --pretty=format:\"%an\"", "r" );
 
@@ -120,10 +120,29 @@ TEST_F( VGit_Test, autor )
     auto pres = string(buf, sz);
 
     // Проверяем правильно ли взяли.
-    EXPECT_EQ( pres, vgit::author() );
+    EXPECT_EQ( pres, vgit::author_name() );
 
     pclose( f );
-    vdeb << "vgit::author(): " << vgit::author() << endl;
+    vdeb << "vgit::author_name(): " << vgit::author_name() << endl;
+
+}
+
+//=======================================================================================
+
+TEST_F( VGit_Test, autor_email )
+{
+    FILE* f = popen( "git log -n 1 --pretty=format:\"%ae\"", "r" );
+
+    enum { BufSZ = 1000 };
+    char buf[BufSZ];
+    auto sz = fread(buf, 1, BufSZ, f);
+    auto pres = string(buf, sz);
+
+    // Проверяем правильно ли взяли.
+    EXPECT_EQ( pres, vgit::author_email() );
+
+    pclose( f );
+    vdeb << "vgit::author_email(): " << vgit::author_email() << endl;
 
 }
 
@@ -131,7 +150,7 @@ TEST_F( VGit_Test, autor )
 
 TEST_F( VGit_Test, date )
 {
-    FILE* f = popen( "git log -n 1 --pretty=format:\"%aI\"", "r" );
+    FILE* f = popen( "git log -n 1 --pretty=format:\"%ci\"", "r" );
 
     enum { BufSZ = 100 };
     char buf[BufSZ];
@@ -143,6 +162,19 @@ TEST_F( VGit_Test, date )
 
     pclose( f );
     vdeb << "vgit::date(): " << vgit::date() << endl;
+}
+
+//=======================================================================================
+
+TEST_F( VGit_Test, entry )
+{
+    auto entry = vgit::cur_entry();
+    EXPECT_EQ( entry.hash,          vgit::hash()            );
+    EXPECT_EQ( entry.revcount,      vgit::revcount()        );
+    EXPECT_EQ( entry.branch,        vgit::branch()          );
+    EXPECT_EQ( entry.author_name,   vgit::author_name()     );
+    EXPECT_EQ( entry.author_email,  vgit::author_email()    );
+    EXPECT_EQ( entry.date,          vgit::date()            );
 }
 
 //=======================================================================================

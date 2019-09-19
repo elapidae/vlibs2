@@ -64,16 +64,24 @@ if ( NOT  VGIT_IMPL_INCLUDED )
     string(REGEX REPLACE "[\"\r\n]+" "" VGIT_BRANCH ${VGIT_BRANCH})
     add_definitions( -DVGIT_BRANCH_ELPD=${VGIT_BRANCH} )
 
-    # author ----------------------------------------------------------------------------
+    # author name -----------------------------------------------------------------------
     execute_process( COMMAND git log -n 1 --pretty=format:"%an"
                      WORKING_DIRECTORY ${MAIN_DIR}
-                     OUTPUT_VARIABLE VGIT_AUTHOR )
+                     OUTPUT_VARIABLE VGIT_AUTHOR_NAME )
 
-    string(REGEX REPLACE "[\"\r\n]+" "" VGIT_AUTHOR ${VGIT_AUTHOR})
-    add_definitions( -DVGIT_AUTHOR_ELPD=${VGIT_AUTHOR} )
+    string(REGEX REPLACE "[\"\r\n]+" "" VGIT_AUTHOR_NAME ${VGIT_AUTHOR_NAME})
+    add_definitions( -DVGIT_AUTHOR_NAME_ELPD=${VGIT_AUTHOR_NAME} )
+
+    # author email ----------------------------------------------------------------------
+    execute_process( COMMAND git log -n 1 --pretty=format:"%ae"
+                     WORKING_DIRECTORY ${MAIN_DIR}
+                     OUTPUT_VARIABLE VGIT_AUTHOR_EMAIL )
+
+    string(REGEX REPLACE "[\"\r\n]+" "" VGIT_AUTHOR_EMAIL ${VGIT_AUTHOR_EMAIL})
+    add_definitions( -DVGIT_AUTHOR_EMAIL_ELPD=${VGIT_AUTHOR_EMAIL} )
 
     # date ------------------------------------------------------------------------------
-    execute_process( COMMAND git log -n 1 --pretty=format:"%aI"
+    execute_process( COMMAND git log -n 1 --pretty=format:"%ci"
                      WORKING_DIRECTORY ${MAIN_DIR}
                      OUTPUT_VARIABLE VGIT_DATE )
 
@@ -84,7 +92,8 @@ if ( NOT  VGIT_IMPL_INCLUDED )
     message( "=== Catched git hash: ${VGIT_HASH}"
                   ", rev-count: ${VGIT_REVCOUNT}"
                      ", branch: ${VGIT_BRANCH}"
-                     ", author: ${VGIT_AUTHOR}"
+                ", author-name: ${VGIT_AUTHOR_NAME}"
+               ", author-email: ${VGIT_AUTHOR_EMAIL}"
                        ", date: ${VGIT_DATE} ===" )
 
     message( "=== vgit impl included ===" )
