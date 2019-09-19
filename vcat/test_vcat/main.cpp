@@ -32,6 +32,19 @@
 #endif // has qt
 
 
+//=======================================================================================
+//  For debugging...
+static std::string last_fname(const char *filepath)
+{
+    std::string fp(filepath);
+    auto pos = fp.find_last_of( '/' );
+    if ( pos == std::string::npos ) return fp;
+    return fp.substr( pos + 1 );
+}
+#define vdeb std::cout << last_fname(__FILE__) << ":" << __LINE__ << "==> "
+//  For debugging...
+//=======================================================================================
+
 using namespace std;
 
 
@@ -104,7 +117,6 @@ TEST_F( VCat_Test, hello_tuple )
     EXPECT_EQ( vcat(tuple<int>(-1)).str(), "{-1}" );
     EXPECT_EQ( vcat(tuple<int,uint>()).str(), "{0,0}" );
     EXPECT_EQ( vcat(tuple<int,uint,int16_t>()).str(), "{0,0,0}" );
-
     EXPECT_EQ( vcat(tuple<string>("ololo")).str(), "{ololo}" );
 }
 
