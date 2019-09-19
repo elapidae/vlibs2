@@ -1,7 +1,7 @@
 #ifndef VVOID_TYPE_H
 #define VVOID_TYPE_H
 
-#include <type_traits>
+//#include <type_traits>
 #include "vcompiler_traits.h"
 
 //=======================================================================================
@@ -29,7 +29,7 @@
 #else // V_DO_NOT_KNOW_STD_VOID_T
     //===================================================================================
     template <class ... Cs>
-    using vvoid_type = std::void_t<Cs...>;
+    using vvoid_type = void;
     //===================================================================================
 #endif // V_DO_NOT_KNOW_STD_VOID_T
 
