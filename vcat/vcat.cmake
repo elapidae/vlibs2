@@ -15,25 +15,9 @@
 ##  information to ensure the GNU Lesser General Public License version 3 requirements
 ##  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 #########################################################################################
-
-
-#========================================================================================
 # vcat.cmake
-#
-#
-# Этот файл сгенерирован автоматически.
-#
-# Вносить изменения можно между строк:
-#   #<<< Start your code here
-#   Сохраненный код.
-#   #>>> Stop your code here
-# Все остальные изменения будут перезаписаны.
-#
-#========================================================================================
-
 
 #========================================================================================
-
 if ( NOT  VCAT_INCLUDED )
     set ( VCAT_INCLUDED TRUE )
 
@@ -41,10 +25,11 @@ if ( NOT  VCAT_INCLUDED )
 
     #<<< Start your code here -----------------------------------------------------------
     include( "${VLIBS_DIR}/cmake/c++11.cmake" )
+    include( "${VLIBS_DIR}/cmake/vcompiler_traits.cmake" )
 
-    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/impl/_vcat_iface.h")
-    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/impl/containers.h")
-    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/impl/tuple.h")
+    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/vcat_impl/vcat_iface.h")
+    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/vcat_impl/tuple.h")
+    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/vcat_impl/containers.h")
     #>>> Stop your code here ------------------------------------------------------------
 
     include_directories( "${VLIBS_DIR}/vcat/")

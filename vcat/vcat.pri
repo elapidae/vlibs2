@@ -18,23 +18,22 @@ isEmpty(qi_vcat) {
 
     isEmpty(VLIBS_DIR): error("vcat: Need VLIBS_DIR correct path.")
 
-
     #<<< Start your code here -----------------------------------------------------------
     include( $$VLIBS_DIR/qmake/v_has_qt.pri )
+    include( $$VLIBS_DIR/qmake/vcompiler_traits.pri )
 
-    HEADERS     += $$VLIBS_DIR/vcat/impl/_vcat_iface.h
-    HEADERS     += $$VLIBS_DIR/vcat/impl/containers.h
-    HEADERS     += $$VLIBS_DIR/vcat/impl/tuple.h
+    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/vcat_iface.h
+    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/tuple.h
+    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/containers.h
 
-    HEADERS     += $$VLIBS_DIR/vcat/impl/vcat_qt_deploy.h
-    SOURCES     += $$VLIBS_DIR/vcat/impl/vcat_qt_deploy.cpp
+    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/vcat_qt_deploy.h
+    SOURCES     += $$VLIBS_DIR/vcat/vcat_impl/vcat_qt_deploy.cpp
     #>>> Stop your code here ------------------------------------------------------------
 
     INCLUDEPATH += $$VLIBS_DIR/vcat
 
-    
     HEADERS     += $$VLIBS_DIR/vcat/vcat.h
-    SOURCES     += $$VLIBS_DIR/vcat/vcat.cpp 
+    SOURCES     += $$VLIBS_DIR/vcat/vcat.cpp
 }
 # vcat.pri
 #========================================================================================

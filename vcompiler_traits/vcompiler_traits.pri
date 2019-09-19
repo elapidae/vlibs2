@@ -18,6 +18,8 @@ isEmpty(qi_vcompiler_traits) {
 
     isEmpty(VLIBS_DIR): error("vcompiler_traits: Need VLIBS_DIR correct path.")
 
+    CONFIG *= c++11
+
     INCLUDEPATH *= $$VLIBS_DIR/vcompiler_traits
 
     HEADERS     += $$VLIBS_DIR/vcompiler_traits/vcompiler_traits.h

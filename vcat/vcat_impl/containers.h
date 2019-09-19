@@ -16,14 +16,15 @@
 **  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 ****************************************************************************************/
 
-
 #ifndef VCAT_IMPL_CONTAINERS_H
 #define VCAT_IMPL_CONTAINERS_H
 
 #include <type_traits>
 #include <ostream>
 #include <iterator>
-//#include "impl/tuple.h"
+
+#include "vvoid_type.h"
+
 
 //=======================================================================================
 namespace impl
@@ -68,19 +69,13 @@ namespace std
 //=======================================================================================
 
 #ifdef V_HAS_QT
- class QString;
- class QByteArray;
+    class QString;
+    class QByteArray;
 #endif // has qt
 
 //=======================================================================================
 namespace impl
 {
-    //===================================================================================
-    //  I know, that where is std::void_t. It is not work with GCC 4.7.3...
-    template <typename ... Ts>
-    using void_type = void;
-    //===================================================================================
-
     //===================================================================================
     //      is_container<C>()
     //===================================================================================
@@ -93,7 +88,7 @@ namespace impl
     struct _is_container
     <
         C,
-        void_type
+        vvoid_type
         <
             decltype( std::declval<C>().begin() ),
             decltype( std::declval<C>().end()   ),
@@ -109,6 +104,7 @@ namespace impl
     {
         return _is_container<C>::value
                 && !std::is_base_of<std::string,C>::value
+                && !std::is_base_of<std::wstring,C>::value
                 #ifdef V_HAS_QT
                     && !std::is_base_of<QString,C>::value
                     && !std::is_base_of<QByteArray,C>::value

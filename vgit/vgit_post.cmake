@@ -25,10 +25,23 @@ endif()
 if ( NOT VGIT_POST_INCLUDED )
     set( VGIT_POST_INCLUDED TRUE )
 
-    add_custom_target( vgit_regenerate ALL
-                        COMMAND           cmake "${CMAKE_SOURCE_DIR}"
-                        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-                        BYPRODUCTS        "${CMAKE_SOURCE_DIR}/.git/HEAD" )
+    message( "=== About to vgit_post... ===" )
 
+    set( VGIT_HEAD_FILE "${CMAKE_SOURCE_DIR}/.git/HEAD" )
+
+    if ( EXISTS ${VGIT_HEAD_FILE} )
+        add_custom_target( vgit_regenerate ALL
+                           COMMAND           cmake "${CMAKE_SOURCE_DIR}"
+                           WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+                           BYPRODUCTS        ${VGIT_HEAD_FILE} )
+    else()
+        # делаю столь странным образом, чтобы логи со старых компиляторов
+        # читать было приятнее.
+        message( ">>>>> WARNING!" )
+        message( ">>>>> vgit_post cannot find .git/HEAD of repository" )
+        message( ">>>>> autorebuild by new commits is impossible."     )
+    endif()
+
+    message( "=== vgit_post included ===" )
 endif()
 #========================================================================================
