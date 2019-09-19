@@ -35,8 +35,12 @@
 using namespace std;
 
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpragmas"
+#pragma GCC diagnostic ignored "-Wweak-vtables"
 class VCat_Test: public testing::Test
 {};
+#pragma GCC diagnostic pop
 
 //=======================================================================================
 

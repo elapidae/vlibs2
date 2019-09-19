@@ -18,14 +18,17 @@
 
 
 #========================================================================================
-if ( NOT  PTHREAD_LIBRARY_INCLUDED )
-    set ( PTHREAD_LIBRARY_INCLUDED TRUE )
-
-    message( "=== from pthread.cmake -- V_LIBRARIES += -lpthread ===" )
-
-    set( V_LIBRARIES ${V_LIBRARIES} -lpthread )
-
-endif() # PTHREAD_LIBRARY_INCLUDED
+if ( NOT VGIT_INCLUDED )
+    message( FATAL_ERROR "Следует включить vgit.cmake перед add_executable()..." )
+endif()
 #========================================================================================
+if ( NOT VGIT_POST_INCLUDED )
+    set( VGIT_POST_INCLUDED TRUE )
 
+    add_custom_target( vgit_regenerate ALL
+                        COMMAND           cmake "${CMAKE_SOURCE_DIR}"
+                        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+                        BYPRODUCTS        "${CMAKE_SOURCE_DIR}/.git/HEAD" )
 
+endif()
+#========================================================================================

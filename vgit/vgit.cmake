@@ -2,12 +2,6 @@
 ##
 ##  VLIBS codebase, NIIAS
 ##
-##  Authors:
-##  Alexandre Gromtsev aka elapidae     elapidae@yandex.ru
-##  Nadezhda Churikova aka claorisel    claorisel@gmail.com
-##  Ekaterina Boltenkova aka kataretta  kitkat52@yandex.ru
-##  Ivan Deylid aka sid1057             ivanov.dale@gmail.com>
-##
 ##  GNU Lesser General Public License Usage
 ##  This file may be used under the terms of the GNU Lesser General Public License
 ##  version 3 as published by the Free Software Foundation and appearing in the file
@@ -18,14 +12,25 @@
 
 
 #========================================================================================
-if ( NOT  PTHREAD_LIBRARY_INCLUDED )
-    set ( PTHREAD_LIBRARY_INCLUDED TRUE )
-
-    message( "=== from pthread.cmake -- V_LIBRARIES += -lpthread ===" )
-
-    set( V_LIBRARIES ${V_LIBRARIES} -lpthread )
-
-endif() # PTHREAD_LIBRARY_INCLUDED
+#   NB! Add it after add_executable!
+#   include( "${VLIBS_DIR}/cmake/vgit_post.cmake" ) # NB! НЕ ЗАБУДЬТЕ!!!!
 #========================================================================================
 
 
+#========================================================================================
+if ( NOT  VGIT_INCLUDED )
+    set ( VGIT_INCLUDED TRUE )
+
+    message( "=== About to include vgit... ===" )
+
+    include( "${VLIBS_DIR}/vgit/vgit_impl.cmake" )
+
+    include_directories( "${VLIBS_DIR}/vgit/" )
+
+    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vgit/vgit.h")
+    set(V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vgit/vgit.cpp")
+
+    message( "=== vgit included ===" )
+endif()
+# vgit.cmake
+#========================================================================================
