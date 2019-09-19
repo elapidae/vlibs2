@@ -23,10 +23,12 @@
 #ifndef VCAT_H
 #define VCAT_H
 
-#include "impl/_vcat_iface.h"
-#include "impl/containers.h"
-#include "impl/tuple.h"
-#include "impl/vcat_qt_deploy.h"
+#include <stdexcept>
+
+#include "vcat_impl/vcat_iface.h"
+#include "vcat_impl/tuple.h"
+#include "vcat_impl/containers.h"
+#include "vcat_impl/vcat_qt_deploy.h"
 
 
 //=======================================================================================
@@ -91,7 +93,7 @@
 //=======================================================================================
 //      vcat -- составитель строк - сообщений методами STL (ostringstream)
 //=======================================================================================
-class vcat : public _vcat_iface<vcat>
+class vcat : public impl::vcat_iface<vcat>
 {
 public:
     //-----------------------------------------------------------------------------------
@@ -114,7 +116,7 @@ private:
     void _init_default_modifiers();
     std::ostringstream _stream;
 
-    friend class _vcat_iface<vcat>;
+    friend class impl::vcat_iface<vcat>;
     template<typename T> void do_cat( T&& val );
 };
 //=======================================================================================
@@ -147,6 +149,7 @@ void vcat::do_cat( T&& val )
 
 
 //=======================================================================================
+//  TODO: Переехать в vstring.
 template< typename T >
 T vcat::from_text( const std::string& text )
 {

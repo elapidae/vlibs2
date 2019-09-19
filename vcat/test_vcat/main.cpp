@@ -34,7 +34,7 @@
 
 //=======================================================================================
 //  For debugging...
-static std::string last_fname(const char *filepath)
+std::string last_fname(const char *filepath)
 {
     std::string fp(filepath);
     auto pos = fp.find_last_of( '/' );
@@ -45,6 +45,7 @@ static std::string last_fname(const char *filepath)
 //  For debugging...
 //=======================================================================================
 
+
 using namespace std;
 
 
@@ -54,6 +55,7 @@ using namespace std;
 class VCat_Test: public testing::Test
 {};
 #pragma GCC diagnostic pop
+
 
 //=======================================================================================
 
