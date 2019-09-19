@@ -1,0 +1,162 @@
+/****************************************************************************************
+**
+**  VLIBS codebase, NIIAS
+**
+**  GNU Lesser General Public License Usage
+**  This file may be used under the terms of the GNU Lesser General Public License
+**  version 3 as published by the Free Software Foundation and appearing in the file
+**  LICENSE.LGPL3 included in the packaging of this file. Please review the following
+**  information to ensure the GNU Lesser General Public License version 3 requirements
+**  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+****************************************************************************************/
+
+// TODO!
+//  Использован linux-овский popen/pclose для чтения подпроцессов. Не особо грамотно,
+//  хотелось бы разобраться, чтобы были грамотные обертки для работы с процессами.
+
+#include "gtest/gtest.h"
+#include <iostream>
+#include "vgit.h"
+
+using namespace std;
+
+static std::string last_fname(const char *filepath)
+{
+    std::string fp(filepath);
+    auto pos = fp.find_last_of( '/' );
+    if ( pos == std::string::npos ) return fp;
+    return fp.substr( pos + 1 );
+}
+
+#define vdeb std::cout << last_fname(__FILE__) << ":" << __LINE__ << "==> "
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpragmas"
+#pragma GCC diagnostic ignored "-Wweak-vtables"
+class VGit_Test: public testing::Test
+{};
+#pragma GCC diagnostic pop
+
+
+//=======================================================================================
+
+TEST_F( VGit_Test, hash )
+{
+    FILE* f = popen( "git log -n 1 --pretty=format:\"%H\"", "r" );
+
+    char buf[41];
+    auto sz = fread(buf, 1, 41, f);
+    EXPECT_EQ(sz, 40);  // size of SHA hash.
+
+    EXPECT_EQ(vgit::hash(), string(buf,sz) );
+
+    pclose(f);
+    vdeb << "vgit::hash(): " << vgit::hash() << endl;
+}
+
+//=======================================================================================
+
+TEST_F( VGit_Test, revcount )
+{
+    FILE* f = popen( "git rev-list HEAD --count", "r" );
+
+    enum { BufSZ = 100 };
+    char buf[BufSZ];
+    auto sz = fread(buf, 1, BufSZ, f);
+
+    // Читаем в интовую переменную,
+    istringstream is( string(buf,sz) );
+    int count; is >> count;
+    EXPECT_FALSE( is.fail() ); // проверяем, что
+    EXPECT_FALSE( is.bad()  ); // поток не накрылся.
+
+    // Пишем в еще один поток.
+    ostringstream os; os << count;
+
+    // Проверяем правильно ли взяли.
+    EXPECT_EQ( os.str(), vgit::revcount() );
+
+    pclose( f );
+    vdeb << "vgit::revcount(): " << vgit::revcount() << endl;
+}
+
+//=======================================================================================
+
+TEST_F( VGit_Test, branch )
+{
+    FILE* f = popen( "git symbolic-ref --short HEAD", "r" );
+
+    enum { BufSZ = 100 };
+    char buf[BufSZ];
+    auto sz = fread(buf, 1, BufSZ, f);
+    auto pres = string(buf, sz);
+
+    if ( !pres.empty() && pres.back() == '\n' ) pres.pop_back();
+    if ( !pres.empty() && pres.back() == '\r' ) pres.pop_back();
+
+    // есть такоой глюююююкккк....
+    if ( vgit::branch() == "DETACHED HEAD" )
+    {
+        vdeb << "detached head detected..." << endl;
+        EXPECT_TRUE( pres.empty() );
+        pres = "DETACHED HEAD";
+    }
+
+    EXPECT_EQ( pres, vgit::branch() );
+
+    pclose( f );
+    vdeb << "vgit::branch(): " << vgit::branch() << endl;
+}
+
+//=======================================================================================
+
+TEST_F( VGit_Test, autor )
+{
+    FILE* f = popen( "git log -n 1 --pretty=format:\"%an\"", "r" );
+
+    enum { BufSZ = 1000 };
+    char buf[BufSZ];
+    auto sz = fread(buf, 1, BufSZ, f);
+    auto pres = string(buf, sz);
+
+    // Проверяем правильно ли взяли.
+    EXPECT_EQ( pres, vgit::author() );
+
+    pclose( f );
+    vdeb << "vgit::author(): " << vgit::author() << endl;
+
+}
+
+//=======================================================================================
+
+TEST_F( VGit_Test, date )
+{
+    FILE* f = popen( "git log -n 1 --pretty=format:\"%aI\"", "r" );
+
+    enum { BufSZ = 100 };
+    char buf[BufSZ];
+    auto sz = fread(buf, 1, BufSZ, f);
+    auto pres = string(buf, sz);
+
+    // Проверяем правильно ли взяли.
+    EXPECT_EQ( pres, vgit::date() );
+
+    pclose( f );
+    vdeb << "vgit::date(): " << vgit::date() << endl;
+}
+
+//=======================================================================================
+
+
+
+//=======================================================================================
+//  Main, do not delete...
+//=======================================================================================
+int main(int argc, char *argv[])
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
+//=======================================================================================
+//  Main, do not delete...
+//=======================================================================================

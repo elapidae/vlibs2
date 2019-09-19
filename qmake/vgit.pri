@@ -1,0 +1,1 @@
+../vgit/vgit.pri
