@@ -23,11 +23,12 @@
 #define VGIT_QUOTES_FOR_EXTRACT_DEFINES(name) #name
 #define VGIT_STRING_FOR_EXTRACT_DEFINES(macro) VGIT_QUOTES_FOR_EXTRACT_DEFINES(macro)
 //=======================================================================================
-#define VGIT_CURRECT_HASH       VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_HASH_ELPD)
-#define VGIT_CURRECT_REVCOUNT   VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_REVCOUNT_ELPD)
-#define VGIT_CURRECT_BRANCH     VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_BRANCH_ELPD)
-#define VGIT_CURRECT_AUTHOR     VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_AUTHOR_ELPD)
-#define VGIT_CURRECT_DATE       VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_DATE_ELPD)
+#define VGIT_CURRECT_HASH         VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_HASH_ELPD)
+#define VGIT_CURRECT_REVCOUNT     VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_REVCOUNT_ELPD)
+#define VGIT_CURRECT_BRANCH       VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_BRANCH_ELPD)
+#define VGIT_CURRECT_AUTHOR_NAME  VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_AUTHOR_NAME_ELPD)
+#define VGIT_CURRECT_AUTHOR_EMAIL VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_AUTHOR_EMAIL_ELPD)
+#define VGIT_CURRECT_DATE         VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_DATE_ELPD)
 //=======================================================================================
 
 
@@ -53,9 +54,14 @@ std::string vgit::branch()
     return res;
 }
 //=======================================================================================
-std::string vgit::author()
+std::string vgit::author_name()
 {
-    return VGIT_CURRECT_AUTHOR;
+    return VGIT_CURRECT_AUTHOR_NAME;
+}
+//=======================================================================================
+std::string vgit::author_email()
+{
+    return VGIT_CURRECT_AUTHOR_EMAIL;
 }
 //=======================================================================================
 std::string vgit::date()
@@ -77,19 +83,21 @@ std::string vgit::compile_datetime()
 //=======================================================================================
 std::string vgit::as_message( const std::string& query )
 {
-    if ( query == "--vgit-hash"     )   return hash();
-    if ( query == "--vgit-revcount" )   return revcount();
-    if ( query == "--vgit-branch"   )   return branch();
-    if ( query == "--vgit-author"   )   return author();
-    if ( query == "--vgit-date"     )   return date();
+    if ( query == "--vgit-hash"         )   return hash();
+    if ( query == "--vgit-revcount"     )   return revcount();
+    if ( query == "--vgit-branch"       )   return branch();
+    if ( query == "--vgit-author-name"  )   return author_name();
+    if ( query == "--vgit-author-email" )   return author_email();
+    if ( query == "--vgit-date"         )   return date();
 
     std::stringstream ss;
-    ss << "hash="       << hash()
-       << ", branch="   << branch()
-       << ", revcount=" << revcount()
-       << ", date="     << date()
-       << ", author="   << author()
-       << ", comptime=" << compile_datetime();
+    ss << "hash="           << hash()
+       << ", branch="       << branch()
+       << ", revcount="     << revcount()
+       << ", date="         << date()
+       << ", author-name="  << author_name()
+       << ", author-email=" << author_email()
+       << ", comptime="     << compile_datetime();
 
     return ss.str();
 }
@@ -112,7 +120,7 @@ void vgit::print_and_exit_if_need( int argc, const char * const * const argv,
 //=======================================================================================
 vgit::entry vgit::cur_entry()
 {
-    return { hash(), revcount(), branch(), author(), date() };
+    return { hash(), revcount(), branch(), author_name(), author_email(), date() };
 }
 //=======================================================================================
 
@@ -123,6 +131,7 @@ vgit::entry vgit::cur_entry()
 #undef VGIT_CURRECT_HASH
 #undef VGIT_CURRECT_REVCOUNT
 #undef VGIT_CURRECT_BRANCH
-#undef VGIT_CURRECT_AUTHOR
+#undef VGIT_CURRECT_AUTHOR_NAME
+#undef VGIT_CURRECT_AUTHOR_EMAIL
 #undef VGIT_CURRECT_DATE
 //=======================================================================================

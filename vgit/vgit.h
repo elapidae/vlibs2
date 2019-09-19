@@ -23,7 +23,8 @@ public:
     static std::string hash();
     static std::string revcount();
     static std::string branch();
-    static std::string author();
+    static std::string author_name();
+    static std::string author_email();
     static std::string date();
 
     // Метка времени компиляции.
@@ -47,7 +48,8 @@ public:
         std::string hash;
         std::string revcount;
         std::string branch;
-        std::string author;
+        std::string author_name;
+        std::string author_email;
         std::string date;
     };
 
@@ -67,13 +69,14 @@ namespace s11n
     {
         using _s = std::string;
 
-        static std::tuple<_s,_s,_s,_s,_s>
+        static std::tuple<_s,_s,_s,_s,_s,_s>
         to_tuple( const vgit::entry& e )
         {
             return  std::make_tuple( e.hash,
                                      e.revcount,
                                      e.branch,
-                                     e.author,
+                                     e.author_name,
+                                     e.author_email,
                                      e.date );
         }
     };

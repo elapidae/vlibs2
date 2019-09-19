@@ -57,27 +57,31 @@ isEmpty(qi_vgit_impl) {
     # -----------------------------------------------------------------------------------
     #   Основная машинерия с преферансом, бубном и танцами. Страшновато представить как
     #   все вот это надо будет еще и под виндой поддерживать...
-    VGIT_HASH     = "$$system(cd \"$$system_path($$MAIN_DIR)\"  &&  \
-                     git log -n 1 --pretty=format:\"%H\")"
+    VGIT_HASH           = "$$system(cd \"$$system_path($$MAIN_DIR)\"  &&  \
+                           git log -n 1 --pretty=format:\"%H\")"
 
-    VGIT_REVCOUNT = "$$system(cd \"$$system_path($$MAIN_DIR)\"  &&  \
-                     git rev-list HEAD --count)"
+    VGIT_REVCOUNT       = "$$system(cd \"$$system_path($$MAIN_DIR)\"  &&  \
+                           git rev-list HEAD --count)"
 
-    VGIT_BRANCH   = "$$system(cd \"$$system_path($$MAIN_DIR)\"  &&  \
-                     git symbolic-ref --short HEAD)"
+    VGIT_BRANCH         = "$$system(cd \"$$system_path($$MAIN_DIR)\"  &&  \
+                           git symbolic-ref --short HEAD)"
 
-    VGIT_AUTHOR   = "$$system(cd \"$$system_path($$MAIN_DIR)\"  &&  \
-                     git log -n 1 --pretty=format:\"%an\")"
+    VGIT_AUTHOR_NAME    = "$$system(cd \"$$system_path($$MAIN_DIR)\"  &&  \
+                           git log -n 1 --pretty=format:\"%an\")"
 
-    VGIT_DATE     = "$$system(cd \"$$system_path($$MAIN_DIR)\"  &&  \
-                     git log -n 1 --pretty=format:\"%aI\")"
+    VGIT_AUTHOR_EMAIL   = "$$system(cd \"$$system_path($$MAIN_DIR)\"  &&  \
+                           git log -n 1 --pretty=format:\"%ae\")"
+
+    VGIT_DATE           = "$$system(cd \"$$system_path($$MAIN_DIR)\"  &&  \
+                           git log -n 1 --pretty=format:\"%ci\")"
 
     # -----------------------------------------------------------------------------------
 
     DEFINES +=     VGIT_HASH_ELPD=\"$${VGIT_HASH}\"
     DEFINES += VGIT_REVCOUNT_ELPD=\"$${VGIT_REVCOUNT}\"
     DEFINES +=   VGIT_BRANCH_ELPD=\"$${VGIT_BRANCH}\"
-    DEFINES +=   VGIT_AUTHOR_ELPD=\"$${VGIT_AUTHOR}\"
+    DEFINES +=   VGIT_AUTHOR_NAME_ELPD=\"$${VGIT_AUTHOR_NAME}\"
+    DEFINES +=   VGIT_AUTHOR_EMAIL_ELPD=\"$${VGIT_AUTHOR_EMAIL}\"
     DEFINES +=     VGIT_DATE_ELPD=\"$${VGIT_DATE}\"
 
     # -----------------------------------------------------------------------------------
@@ -85,7 +89,8 @@ isEmpty(qi_vgit_impl) {
     message(">>> Current git hash: $${VGIT_HASH}, \
                          revcount: $${VGIT_REVCOUNT}, \
                            branch: $${VGIT_BRANCH}, \
-                           author: $${VGIT_AUTHOR}, \
+                      author-name: $${VGIT_AUTHOR_NAME}, \
+                     author-email: $${VGIT_AUTHOR_EMAIL}, \
                              date: $${VGIT_DATE}\
                              ")
 
