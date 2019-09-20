@@ -7,6 +7,7 @@ set( VLIBS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vlibs" )
 
 add_subdirectory( "${VLIBS_DIR}/vcat/test_vcat/" )
 add_subdirectory( "${VLIBS_DIR}/vgit/test_vgit/" )
+add_subdirectory( "${VLIBS_DIR}/vcompiler_traits/test_vcompiler_traits/" )
 
 #add_subdirectory( "${VLIBS_DIR}/vcrc/test_vcrc/" )
 #add_subdirectory( "${VLIBS_DIR}/vstring/test_vstring/" )

@@ -1,10 +1,12 @@
 #!/bin/bash
 
 echo ====================================================================================
-vlibs/vcat/test_vcat/test_vcat                          || exit 1
+vlibs/vcat/test_vcat/test_vcat                                              || exit 1
 echo ====================================================================================
-vlibs/vgit/test_vgit/test_vgit                          || exit 1
-#echo ====================================================================================
+vlibs/vgit/test_vgit/test_vgit                                              || exit 1
+echo ====================================================================================
+vlibs/vcompiler_traits/test_vcompiler_traits/test_vcompiler_traits          || exit 1
+echo ====================================================================================
 #vlibs/vgio/keyfile/test_keyfile/test_keyfile            || exit 1
 #echo ====================================================================================
 #vlibs/vcrc/test_vcrc/test_vcrc                          || exit 1

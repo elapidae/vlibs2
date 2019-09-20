@@ -1,37 +1,81 @@
 #ifndef VVOID_TYPE_H
 #define VVOID_TYPE_H
 
-//#include <type_traits>
-#include "vcompiler_traits.h"
+#include <type_traits>
+
 
 //=======================================================================================
-#ifdef V_DO_NOT_KNOW_STD_VOID_T
+namespace impl
+{
+    // 1. определить укуренную реализацию, которую сожрет недо 11й компилятор.
+    // 2. определить промежуточный vvt через void.
+    // 3. устроить проверку промежуточному vvt.
+    // 4. вывести vvt в зависимоти от проверки.
+
     //===================================================================================
-    namespace impl
+    // 1. определить укуренную реализацию, которую сожрет недо 11й компилятор.
+    template<class T0, class ... Ts>
+    struct _void_for_old_
     {
-        template<class C0>
-        constexpr void _define_void_type_()
-        {
-            using sss = C0;
-        }
-
-        template< class C0, class C1, class... Cls >
-        constexpr void _define_void_type_()
-        {
-            using sss = C0;
-            _define_void_type_<C1,Cls...>();
-        }
-    } // namespace impl
-
-    template< class... Cls >
-    using vvoid_type = decltype( impl::_define_void_type_<Cls...>() );
+        using v  = void;
+        using _  = T0;
+        using __ = _void_for_old_<Ts...>;
+    };
+    //-----------------------------------------------------------------------------------
+    template<class T0>
+    struct _void_for_old_<T0>
+    {
+        using v  = void;
+        using _  = T0;
+    };
     //===================================================================================
-#else // V_DO_NOT_KNOW_STD_VOID_T
+    // 2. определить промежуточный vvt через void.
+    template<class ... Ts>
+    using _may_void_type_ = void;
     //===================================================================================
-    template <class ... Cs>
-    using vvoid_type = void;
+    // 3. устроить проверку промежуточному vvt.
+    // 3.1.a. сделать типичное применение vvt для проверки наличия метода foo();
+    template<class T, class = void>
+    struct _has_foo_ : public std::false_type
+    {};
+    //-----------------------------------------------------------------------------------
+    template<class T>
+    struct _has_foo_< T, _may_void_type_<decltype(std::declval<T>().foo())> >
+        : public std::true_type
+    {};
+    //-----------------------------------------------------------------------------------
+    // 3.1.b. сделать типичное применение vvt для проверки наличия метода bar();
+    template<class T, class = void>
+    struct _has_bar_ : public std::false_type
+    {};
+    //-----------------------------------------------------------------------------------
+    template<class T>
+    struct _has_bar_< T, _may_void_type_<decltype(std::declval<T>().bar())> >
+        : public std::true_type
+    {};
+    //-----------------------------------------------------------------------------------
+    // 3.2. вводим структуру, в которой есть только foo();
+    struct _some_foo_ { void foo(); };
+    //-----------------------------------------------------------------------------------
+    // 3.3. проверяем как оно отработало;
+    constexpr bool _may_void_is_adequate()
+    {
+        return _has_foo_<_some_foo_>::value &&
+              !_has_bar_<_some_foo_>::value;
+    }
     //===================================================================================
-#endif // V_DO_NOT_KNOW_STD_VOID_T
+} // impl namespace
+//=======================================================================================
 
+//=======================================================================================
+// 4. вывести vvt в зависимоти от проверки.
+template<class ... Ts>
+using vvoid_type = typename std::conditional
+    <
+        impl::_may_void_is_adequate(),
+        void,
+        typename impl::_void_for_old_<Ts...>::v
+    >::type;
+//=======================================================================================
 
 #endif // VVOID_TYPE_H
