@@ -7,6 +7,8 @@ vlibs/vgit/test_vgit/test_vgit                                              || e
 echo ====================================================================================
 vlibs/vcompiler_traits/test_vcompiler_traits/test_vcompiler_traits          || exit 1
 echo ====================================================================================
+vlibs/vsignal/test_vsignal/test_vsignal                                     || exit 1
+echo ====================================================================================
 #vlibs/vgio/keyfile/test_keyfile/test_keyfile            || exit 1
 #echo ====================================================================================
 #vlibs/vcrc/test_vcrc/test_vcrc                          || exit 1
