@@ -72,6 +72,7 @@ std::string vgit::date()
 
 //=======================================================================================
 #pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wdate-time"
 std::string vgit::compile_datetime()
 {

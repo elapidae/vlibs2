@@ -9,7 +9,7 @@
 ##  information to ensure the GNU Lesser General Public License version 3 requirements
 ##  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 #########################################################################################
-
+# v_has_qt.pri
 
 #========================================================================================
 isEmpty(qi_v_has_qt) {

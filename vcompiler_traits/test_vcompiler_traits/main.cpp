@@ -35,7 +35,7 @@ std::string last_fname(const char *filepath)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wweak-vtables"
-class VGit_Test: public testing::Test
+class VCompiler_Traits_Test: public testing::Test
 {};
 #pragma GCC diagnostic pop
 //=======================================================================================
@@ -43,7 +43,7 @@ class VGit_Test: public testing::Test
 
 //=======================================================================================
 
-TEST_F( VGit_Test, gnuc_only )
+TEST_F( VCompiler_Traits_Test, gnuc_only )
 {
     EXPECT_EQ(  V_GNUC_COMPILER_VERSION        &0xFF, __GNUC_PATCHLEVEL__   );
     EXPECT_EQ( (V_GNUC_COMPILER_VERSION >> 8)  &0xFF, __GNUC_MINOR__        );
@@ -72,7 +72,7 @@ struct has_bar : public std::false_type {};
 template<typename T>
 struct has_bar<T, vvoid_type<decltype(T::bar)> > : public std::true_type {};
 //---------------------------------------------------------------------------------------
-TEST_F( VGit_Test, vvoid_type )
+TEST_F( VCompiler_Traits_Test, vvoid_type )
 {
     EXPECT_TRUE( test_vvoid_type<uint>::value );
     EXPECT_TRUE( has_foo<SFoo>::value );
