@@ -45,10 +45,10 @@
 //  NB! С версией не уверен.
 //  Use V_NORETURN macro instead of real [[noreturn]] :((
 #define V_NORETURN_ENABLED (V_GNUC_COMPILER_VERSION > 0x040703)
-#if V_NORETURN_ENABLED
+#ifdef V_NORETURN_ENABLED
     #define V_NORETURN [[noreturn]]
 #else
-    #define V_NORETURN
+    #define V_NORETURN __attribute__((noreturn))
 #endif
 //=======================================================================================
 
