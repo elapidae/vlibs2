@@ -65,6 +65,7 @@
 //=======================================================================================
 
 #include "vchrono_impl/time_point_base.h"
+#include <ostream>
 
 //=======================================================================================
 class vsystem_time_point
@@ -109,6 +110,65 @@ public:
     template<typename Duration>
     vhigh_resolution_time_point(Duration d) : _base_type(d) {}
 };
+//=======================================================================================
+
+
+//=======================================================================================
+//      Streaming for my and std types.
+//=======================================================================================
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+
+template<typename Clk, typename Derived>
+std::ostream & operator << ( std::ostream & os,
+                             const impl::time_point_base<Clk,Derived> & val )
+{
+    os << "TimePoint(" << val.humanable().date_time_zzz() << ")";
+    return os;
+}
+//=======================================================================================
+static std::ostream& operator << ( std::ostream & os, const std::chrono::hours & val )
+{
+    os << "hours(" << val.count() << ')';
+    return os;
+}
+//---------------------------------------------------------------------------------------
+static std::ostream& operator << ( std::ostream & os, const std::chrono::minutes & val )
+{
+    os << "minutes(" << val.count() << ')';
+    return os;
+}
+//---------------------------------------------------------------------------------------
+static std::ostream& operator << ( std::ostream & os, const std::chrono::seconds & val )
+{
+    os << "seconds(" << val.count() << ')';
+    return os;
+}
+//---------------------------------------------------------------------------------------
+static
+std::ostream& operator << ( std::ostream & os, const std::chrono::milliseconds & val )
+{
+    os << "milliseconds(" << val.count() << ')';
+    return os;
+}
+//---------------------------------------------------------------------------------------
+static
+std::ostream& operator << ( std::ostream & os, const std::chrono::microseconds & val )
+{
+    os << "microseconds(" << val.count() << ')';
+    return os;
+}
+//---------------------------------------------------------------------------------------
+static
+std::ostream& operator << ( std::ostream & os, const std::chrono::nanoseconds  & val )
+{
+    os << "nanoseconds(" << val.count() << ')';
+    return os;
+}
+
+#pragma GCC diagnostic pop
+//=======================================================================================
+//      Streaming for std types.
 //=======================================================================================
 
 #endif // VTIME_POINT_H

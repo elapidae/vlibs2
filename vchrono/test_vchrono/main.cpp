@@ -22,6 +22,7 @@
 
 #include "gtest/gtest.h"
 #include "vtime_point.h"
+#include "vtime_meter.h"
 
 //#include "vtimemeter.h"
 //#include <list>
@@ -72,14 +73,15 @@ static void base_test(string who)
 
     //TD<decltype(time_point::system_type::clock::now())> fl;
     auto p1 = vtime_point::now();
-    vdeb << who << endl;
-    vdeb << "nano:   " << p1.nanoseconds().count() << endl;
-    vdeb << "micro:  " << p1.microseconds().count() << endl;
-    vdeb << "milli:  " << p1.milliseconds().count() << endl;
-    vdeb << "second: " << p1.seconds().count() << endl;
-    vdeb << "minute: " << p1.minutes().count() << endl;
-    vdeb << "hour:   " << p1.hours().count() << endl;
     vdeb << "=====================" << endl;
+    vdeb << who << endl;
+    vdeb << p1 << endl;
+    vdeb << p1.nanoseconds() << endl;
+    vdeb << p1.microseconds() << endl;
+    vdeb << p1.milliseconds() << endl;
+    vdeb << p1.seconds() << endl;
+    vdeb << p1.minutes() << endl;
+    vdeb << p1.hours() << endl;
 }
 
 TEST_F( VChrono_Test, base_test )
@@ -206,6 +208,23 @@ TEST_F( VChrono_Test, humanable_2 )
 
 //=======================================================================================
 
+TEST_F( VChrono_Test, simple_time_meter )
+{
+    vtime_meter meter( vtime_meter::stopped );
+    usleep(1);
+    EXPECT_EQ( meter.restart().ns(), nanoseconds(0) );
+
+    usleep(1);
+    vdeb << "after waited 1 us:" << endl;
+    vdeb << meter.elapsed().ns() << endl;
+    vdeb << meter.elapsed().us() << endl;
+    vdeb << meter.elapsed().ms() << endl;
+    vdeb << meter.elapsed().sec() << endl;
+    vdeb << meter.elapsed().ns() << endl;
+    vdeb << meter.elapsed().us() << endl;
+    vdeb << meter.elapsed().ms() << endl;
+    vdeb << meter.elapsed().sec() << endl;
+}
 
 //TEST_F( VChrono_Test, dev_meter_reverse )
 //{

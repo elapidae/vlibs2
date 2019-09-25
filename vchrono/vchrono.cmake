@@ -15,14 +15,17 @@
 if ( NOT  VCHRONO_INCLUDED )
     set ( VCHRONO_INCLUDED TRUE )
 
-    message( "=== include vchrono... ===" )
+    message( "=== about include vchrono... ===" )
 
     include( "${VLIBS_DIR}/cmake/vcompiler_traits.cmake" )
 
-    include_directories( "${VLIBS_DIR}/vchrono/")
+    include_directories( "${VLIBS_DIR}/vchrono/" )
 
-    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vchrono_impl/time_point_base.h" )
-    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vtime_point.h" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vtime_point.h" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vtime_meter.h" )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vchrono_impl/time_point_base.h" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vchrono_impl/time_meter.h" )
 
     set( V_HEADERS ${V_HEADERS}
                   "${VLIBS_DIR}/vchrono/vchrono_impl/human_readable_time.h" )
