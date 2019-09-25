@@ -9,6 +9,8 @@ vlibs/vcompiler_traits/test_vcompiler_traits/test_vcompiler_traits          || e
 echo ====================================================================================
 vlibs/vsignal/test_vsignal/test_vsignal                                     || exit 1
 echo ====================================================================================
+vlibs/vchrono/test_vchrono/test_vchrono                                     || exit 1
+echo ====================================================================================
 #vlibs/vgio/keyfile/test_keyfile/test_keyfile            || exit 1
 #echo ====================================================================================
 #vlibs/vcrc/test_vcrc/test_vcrc                          || exit 1
