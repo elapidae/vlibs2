@@ -34,15 +34,7 @@
 
 //=======================================================================================
 //  For debugging...
-std::string last_fname(const char *filepath)
-{
-    std::string fp(filepath);
-    auto pos = fp.find_last_of( '/' );
-    if ( pos == std::string::npos ) return fp;
-    return fp.substr( pos + 1 );
-}
-#define vdeb std::cout << last_fname(__FILE__) << ":" << __LINE__ << "==> "
-//  For debugging...
+#define vdeb std::cout << basename(__FILE__) << ":" << __LINE__ << "==> "
 //=======================================================================================
 
 
@@ -61,6 +53,8 @@ class VCat_Test: public testing::Test
 
 TEST_F( VCat_Test, hello_world )
 {
+    vdeb << vcat( "Hello", " ", "world", '!', '\n' );
+
     EXPECT_EQ( vcat().str(), "" );
     EXPECT_EQ( vcat("Hello world!").str(), "Hello world!" );
     EXPECT_EQ( vcat("Привет мир!").str(), "Привет мир!" );

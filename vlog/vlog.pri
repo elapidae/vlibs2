@@ -9,30 +9,35 @@
 ##  information to ensure the GNU Lesser General Public License version 3 requirements
 ##  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 #########################################################################################
-# vcat.pri
+# vlog.pri
 
 #========================================================================================
-isEmpty(qi_vcat) {
-    qi_vcat = 1;
-    isEmpty(qi_not_print_pri_messages): message("=== vcat appended ===")
+isEmpty(qi_vlog) {
+    qi_vlog = 1;
+    isEmpty(qi_not_print_pri_messages): message("=== vlog appended ===")
 
-    isEmpty(VLIBS_DIR): error("vcat: Need VLIBS_DIR correct path.")
+    isEmpty(VLIBS_DIR): error("vlog: Need VLIBS_DIR correct path.")
 
-    include( $$VLIBS_DIR/qmake/v_has_qt.pri )
-    include( $$VLIBS_DIR/qmake/vcompiler_traits.pri )
+    include( $$VLIBS_DIR/qmake/vcat.pri    )
+    include( $$VLIBS_DIR/qmake/vchrono.pri )
 
-    INCLUDEPATH += $$VLIBS_DIR/vcat
+    INCLUDEPATH += $$VLIBS_DIR/vlog
 
-    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/vcat_iface.h
-    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/tuple.h
-    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/containers.h
+    HEADERS     += $$VLIBS_DIR/vlog/vlog.h
 
-    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/vcat_qt_deploy.h
-    SOURCES     += $$VLIBS_DIR/vcat/vcat_impl/vcat_qt_deploy.cpp
+#    HEADERS     += $$VLIBS_DIR/vlog/verror.h
+#    SOURCES     += $$VLIBS_DIR/vlog/verror.cpp
 
-    HEADERS     += $$VLIBS_DIR/vcat/vcat.h
-    SOURCES     += $$VLIBS_DIR/vcat/vcat.cpp
+#    HEADERS     += $$VLIBS_DIR/vlog/vlogger.h
+#    SOURCES     += $$VLIBS_DIR/vlog/vlogger.cpp
+
+#    HEADERS     += $$VLIBS_DIR/vlog/vlogentry.h
+#    SOURCES     += $$VLIBS_DIR/vlog/vlogentry.cpp
+
+#    contains( CONFIG, qt ) {
+#        HEADERS += $$VLIBS_DIR/vlog/vlog_qt.h
+#        SOURCES += $$VLIBS_DIR/vlog/vlog_qt.cpp
+#    }
 }
-# vcat.pri
+# vlog.pri
 #========================================================================================
-
