@@ -25,6 +25,10 @@ isEmpty(qi_vlog) {
 
     HEADERS     += $$VLIBS_DIR/vlog/vlog.h
 
+    HEADERS     += $$VLIBS_DIR/vlog/vlog_impl/logger.h
+    SOURCES     += $$VLIBS_DIR/vlog/vlog_impl/logger.cpp
+
+
 #    HEADERS     += $$VLIBS_DIR/vlog/verror.h
 #    SOURCES     += $$VLIBS_DIR/vlog/verror.cpp
 
@@ -41,3 +45,4 @@ isEmpty(qi_vlog) {
 }
 # vlog.pri
 #========================================================================================
+

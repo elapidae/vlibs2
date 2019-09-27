@@ -26,12 +26,16 @@ if ( NOT  VLOG_INCLUDED )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/vlogger.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/vlogger.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/vlog_impl/logger.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/vlog_impl/logger.cpp" )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/verror.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/verror.cpp" )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/vlogentry.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/vlogentry.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/vlog_impl/log_entry.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/vlog_impl/log_entry.cpp" )
 
     message( "=== vlog included ===" )
 endif()

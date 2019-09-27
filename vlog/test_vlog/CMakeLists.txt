@@ -1,7 +1,7 @@
 #========================================================================================
 cmake_minimum_required(VERSION 2.8)
 
-project(test_vcat)
+project(test_vlog)
 
 set( VLIBS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../.." )
 
