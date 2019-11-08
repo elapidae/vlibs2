@@ -17,8 +17,8 @@
 ****************************************************************************************/
 
 
-#ifndef VCAT_IMPL_TUPLE_H
-#define VCAT_IMPL_TUPLE_H
+#ifndef IMPL_VCAT_TUPLE_H
+#define IMPL_VCAT_TUPLE_H
 
 #include <tuple>
 #include <ostream>
@@ -44,7 +44,7 @@ namespace std
 //=======================================================================================
 //      Implementation
 //=======================================================================================
-namespace impl
+namespace impl_vcat
 {
     template<size_t pos, size_t endpos>
     void _print( std::ostream& os, const std::tuple<>& )
@@ -68,7 +68,7 @@ namespace impl
                 endpos,
                 pos + 1 < endpos >(os,tup);
     }
-} // impl namespace
+} // impl_vcat namespace
 //=======================================================================================
 
 //=======================================================================================
@@ -89,7 +89,7 @@ namespace std
     {
         os << "{";
         constexpr size_t sz = tuple_size< tuple<T,Args...> >();
-        impl::_print<0,sz,sz != 0>(os, tup);
+        impl_vcat::_print<0,sz,sz != 0>(os, tup);
         return os;
     }
     //===================================================================================
@@ -103,4 +103,4 @@ namespace std
 } // std namespace
 //=======================================================================================
 
-#endif // VCAT_IMPL_TUPLE_H
+#endif // IMPL_VCAT_TUPLE_H
