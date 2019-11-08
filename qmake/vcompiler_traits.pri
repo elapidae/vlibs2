@@ -1,0 +1,1 @@
+../vcompiler_traits/vcompiler_traits.pri

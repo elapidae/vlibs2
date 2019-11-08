@@ -9,7 +9,7 @@
 ##  information to ensure the GNU Lesser General Public License version 3 requirements
 ##  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 #########################################################################################
-
+# vcat.pri
 
 #========================================================================================
 isEmpty(qi_vcat) {
@@ -18,24 +18,23 @@ isEmpty(qi_vcat) {
 
     isEmpty(VLIBS_DIR): error("vcat: Need VLIBS_DIR correct path.")
 
-    #<<< Start your code here -----------------------------------------------------------
     include( $$VLIBS_DIR/qmake/v_has_qt.pri )
     include( $$VLIBS_DIR/qmake/vcompiler_traits.pri )
-
-    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/vcat_iface.h
-    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/tuple.h
-    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/containers.h
-
-    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/vcat_qt_deploy.h
-    SOURCES     += $$VLIBS_DIR/vcat/vcat_impl/vcat_qt_deploy.cpp
-    #>>> Stop your code here ------------------------------------------------------------
 
     INCLUDEPATH += $$VLIBS_DIR/vcat
 
     HEADERS     += $$VLIBS_DIR/vcat/vcat.h
     SOURCES     += $$VLIBS_DIR/vcat/vcat.cpp
 
+    HEADERS     += $$VLIBS_DIR/vcat/impl_vcat/vcat_iface.h
+    HEADERS     += $$VLIBS_DIR/vcat/impl_vcat/tuple.h
+    HEADERS     += $$VLIBS_DIR/vcat/impl_vcat/containers.h
+
+    HEADERS     += $$VLIBS_DIR/vcat/impl_vcat/vcat_qt_deploy.h
+    SOURCES     += $$VLIBS_DIR/vcat/impl_vcat/vcat_qt_deploy.cpp
+
     OTHER_FILES += $$VLIBS_DIR/vcat/README
+    OTHER_FILES += $$VLIBS_DIR/vcat/vcat.cmake
 }
 # vcat.pri
 #========================================================================================

@@ -10,8 +10,8 @@
 **  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 ****************************************************************************************/
 
-#ifndef VCAT_IMPLvcat_iface_H
-#define VCAT_IMPLvcat_iface_H
+#ifndef IMPL_VCAT_VCAT_IFACE_H
+#define IMPL_VCAT_VCAT_IFACE_H
 
 #include <sstream>
 #include <iomanip>
@@ -44,14 +44,15 @@
  *   - space()/nospace дополнены delimiter(char)/nodelimiter();
  *
  *  UPD: 2019-09-19 -- перенесен в namespace impl.
+ *  UPD: 2019-11-08 -- namespace теперь impl_vcat.
 **/
 //=======================================================================================
 
 
 //=======================================================================================
-//      impl::vcat_iface
+//      impl_vcat::vcat_iface
 //=======================================================================================
-namespace impl
+namespace impl_vcat
 {
     template<typename D>
     class vcat_iface
@@ -280,9 +281,9 @@ namespace impl
         return  fill_char(fill_ch).field_width(f_width)( val );
     }
     //===================================================================================
-} // namespace impl
+} // namespace impl_vcat
 //=======================================================================================
-#endif // VCAT_IMPLvcat_iface_H
+#endif // IMPL_VCAT_VCAT_IFACE_H
 //=======================================================================================
-//      impl::vcat_iface.h
+//      impl_vcat::vcat_iface.h
 //=======================================================================================

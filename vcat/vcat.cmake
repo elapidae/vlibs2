@@ -2,12 +2,6 @@
 ##
 ##  VLIBS codebase, NIIAS
 ##
-##  Authors:
-##  Alexandre Gromtsev aka elapidae     elapidae@yandex.ru
-##  Nadezhda Churikova aka claorisel    claorisel@gmail.com
-##  Ekaterina Boltenkova aka kataretta  kitkat52@yandex.ru
-##  Ivan Deylid aka sid1057             ivanov.dale@gmail.com>
-##
 ##  GNU Lesser General Public License Usage
 ##  This file may be used under the terms of the GNU Lesser General Public License
 ##  version 3 as published by the Free Software Foundation and appearing in the file
@@ -23,23 +17,22 @@ if ( NOT  VCAT_INCLUDED )
 
     message( "=== include vcat... ===" )
 
-    #<<< Start your code here -----------------------------------------------------------
     include( "${VLIBS_DIR}/cmake/c++11.cmake" )
     include( "${VLIBS_DIR}/cmake/vcompiler_traits.cmake" )
 
-    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/vcat_impl/vcat_iface.h")
-    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/vcat_impl/tuple.h")
-    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/vcat_impl/containers.h")
-    #>>> Stop your code here ------------------------------------------------------------
+    include_directories( "${VLIBS_DIR}/vcat/" )
 
-    include_directories( "${VLIBS_DIR}/vcat/")
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/vcat.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vcat/vcat.cpp" )
 
-    
-    set(V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vcat/vcat.cpp")
-    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/vcat.h")
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/impl_vcat/vcat_iface.h" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/impl_vcat/tuple.h"      )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/impl_vcat/containers.h" )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/impl_vcat/vcat_qt_deploy.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vcat/impl_vcat/vcat_qt_deploy.cpp" )
 
     message( "=== vcat included ===" )
-
 endif()
 # vcat.cmake
 #========================================================================================

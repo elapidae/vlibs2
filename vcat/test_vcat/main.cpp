@@ -34,15 +34,7 @@
 
 //=======================================================================================
 //  For debugging...
-std::string last_fname(const char *filepath)
-{
-    std::string fp(filepath);
-    auto pos = fp.find_last_of( '/' );
-    if ( pos == std::string::npos ) return fp;
-    return fp.substr( pos + 1 );
-}
-#define vdeb std::cout << last_fname(__FILE__) << ":" << __LINE__ << "==> "
-//  For debugging...
+#define vdeb std::cout << basename(__FILE__) << ":" << __LINE__ << "==> "
 //=======================================================================================
 
 
