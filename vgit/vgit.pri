@@ -19,19 +19,20 @@ isEmpty(qi_vgit) {
 
     isEmpty(VLIBS_DIR): error("vgit: Need VLIBS_DIR correct path.")
 
-    #<<< Start your code here -----------------------------------------------------------
     # Вся машинерия там, т.к. между этими палочками не очень-то развернешься.
-    include( $$VLIBS_DIR/vgit/vgit_impl.pri )
-    OTHER_FILES += $$VLIBS_DIR/vgit/README
-    OTHER_FILES += $$VLIBS_DIR/vgit/vgit.cmake
-    OTHER_FILES += $$VLIBS_DIR/vgit/vgit_impl.cmake
-    OTHER_FILES += $$VLIBS_DIR/vgit/vgit_post.cmake
-    #>>> Stop your code here ------------------------------------------------------------
+    include( $$VLIBS_DIR/vgit/impl_vgit/impl_vgit.pri )
 
     INCLUDEPATH += $$VLIBS_DIR/vgit
 
     HEADERS     += $$VLIBS_DIR/vgit/vgit.h
     SOURCES     += $$VLIBS_DIR/vgit/vgit.cpp
+
+    OTHER_FILES += $$VLIBS_DIR/vgit/README
+
+    OTHER_FILES += $$VLIBS_DIR/vgit/vgit.cmake
+    OTHER_FILES += $$VLIBS_DIR/vgit/vgit_post.cmake
+
+    OTHER_FILES += $$VLIBS_DIR/vgit/impl_vgit/impl_vgit.cmake
 }
 # vgit.pri
 #========================================================================================
