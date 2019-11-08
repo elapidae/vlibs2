@@ -34,6 +34,8 @@ isEmpty(qi_vcat) {
 
     HEADERS     += $$VLIBS_DIR/vcat/vcat.h
     SOURCES     += $$VLIBS_DIR/vcat/vcat.cpp
+
+    OTHER_FILES += $$VLIBS_DIR/vcat/README
 }
 # vcat.pri
 #========================================================================================
