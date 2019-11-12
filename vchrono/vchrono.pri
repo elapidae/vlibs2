@@ -25,11 +25,13 @@ isEmpty(qi_vchrono) {
     HEADERS     += $$VLIBS_DIR/vchrono/vtime_point.h
     HEADERS     += $$VLIBS_DIR/vchrono/vtime_meter.h
 
-    HEADERS     += $$VLIBS_DIR/vchrono/vchrono_impl/time_meter.h
-    HEADERS     += $$VLIBS_DIR/vchrono/vchrono_impl/time_point_base.h
+    HEADERS     += $$VLIBS_DIR/vchrono/impl_vchrono/time_meter.h
+    HEADERS     += $$VLIBS_DIR/vchrono/impl_vchrono/time_point_base.h
 
-    HEADERS     += $$VLIBS_DIR/vchrono/vchrono_impl/human_readable_time.h
-    SOURCES     += $$VLIBS_DIR/vchrono/vchrono_impl/human_readable_time.cpp
+    HEADERS     += $$VLIBS_DIR/vchrono/impl_vchrono/human_readable_time.h
+    SOURCES     += $$VLIBS_DIR/vchrono/impl_vchrono/human_readable_time.cpp
+
+    OTHER_FILES += $$VLIBS_DIR/vchrono/vchrono.cmake
 }
 # vchrono.pri
 #========================================================================================

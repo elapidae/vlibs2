@@ -39,7 +39,7 @@
 #ifndef VTIME_METER_H
 #define VTIME_METER_H
 
-#include "vchrono_impl/time_meter.h"
+#include "impl_vchrono/time_meter.h"
 
 //=======================================================================================
 using vtime_meter_system          = impl::time_meter<std::chrono::system_clock>;
