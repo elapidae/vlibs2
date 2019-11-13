@@ -1,5 +1,5 @@
-#ifndef VCHRONO_IMPL_TIME_POINT_BASE_H
-#define VCHRONO_IMPL_TIME_POINT_BASE_H
+#ifndef IMPL_VCHRONO_TIME_POINT_BASE_H
+#define IMPL_VCHRONO_TIME_POINT_BASE_H
 
 #include <chrono>
 #include "impl_vchrono/human_readable_time.h"
@@ -374,4 +374,4 @@ namespace impl_vchrono
 
 
 
-#endif // VCHRONO_IMPL_TIME_POINT_BASE_H
+#endif // IMPL_VCHRONO_TIME_POINT_BASE_H

@@ -10,8 +10,8 @@
 **  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 ****************************************************************************************/
 
-#ifndef VCHRONO_IMPL_TIME_METER_H
-#define VCHRONO_IMPL_TIME_METER_H
+#ifndef IMPL_VCHRONO_TIME_METER_H
+#define IMPL_VCHRONO_TIME_METER_H
 
 #include <chrono>
 
@@ -136,4 +136,4 @@ namespace impl_vchrono
 } // impl_vchrono namespace
 //=======================================================================================
 
-#endif // VCHRONO_IMPL_TIME_METER_H
+#endif // IMPL_VCHRONO_TIME_METER_H
