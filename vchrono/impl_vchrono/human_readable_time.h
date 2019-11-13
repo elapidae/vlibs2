@@ -1,11 +1,11 @@
-#ifndef VCHRONO_IMPL_HUMAN_READABLE_TIME_H
-#define VCHRONO_IMPL_HUMAN_READABLE_TIME_H
+#ifndef IMPL_VCHRONO_HUMAN_READABLE_TIME_H
+#define IMPL_VCHRONO_HUMAN_READABLE_TIME_H
 
 #include <chrono>
 #include <string>
 
 //=======================================================================================
-namespace impl
+namespace impl_vchrono
 {
     //===================================================================================
     class human_readable_time
@@ -80,7 +80,7 @@ namespace impl
                           + std::chrono::milliseconds(_milliseconds) );
     }
     //===================================================================================
-} // namespace impl
+} // namespace impl_vchrono
 //=======================================================================================
 
-#endif // VCHRONO_IMPL_HUMAN_READABLE_TIME_H
+#endif // IMPL_VCHRONO_HUMAN_READABLE_TIME_H

@@ -39,12 +39,13 @@
 #ifndef VTIME_METER_H
 #define VTIME_METER_H
 
-#include "vchrono_impl/time_meter.h"
+#include "impl_vchrono/time_meter.h"
 
 //=======================================================================================
-using vtime_meter_system          = impl::time_meter<std::chrono::system_clock>;
-using vtime_meter_steady          = impl::time_meter<std::chrono::steady_clock>;
-using vtime_meter_high_resolution = impl::time_meter<std::chrono::high_resolution_clock>;
+using vtime_meter_system          = impl_vchrono::time_meter<std::chrono::system_clock>;
+using vtime_meter_steady          = impl_vchrono::time_meter<std::chrono::steady_clock>;
+using vtime_meter_high_resolution
+                        = impl_vchrono::time_meter<std::chrono::high_resolution_clock>;
 //=======================================================================================
 using vtime_meter = vtime_meter_steady;
 //=======================================================================================

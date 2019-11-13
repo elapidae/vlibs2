@@ -24,13 +24,13 @@ if ( NOT  VCHRONO_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vtime_point.h" )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vtime_meter.h" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vchrono_impl/time_point_base.h" )
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vchrono_impl/time_meter.h" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/impl_vchrono/time_point_base.h" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/impl_vchrono/time_meter.h" )
 
     set( V_HEADERS ${V_HEADERS}
-                  "${VLIBS_DIR}/vchrono/vchrono_impl/human_readable_time.h" )
+                  "${VLIBS_DIR}/vchrono/impl_vchrono/human_readable_time.h" )
     set( V_SOURCES ${V_SOURCES}
-                  "${VLIBS_DIR}/vchrono/vchrono_impl/human_readable_time.cpp" )
+                  "${VLIBS_DIR}/vchrono/impl_vchrono/human_readable_time.cpp" )
 
     message( "=== vchrono included ===" )
 

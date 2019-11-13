@@ -1,11 +1,11 @@
-#ifndef VCHRONO_IMPL_TIME_POINT_BASE_H
-#define VCHRONO_IMPL_TIME_POINT_BASE_H
+#ifndef IMPL_VCHRONO_TIME_POINT_BASE_H
+#define IMPL_VCHRONO_TIME_POINT_BASE_H
 
 #include <chrono>
-#include "vchrono_impl/human_readable_time.h"
+#include "impl_vchrono/human_readable_time.h"
 
 //=======================================================================================
-namespace impl
+namespace impl_vchrono
 {
     template<typename Clk, typename Derived>
     class time_point_base
@@ -43,7 +43,7 @@ namespace impl
         std::time_t to_time_t()  const;
 
         //-------------------------------------------------------------------------------
-        impl::human_readable_time humanable() const;
+        human_readable_time humanable() const;
 
         //-------------------------------------------------------------------------------
         std::chrono::nanoseconds    nanoseconds()   const;
@@ -369,9 +369,9 @@ namespace impl
         return Derived( tres.time_point() );
     }
     //===================================================================================
-} // namespace impl
+} // namespace impl_vchrono
 //=======================================================================================
 
 
 
-#endif // VCHRONO_IMPL_TIME_POINT_BASE_H
+#endif // IMPL_VCHRONO_TIME_POINT_BASE_H
