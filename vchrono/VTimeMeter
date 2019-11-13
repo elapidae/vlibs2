@@ -1,0 +1,9 @@
+#pragma once
+
+#include "vtime_meter.h"
+
+using VTimeMeterSystem = vtime_meter_system;
+using VTimeMeterSteady = vtime_meter_steady;
+using VTimeMeterHighResolution = vtime_meter_high_resolution;
+
+using VTimeMeter = vtime_meter;

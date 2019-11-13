@@ -22,6 +22,9 @@ isEmpty(qi_vchrono) {
 
     INCLUDEPATH += $$VLIBS_DIR/vchrono
 
+    HEADERS     += $$VLIBS_DIR/vchrono/VTimePoint
+    HEADERS     += $$VLIBS_DIR/vchrono/VTimeMeter
+
     HEADERS     += $$VLIBS_DIR/vchrono/vtime_point.h
     HEADERS     += $$VLIBS_DIR/vchrono/vtime_meter.h
 
