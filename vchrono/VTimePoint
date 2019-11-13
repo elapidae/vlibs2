@@ -1,0 +1,9 @@
+#pragma once
+
+#include "vtime_point.h"
+
+using VSystemTimePoint = vsystem_time_point;
+using VSteadyTimePoint = vsteady_time_point;
+using VHighResolutionTimePoint = vhigh_resolution_time_point;
+
+using VTimePoint = vtime_point;

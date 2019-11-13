@@ -18,8 +18,10 @@ if ( NOT  VSIGNAL_INCLUDED )
 
     message( "=== About include vsignal... ===" )
 
+    include( "${VLIBS_DIR}/cmake/c++11.cmake" )
+
     include_directories( "${VLIBS_DIR}/vsignal/" )
-    
+
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vsignal/vsignal.h" ) 
 
     message( "=== vsignal included ===" )

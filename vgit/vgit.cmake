@@ -24,12 +24,12 @@ if ( NOT  VGIT_INCLUDED )
     message( "=== About to include vgit... ===" )
 
     include( "${VLIBS_DIR}/cmake/c++11.cmake" )     # need for old compiler...
-    include( "${VLIBS_DIR}/vgit/vgit_impl.cmake" )
+    include( "${VLIBS_DIR}/vgit/impl_vgit/impl_vgit.cmake" )
 
     include_directories( "${VLIBS_DIR}/vgit/" )
 
-    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vgit/vgit.h")
-    set(V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vgit/vgit.cpp")
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vgit/vgit.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vgit/vgit.cpp" )
 
     message( "=== vgit included ===" )
 endif()

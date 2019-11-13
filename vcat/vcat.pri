@@ -23,15 +23,18 @@ isEmpty(qi_vcat) {
 
     INCLUDEPATH += $$VLIBS_DIR/vcat
 
-    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/vcat_iface.h
-    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/tuple.h
-    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/containers.h
-
-    HEADERS     += $$VLIBS_DIR/vcat/vcat_impl/vcat_qt_deploy.h
-    SOURCES     += $$VLIBS_DIR/vcat/vcat_impl/vcat_qt_deploy.cpp
-
     HEADERS     += $$VLIBS_DIR/vcat/vcat.h
     SOURCES     += $$VLIBS_DIR/vcat/vcat.cpp
+
+    HEADERS     += $$VLIBS_DIR/vcat/impl_vcat/vcat_iface.h
+    HEADERS     += $$VLIBS_DIR/vcat/impl_vcat/tuple.h
+    HEADERS     += $$VLIBS_DIR/vcat/impl_vcat/containers.h
+
+    HEADERS     += $$VLIBS_DIR/vcat/impl_vcat/vcat_qt_deploy.h
+    SOURCES     += $$VLIBS_DIR/vcat/impl_vcat/vcat_qt_deploy.cpp
+
+    OTHER_FILES += $$VLIBS_DIR/vcat/README
+    OTHER_FILES += $$VLIBS_DIR/vcat/vcat.cmake
 }
 # vcat.pri
 #========================================================================================

@@ -16,8 +16,8 @@
 **  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 ****************************************************************************************/
 
-#ifndef VCAT_IMPL_CONTAINERS_H
-#define VCAT_IMPL_CONTAINERS_H
+#ifndef IMPL_VCAT_CONTAINERS_H
+#define IMPL_VCAT_CONTAINERS_H
 
 #include <type_traits>
 #include <ostream>
@@ -27,7 +27,7 @@
 
 
 //=======================================================================================
-namespace impl
+namespace impl_vcat
 {
     template<typename C> constexpr
     bool is_container_not_string();
@@ -35,7 +35,7 @@ namespace impl
 //=======================================================================================
 namespace std
 {
-    template<typename C> typename std::enable_if<impl::is_container_not_string<C>(),
+    template<typename C> typename std::enable_if<impl_vcat::is_container_not_string<C>(),
     std::ostream&>::type operator <<( std::ostream& os, const C& container );
 }
 //=======================================================================================
@@ -47,7 +47,7 @@ namespace std
 namespace std
 {
     //===================================================================================
-    template<typename C> typename std::enable_if<impl::is_container_not_string<C>(),
+    template<typename C> typename std::enable_if<impl_vcat::is_container_not_string<C>(),
     std::ostream&>::type operator <<( std::ostream& os, const C& container )
     {
         os << "[";
@@ -74,7 +74,7 @@ namespace std
 #endif // has qt
 
 //=======================================================================================
-namespace impl
+namespace impl_vcat
 {
     //===================================================================================
     //      is_container<C>()
@@ -112,8 +112,8 @@ namespace impl
                ;
     }
     //===================================================================================
-} // namespace impl
+} // namespace impl_vcat
 //=======================================================================================
 
 
-#endif // VCAT_IMPL_CONTAINERS_H
+#endif // IMPL_VCAT_CONTAINERS_H

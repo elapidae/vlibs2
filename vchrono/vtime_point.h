@@ -64,16 +64,16 @@
 **/
 //=======================================================================================
 
-#include "vchrono_impl/time_point_base.h"
+#include "impl_vchrono/time_point_base.h"
 #include <ostream>
 
 //=======================================================================================
 class vsystem_time_point
-                : public impl::time_point_base< std::chrono::system_clock,
-                                                vsystem_time_point >
+                : public impl_vchrono::time_point_base< std::chrono::system_clock,
+                                                        vsystem_time_point >
 {
-    using _base_type = impl::time_point_base< std::chrono::system_clock,
-                                              vsystem_time_point >;
+    using _base_type = impl_vchrono::time_point_base< std::chrono::system_clock,
+                                                      vsystem_time_point >;
 public:
     vsystem_time_point() : _base_type() {}
     vsystem_time_point( const system_type& tp ) : _base_type(tp) {}
@@ -84,11 +84,11 @@ public:
 using vtime_point = vsystem_time_point;
 //=======================================================================================
 class vsteady_time_point
-        : public impl::time_point_base< std::chrono::steady_clock,
-                                        vsteady_time_point >
+        : public impl_vchrono::time_point_base< std::chrono::steady_clock,
+                                                vsteady_time_point >
 {
-    using _base_type = impl::time_point_base< std::chrono::steady_clock,
-                                              vsteady_time_point >;
+    using _base_type = impl_vchrono::time_point_base< std::chrono::steady_clock,
+                                                      vsteady_time_point >;
 public:
     vsteady_time_point() : _base_type() {}
     vsteady_time_point( const system_type& tp ) : _base_type(tp) {}
@@ -98,11 +98,11 @@ public:
 };
 //=======================================================================================
 class vhigh_resolution_time_point
-        : public impl::time_point_base< std::chrono::high_resolution_clock,
-                                        vhigh_resolution_time_point >
+        : public impl_vchrono::time_point_base< std::chrono::high_resolution_clock,
+                                                vhigh_resolution_time_point >
 {
-    using _base_type = impl::time_point_base< std::chrono::high_resolution_clock,
-                                              vhigh_resolution_time_point >;
+    using _base_type = impl_vchrono::time_point_base< std::chrono::high_resolution_clock,
+                                                      vhigh_resolution_time_point >;
 public:
     vhigh_resolution_time_point() : _base_type() {}
     vhigh_resolution_time_point( const system_type& tp ) : _base_type(tp) {}
@@ -121,7 +121,7 @@ public:
 
 template<typename Clk, typename Derived>
 std::ostream & operator << ( std::ostream & os,
-                             const impl::time_point_base<Clk,Derived> & val )
+                             const impl_vchrono::time_point_base<Clk,Derived> & val )
 {
     os << "TimePoint(" << val.humanable().date_time_zzz() << ")";
     return os;
