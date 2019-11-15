@@ -157,6 +157,33 @@ TEST_F( VCat_Test, simple_from_text )
 }
 
 //=======================================================================================
+//  Проверки, что модификаторы не добавляют пробелы в соответствующем режиме.
+//  Также проверяется, что оно работает как задумано.
+TEST_F( VCat_Test, modifiers_spaces )
+{
+    EXPECT_EQ( vcat().num(42, 5, '0').str(), "00042" );
+
+    vcat ccc;
+    ccc.space();
+    ccc.hex().oct().dec() << 42;
+    EXPECT_EQ( ccc.str(), "42" );
+
+    ccc.hex().oct().precision(6) << (1./3.);
+    EXPECT_EQ( ccc.str(), "42 0.333333" );
+}
+
+//=======================================================================================
+//  2019-11-15
+//  It is very bad !!!!!!!!!!
+TEST_F( VCat_Test, bad_feature_dont_work_setfill )
+{
+    vcat c;
+    c.space() << 42;
+    c.fill_char('=').field_width(10) << "alala";
+    EXPECT_EQ( c.str(), "42========= alala" );
+}
+
+//=======================================================================================
 
 #ifdef V_HAS_QT
 TEST_F( VCat_Test, simple_qt_test )

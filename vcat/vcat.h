@@ -111,6 +111,11 @@ private:
 
     friend class impl_vcat::vcat_iface<vcat>;
     template<typename T> void do_cat( T&& val );
+
+    vcat( vcat&& )                  = delete;
+    vcat( const vcat& )             = delete;
+    vcat& operator= ( vcat&& )      = delete;
+    vcat& operator= ( const vcat& ) = delete;
 };
 //=======================================================================================
 //      vcat
