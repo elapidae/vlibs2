@@ -2,12 +2,6 @@
 **
 **  VLIBS codebase, NIIAS
 **
-**  Authors:
-**  Alexandre Gromtsev aka elapidae     elapidae@yandex.ru
-**  Nadezhda Churikova aka claorisel    claorisel@gmail.com
-**  Ekaterina Boltenkova aka kataretta  kitkat52@yandex.ru
-**  Ivan Deylid aka sid1057             ivanov.dale@gmail.com>
-**
 **  GNU Lesser General Public License Usage
 **  This file may be used under the terms of the GNU Lesser General Public License
 **  version 3 as published by the Free Software Foundation and appearing in the file
@@ -21,13 +15,17 @@
 #include "gtest/gtest.h"
 
 #include "vlog.h"
-//#include "vfilelog.h"
+
+class VLog_Test: public testing::Test
+{};
 
 using namespace std;
 
+template<class> class TD;
+
 //=======================================================================================
 //  Пример-затравка для пользовательской обработки логов.
-void my_log_executer( const VLogEntry &entry )
+void my_log_executer( const vlog::entry &entry )
 {
     // Ниже приведены содержания из точки логгирования.
     // Их следует использовать для составления собственных сообщений.
@@ -36,12 +34,12 @@ void my_log_executer( const VLogEntry &entry )
 
     entry.level_char(); // Однобуквенный код типа сообщения { T, D, R, W, F }.
     entry.level_str();  // Трехбуквенный код типа сообщения { TRC, DBG, RUN, WRN, FLT }.
-    entry.level();      // Тип enum class vlog::VLogEntry::Type.
+    entry.level();      // Тип enum class vlog::vlog::entry::Type.
 
     entry.filename();   // Имя файла без пути до него.
     entry.filepath();   // Полное имя файла (то, что дает __FILE__).
     entry.line();       // Номер строки в исходнике __LINE__
-    entry.function();   // Что дает __FUNCTION__ (ИМХО __PRETTY_FUNCTION__ - не pretty).
+    entry.function();   // Что дает __PRETTY_FUNCTION__.
 
     entry.message();    //  Составленное сообщение.
 
@@ -55,15 +53,31 @@ void my_log_executer( const VLogEntry &entry )
 }
 //=======================================================================================
 
-class VLog_Test: public testing::Test
-{};
+//=======================================================================================
+
+TEST_F( VLog_Test, _alla )
+{
+    vtrace   << "alla";
+    vdeb     << "alla";
+    vrunlog  << "alla";
+    vwarning << "alla";
+    vfatal   << "alla";
+}
 
 //=======================================================================================
+
+TEST_F( VLog_Test, _error )
+{
+    EXPECT_THROW( throw verror << "Hello world!", vlog::error );
+}
+
+//=======================================================================================
+
 TEST_F( VLog_Test, _1 )
 {
     // По умолчанию будет выводить в консоль.
     vrunlog << "Hello World!"
-            << "sizeof(VLogEntry):"   << sizeof(VLogEntry)
+            << "sizeof(vlog::entry):"   << sizeof(vlog::entry)
             << "sizeof(vtime_point):" << sizeof(vtime_point)
             << "sizeof(string):"      << sizeof(string);
 
@@ -92,17 +106,18 @@ TEST_F( VLog_Test, _1 )
     vdeb << "------------------------------";
 
     // Вывод без пробелов между аргументами:
-    string prog_name = VLogEntry::_extract_filename( "some-dir/some-file.exe" );
+    string prog_name = "some-dir/some-file.exe";
     vtrace.nospace()( "filename is '", prog_name, "'." );
 
     // Теперь будем логгировать в cerr, удалим всех исполнителей и добавим исполнитель,
-    // который будет писать в cerr (vlog::VLogger::_log_to_cerr).
-    VLogger::clear_executers();
-    VLogger::add_executer( VLogger::to_cerr );
+    // который будет писать в cerr.
+    vlog::clear_executers();
+    vlog::add_log_to_cerr();
     vrunlog << "Hello World in cerr!";
 
     // регистрируем своего исполнителя.
-    VLogger::add_executer( my_log_executer );
+    vlog::clear_executers();
+    vlog::add_executer( my_log_executer );
     vwarning("After register own executer.");
 }
 
@@ -110,10 +125,10 @@ TEST_F( VLog_Test, _1 )
 
 TEST_F( VLog_Test, test_on_off )
 {
-    VLogger::clear_executers();
+    vlog::clear_executers();
 
     int count = 0;
-    VLogger::add_executer( [&](const VLogEntry&)
+    vlog::add_executer( [&](const vlog::entry&)
     {
         ++count;
     });

@@ -24,24 +24,20 @@ isEmpty(qi_vlog) {
     INCLUDEPATH += $$VLIBS_DIR/vlog
 
     HEADERS     += $$VLIBS_DIR/vlog/vlog.h
+    SOURCES     += $$VLIBS_DIR/vlog/vlog.cpp
 
-    HEADERS     += $$VLIBS_DIR/vlog/vlog_impl/logger.h
-    SOURCES     += $$VLIBS_DIR/vlog/vlog_impl/logger.cpp
+    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/vlog_entry.h
+    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/vlog_entry.cpp
 
+    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/vlog_logger.h
+    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/vlog_logger.cpp
 
-#    HEADERS     += $$VLIBS_DIR/vlog/verror.h
-#    SOURCES     += $$VLIBS_DIR/vlog/verror.cpp
+    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/vlog_error.h
+    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/vlog_error.cpp
 
-#    HEADERS     += $$VLIBS_DIR/vlog/vlogger.h
-#    SOURCES     += $$VLIBS_DIR/vlog/vlogger.cpp
-
-#    HEADERS     += $$VLIBS_DIR/vlog/vlogentry.h
-#    SOURCES     += $$VLIBS_DIR/vlog/vlogentry.cpp
-
-#    contains( CONFIG, qt ) {
-#        HEADERS += $$VLIBS_DIR/vlog/vlog_qt.h
-#        SOURCES += $$VLIBS_DIR/vlog/vlog_qt.cpp
-#    }
+    OTHER_FILES += $$VLIBS_DIR/vlog/vlog.cmake
+    OTHER_FILES += $$VLIBS_DIR/vlog/README
+    OTHER_FILES += $$VLIBS_DIR/vlog/readme.md
 }
 # vlog.pri
 #========================================================================================

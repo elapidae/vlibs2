@@ -1,5 +1,8 @@
 # VLOG -- Логгирование действий в программах и модулях.
 
+2019-11-15
+TODO: Текст сильно устарел, надо вычитывать и переписывать.
+
 UPD 20-07-2018 Этот файл был написан раньше, часть устарела. Но основная мысль осталась.
 
 
@@ -26,14 +29,14 @@ NB! В папке логгера вложены примеры для qt и cmak
 
 * qt :
 ```
-VLibs_Dir = path/to/this/repo
-include( $$VLibs_Dir/vlog/vlog.pri )        # Здесь сама система сбора логов.
-include( $$VLibs_Dir/vlog/vfilelog.pri )    # Здесь файловый логгер "из коробки".
+VLIBS_DIR = path/to/this/repo
+include( $$VLIBS_DIR/vlog/vlog.pri )        # Здесь сама система сбора логов.
+include( $$VLIBS_DIR/vlog/vfilelog.pri )    # Здесь файловый логгер "из коробки".
                                             # Если включен, vlog.pri не нужен.
 ```
 
 * cmake (заголовки и исходные файлы будут добавлены в пары переменных
-`HEADERS, SOURCES` и продублированы в `INC_ALL, SRC_ALL`):
+`V_HEADERS, V_SOURCES`.
 ```
 set( VLIBS_PATH, "path/to/this/repo" )
 include( "${VLIBS_PATH}/vlog/vlog.cmake" )
@@ -65,7 +68,7 @@ include( "${VLIBS_PATH}/vlog/vfilelog.cmake" )
     double dd;
     string ss;
     float ff;
-    
+
     // будет работать при включении проекта vchrono и заголовка #include "vtimepoint.h"
     chrono::milliseconds ms;
 
@@ -97,7 +100,7 @@ NB! Добавлен модификатор vcat::space, vcat::nospace, вклю
 ```
     if ( some_error )
         throw verror << "Some problem";
-```    
+```
 Метод what(), кроме сообщения, будет содержать точку, где было брошено исключение в виде:
 [source.cpp:42:function] >> "Some problem";
 
@@ -120,7 +123,7 @@ NB! Добавлен модификатор vcat::space, vcat::nospace, вклю
 ```
         static void add_executer( Executer e );
         static void clear_executers();
-```        
+```
 которые позволяют добавлять своих исполнителей, а также сбрасывать всех исполнителей
 разом (делать селекционное отключение нет смысла, просто настраивайте один раз).
 
@@ -129,7 +132,7 @@ NB! Добавлен модификатор vcat::space, vcat::nospace, вклю
 Есть вариант логгирования в один файл, в файлы по типу сообщения;
 Есть исполнители в отдельном потоке, или без потокобезопасности.
 
-NB! Если программист логгирует всякую муру и забил очередь потока -- это ЕГО проблемы!  
+NB! Если программист логгирует всякую муру и забил очередь потока -- это ЕГО проблемы!
 На крайний случай, в классах V*FileLog_Threaded есть метод `int queued_entries() const;`,
 через который можно мониторить забитость очереди.
 

@@ -22,20 +22,17 @@ if ( NOT  VLOG_INCLUDED )
 
     include_directories( "${VLIBS_DIR}/vlog/" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/vlog.h" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/vlog.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/vlog.cpp" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/vlogger.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/vlogger.cpp" )
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/vlog_impl/logger.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/vlog_impl/logger.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/vlog_entry.h"    )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/vlog_entry.cpp"  )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/verror.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/verror.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/vlog_logger.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/vlog_logger.cpp" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/vlogentry.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/vlogentry.cpp" )
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/vlog_impl/log_entry.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/vlog_impl/log_entry.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/vlog_error.h"    )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/vlog_error.cpp"  )
 
     message( "=== vlog included ===" )
 endif()

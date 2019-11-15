@@ -9,6 +9,6 @@ SOURCES += main.cpp
 
 VLIBS_DIR = $$PWD/../..
 include( $$VLIBS_DIR/qmake/gtest.pri )
-include( $$VLIBS_DIR/qmake/vlog.pri )
+include( $$VLIBS_DIR/qmake/vlog.pri  )
 
 INCLUDEPATH += $$PWD

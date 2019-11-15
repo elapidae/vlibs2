@@ -13,72 +13,85 @@
 #ifndef VLOG_H
 #define VLOG_H
 
-#include "vlogger.h"
+#include <string>
+#include <stdexcept>
+#include <functional>
 
+//=======================================================================================
+//      vlog
+//=======================================================================================
+class vlog
+{
+public:
+    //-----------------------------------------------------------------------------------
+    class entry;
+    class logger;
+    class error;
+
+    //-----------------------------------------------------------------------------------
+    //  Кухня настройки логгирования.
+
+    using Executer = std::function< void(const entry&) >;
+
+    static void clear_executers();
+    static void add_executer( Executer e );
+
+    //  Добавляет в выполнители канал по cout, cerr.
+    //  NB! не контролирует количество вызовов.
+    static void add_log_to_cout();
+    static void add_log_to_cerr();
+
+    //  not implemented yet...
+    static void add_file_shared_log( std::string fname,
+                                     uint bytes_in_one,
+                                     uint rotates );
+
+    //  not implemented yet...
+    static void add_file_leveled_log( std::string path,
+                                      uint bytes_in_one,
+                                      uint rotates );
+    //-----------------------------------------------------------------------------------
+
+    //  Utils
+    static std::string base_name( const char* file );
+    //-----------------------------------------------------------------------------------
+private:
+    friend class logger;
+    static void _execute( const entry& e );
+}; // vlog class
+//=======================================================================================
+//      vlog
+//=======================================================================================
+
+#include "impl_vlog/vlog_entry.h"
+#include "impl_vlog/vlog_logger.h"
+#include "impl_vlog/vlog_error.h"
+
+//=======================================================================================
+//      defines
 //=======================================================================================
 #define VLOG_FUNCTION __PRETTY_FUNCTION__
 
-#define VTRACE          VLogger( VLogEntry::Level::Trace,           \
-                                 __FILE__, __LINE__, VLOG_FUNCTION, \
-                                 VLogger::_is_proxy::no_proxy )
+#define vtrace          vlog::logger( vlog::entry::Level::Trace,        \
+                                      __FILE__, __LINE__, VLOG_FUNCTION )
 
-#define VDEBUG          VLogger( VLogEntry::Level::Dbg,             \
-                                 __FILE__, __LINE__, VLOG_FUNCTION, \
-                                 VLogger::_is_proxy::no_proxy )
+#define vdebug          vlog::logger( vlog::entry::Level::Dbg,          \
+                                      __FILE__, __LINE__, VLOG_FUNCTION )
+#define vdeb vdebug
 
-#define VRUNLOG         VLogger( VLogEntry::Level::Runlog,          \
-                                 __FILE__, __LINE__, VLOG_FUNCTION, \
-                                 VLogger::_is_proxy::no_proxy )
+#define vrunlog         vlog::logger( vlog::entry::Level::Runlog,       \
+                                      __FILE__, __LINE__, VLOG_FUNCTION )
 
-#define VWARNING        VLogger( VLogEntry::Level::Warning,         \
-                                 __FILE__, __LINE__, VLOG_FUNCTION, \
-                                 VLogger::_is_proxy::no_proxy )
+#define vwarning        vlog::logger( vlog::entry::Level::Warning,      \
+                                      __FILE__, __LINE__, VLOG_FUNCTION )
 
-#define VFATAL          VLogger( VLogEntry::Level::Fatal,           \
-                                 __FILE__, __LINE__, VLOG_FUNCTION, \
-                                 VLogger::_is_proxy::no_proxy )
+#define vfatal          vlog::logger( vlog::entry::Level::Fatal,        \
+                                      __FILE__, __LINE__, VLOG_FUNCTION )
 
+#define verror vlog::error( __FILE__, __LINE__, VLOG_FUNCTION )
 //=======================================================================================
-//  TODO: распросить и посоветоваться, по моему, с прокси глупая идея была.
-//  Xотелось всем угодить в итоге угодил в лужу.
-#define VTRACE_PROXY    VLogger( VLogEntry::Level::Trace,           \
-                                 __FILE__, __LINE__, VLOG_FUNCTION, \
-                                 VLogger::_is_proxy::is_proxy )
-
-#define VDEBUG_PROXY    VLogger( VLogEntry::Level::Dbg,             \
-                                 __FILE__, __LINE__, VLOG_FUNCTION, \
-                                 VLogger::_is_proxy::is_proxy )
-
-#define VRUNLOG_PROXY   VLogger( VLogEntry::Level::Runlog,          \
-                                 __FILE__, __LINE__, VLOG_FUNCTION, \
-                                 VLogger::_is_proxy::is_proxy )
-
-#define VWARNING_PROXY  VLogger( VLogEntry::Level::Warning,         \
-                                 __FILE__, __LINE__, VLOG_FUNCTION, \
-                                 VLogger::_is_proxy::is_proxy )
-
-#define VFATAL_PROXY    VLogger( VLogEntry::Level::Fatal,           \
-                                 __FILE__, __LINE__, VLOG_FUNCTION, \
-                                 VLogger::_is_proxy::is_proxy )
-
+//      defines
 //=======================================================================================
 
-//=======================================================================================
-//  UPD 2019-01-24 -- vlog_pretty deprecated. Let all will be here.
-//=======================================================================================
-#define vtrace   VTRACE
-#define vdebug   VDEBUG
-#define vdeb     VDEBUG
-#define vrunlog  VRUNLOG
-#define vwarning VWARNING
-#define vfatal   VFATAL
-//=======================================================================================
-#define vtrace_proxy   VTRACE_PROXY
-#define vdebug_proxy   VDEBUG_PROXY
-#define vdeb_proxy     VDEBUG_PROXY
-#define vrunlog_proxy  VRUNLOG_PROXY
-#define vwarning_proxy VWARNING_PROXY
-#define vfatal_proxy   VFATAL_PROXY
-//=======================================================================================
 
 #endif // VLOG_H
