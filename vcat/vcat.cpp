@@ -23,7 +23,14 @@ vcat::vcat()
 //=======================================================================================
 std::string vcat::str() const
 {
-    return _stream.str();
+    auto res = _stream.str();
+
+    if ( delimiter_was_added() )
+    {
+        res.pop_back();
+    }
+
+    return res;
 }
 //=======================================================================================
 void vcat::_init_default_modifiers()
