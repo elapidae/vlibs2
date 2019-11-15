@@ -57,7 +57,10 @@ namespace impl_vcat
     template<typename D>
     class vcat_iface
     {
-        using _std_modifier_type = decltype(std::hex);
+        using _std_hex_type             = decltype( std::hex                );
+        using _std_setprecision_type    = decltype( std::setprecision(1)    );
+        using _std_setfill_type         = decltype( std::setfill(' ')       );
+        using _std_setw_type            = decltype( std::setw(1)            );
 
     public:
         //-------------------------------------------------------------------------------
@@ -91,12 +94,6 @@ namespace impl_vcat
         D& nodelimiter();            // Отключает вывод символа между аргументами.
 
         D& num( long long val, int field_width, char fill = ' ' );
-        //-------------------------------------------------------------------------------
-
-        //-------------------------------------------------------------------------------
-        //  For modifiers does not apply delimiter rules.
-        D& operator()   ( _std_modifier_type&& );
-        D& operator<<   ( _std_modifier_type&& );
 
         //-------------------------------------------------------------------------------
     protected:
@@ -115,7 +112,13 @@ namespace impl_vcat
         template< typename T >
         D& _cat ( T&& val );
 
-        D& _cat ( _std_modifier_type&& );
+        template< typename T >
+        D& _mod_cat ( T && modifier );
+
+        D& _cat ( _std_hex_type modifier          );
+        D& _cat ( _std_setprecision_type modifier );
+        D& _cat ( _std_setfill_type modifier      );
+        D& _cat ( _std_setw_type modifier         );
     };
     //===================================================================================
     //      vcat_iface
@@ -181,23 +184,36 @@ namespace impl_vcat
 
     //===================================================================================
     template< typename D >
-    D& vcat_iface<D>::_cat ( _std_modifier_type&& modifier )
+    template< typename T >
+    D& vcat_iface<D>::_mod_cat ( T&& modifier )
     {
         D& d = static_cast<D&>( *this );
-        d.do_cat( std::forward<_std_modifier_type>(modifier) );
+        d.do_cat( std::forward<T>(modifier) );
         return d;
     }
     //-----------------------------------------------------------------------------------
     template< typename D >
-    D& vcat_iface<D>::operator << ( _std_modifier_type&& modifier )
+    D& vcat_iface<D>::_cat ( _std_hex_type modifier )
     {
-        return _cat( std::forward<_std_modifier_type>(modifier) );
+        return _mod_cat( std::move(modifier) );
     }
     //-----------------------------------------------------------------------------------
     template< typename D >
-    D& vcat_iface<D>::operator()( _std_modifier_type&& modifier )
+    D& vcat_iface<D>::_cat ( _std_setprecision_type modifier )
     {
-        return _cat( std::forward<_std_modifier_type>(modifier) );
+        return _mod_cat( std::move(modifier) );
+    }
+    //-----------------------------------------------------------------------------------
+    template< typename D >
+    D& vcat_iface<D>::_cat ( _std_setfill_type modifier )
+    {
+        return _mod_cat( std::move(modifier) );
+    }
+    //-----------------------------------------------------------------------------------
+    template< typename D >
+    D& vcat_iface<D>::_cat ( _std_setw_type modifier )
+    {
+        return _mod_cat( std::move(modifier) );
     }
     //===================================================================================
 
