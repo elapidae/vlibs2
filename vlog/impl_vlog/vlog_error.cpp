@@ -23,8 +23,13 @@ vlog::error::error( const error &other )
     , _func ( other._func  )
     , _msg  ( vcat( "VERROR AT [",
                     base_name(other._file), ':', other._line, "][",
-                    other._func, "] ==> ", other._msg, '\n' ) )
+                    other._func, "] ==> ", other._msg ) )
 {
+    if ( other.delimiter_was_added() )
+        _msg.back() = '\n';
+    else
+        _msg.push_back( '\n' );
+
     auto ent = entry( entry::Level::Fatal, _stamp, _file, _line, _func, _msg, {} );
 
     _execute( ent );

@@ -24,7 +24,12 @@ vlog::logger::~logger()
 {
     if ( !_is_on ) return;
 
-    auto msg = _stream.str() + '\n';
+    auto msg = _stream.str();
+    if ( delimiter_was_added() )
+        msg.back() = '\n';
+    else
+        msg.push_back( '\n' );
+
     auto ent = entry( _level, _stamp, _file, _line, _func, msg, _domain );
     vlog::_execute( ent );
 }
