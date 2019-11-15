@@ -78,8 +78,8 @@ TEST_F( VLog_Test, _1 )
     // По умолчанию будет выводить в консоль.
     vrunlog << "Hello World!"
             << "sizeof(vlog::entry):"   << sizeof(vlog::entry)
-            << "sizeof(vtime_point):" << sizeof(vtime_point)
-            << "sizeof(string):"      << sizeof(string);
+            << ", sizeof(vtime_point):" << sizeof(vtime_point)
+            << ", sizeof(string):"      << sizeof(string);
 
     //  Вводные примеры, определим пару простых переменных и плюнем ими в консоль.
     double dd = 3.1415;
@@ -148,6 +148,64 @@ TEST_F( VLog_Test, test_on_off )
     EXPECT_EQ( count, 4 );
 }
 
+//=======================================================================================
+
+TEST_F( VLog_Test, test_domain )
+{
+    vlog::clear_executers();
+    vlog::add_log_to_cout();
+
+    string d;
+    vlog::add_executer( [&](const vlog::entry& e)
+    {
+        d = e.domain();
+    });
+
+    vtrace["domain"] << 1;
+
+    EXPECT_EQ( d, "domain" );
+}
+
+//=======================================================================================
+
+//  SUKA! VERY BAD!
+TEST_F( VLog_Test, any_nums_spaces )
+{
+    vlog::clear_executers();
+    vlog::add_log_to_cout();
+
+    vdeb.space()("ololo").num(42,8,'=');
+    // "ololo======= 42"
+}
+
+//=======================================================================================
+
+TEST_F( VLog_Test, examples )
+{
+    vlog::clear_executers();
+    vlog::add_log_to_cout();
+
+    vtrace << "frame received" << 42;
+    vdeb << "debug example";
+    vrunlog << "socket opened";
+    vwarning << "socket closed";
+    vfatal << "server killed";
+
+    string buffer;
+
+    bool need_trace_frames_receiving = true;
+
+    if ( need_trace_frames_receiving )
+        vtrace << "frame received";
+
+    vtrace[need_trace_frames_receiving] << "frame received";
+
+    vlog::omit_domain( "DOMAIN1" );
+    vdeb["DOMAIN1"] << 42;
+    vdeb << 42;
+    vdeb["DOMAIN_2"][true] << 42;
+    vdeb[false]["DOMAIN_2"] << 42;
+}
 
 //=======================================================================================
 //TEST_F( VLog_Test, _2 )
@@ -176,8 +234,6 @@ TEST_F( VLog_Test, test_on_off )
 //    // См. логи около бинарника программы.
 //}
 //=======================================================================================
-
-
 
 
 //=======================================================================================

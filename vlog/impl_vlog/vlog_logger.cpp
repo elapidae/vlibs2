@@ -29,13 +29,20 @@ vlog::logger::~logger()
     vlog::_execute( ent );
 }
 //=======================================================================================
-vlog::logger &vlog::logger::operator[]( bool on )
+vlog::logger& vlog::logger::operator[]( bool on )
 {
     _is_on = on;
     return *this;
 }
 //=======================================================================================
-vlog::logger &vlog::logger::operator[]( const string& domain )
+vlog::logger& vlog::logger::operator[]( const string& domain )
+{
+    assert( _domain.empty() );
+    _domain = domain;
+    return *this;
+}
+//=======================================================================================
+vlog::logger& vlog::logger::operator[]( const char* domain )
 {
     assert( _domain.empty() );
     _domain = domain;

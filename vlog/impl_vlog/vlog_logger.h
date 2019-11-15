@@ -22,6 +22,7 @@ public:
 
     logger& operator[] ( bool on );
     logger& operator[] ( const std::string& domain );
+    logger& operator[] ( const char* domain );
 
     //-----------------------------------------------------------------------------------
 private:

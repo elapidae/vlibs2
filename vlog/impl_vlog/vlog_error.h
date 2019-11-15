@@ -20,6 +20,11 @@ public:
     const char* what() const noexcept override;
 
 private:
+    vtime_point  _stamp;
+    const char*  _file;
+    int32_t      _line;
+    const char*  _func;
+
     std::string _msg;
 
     friend class impl_vcat::vcat_iface<vlog::error>;

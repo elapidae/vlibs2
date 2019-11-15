@@ -50,13 +50,19 @@ public:
     static void add_file_leveled_log( std::string path,
                                       uint bytes_in_one,
                                       uint rotates );
-    //-----------------------------------------------------------------------------------
 
+    //-----------------------------------------------------------------------------------
+    //  Кухня работы с доменами логов.
+    static void omit_domain ( const std::string& domain );  // перестаем логировать.
+    static void apply_domain( const std::string& domain );  // будем логировать.
+
+    //-----------------------------------------------------------------------------------
     //  Utils
     static std::string base_name( const char* file );
+
     //-----------------------------------------------------------------------------------
 private:
-    friend class logger;
+    //  Вызывается из logger, error.
     static void _execute( const entry& e );
 }; // vlog class
 //=======================================================================================

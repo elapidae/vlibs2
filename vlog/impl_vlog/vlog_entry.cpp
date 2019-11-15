@@ -109,6 +109,11 @@ bool vlog::entry::has_domain() const
     return !_domain.empty();
 }
 //=======================================================================================
+const string &vlog::entry::domain() const
+{
+    return _domain;
+}
+//=======================================================================================
 string vlog::entry::level_str() const
 {
     switch ( _level )
