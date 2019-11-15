@@ -96,7 +96,7 @@ TEST_F( VCat_Test, hello_delimiters )
     EXPECT_EQ( vcat().delimiter(',')(42,43,44).str(), "42,43,44" );
     EXPECT_EQ( vcat().delimiter(',').nospace()(42,43).str(), "4243" );
 
-    EXPECT_EQ( vcat().space()(42,43).nospace()(44,45).str(), "42 434445" );
+    EXPECT_EQ( vcat().space()(42,43).nospace()(44,45).str(), "42 43 4445" );
 
     EXPECT_EQ( vcat().space()("Abra","cadabra").str(), "Abra cadabra" );
     EXPECT_EQ( vcat().delimiter('+')("Abra","cadabra").str(), "Abra+cadabra" );
@@ -172,13 +172,13 @@ TEST_F( VCat_Test, modifiers_spaces )
 
 //=======================================================================================
 //  2019-11-15
-//  It is very bad !!!!!!!!!!
+//  Was very bad, but do new delimiter logic...
 TEST_F( VCat_Test, bad_feature_dont_work_setfill )
 {
     vcat c;
     c.space() << 42;
     c.fill_char('=').field_width(10) << "alala";
-    EXPECT_EQ( c.str(), "42========= alala" );
+    EXPECT_EQ( c.str(), "42 =====alala" );
 }
 
 //=======================================================================================

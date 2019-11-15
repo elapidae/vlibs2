@@ -97,6 +97,9 @@ namespace impl_vcat
 
         //-------------------------------------------------------------------------------
     protected:
+
+        bool delimiter_was_added() const { return _delimiter_added; }
+
         vcat_iface();
 
         template< typename ... Ts >
@@ -107,7 +110,7 @@ namespace impl_vcat
     private:
         char _delimiter;
         bool _with_delimiters = false;
-        bool _is_first_arg    = true;
+        bool _delimiter_added = false;
 
         template< typename T >
         D& _cat ( T&& val );
@@ -150,11 +153,12 @@ namespace impl_vcat
     {
         D& d = static_cast<D&>( *this );
 
-        if ( !_is_first_arg && _with_delimiters )
+        d.do_cat( std::forward<T>(val) );
+
+        if ( _with_delimiters )
             d.do_cat( _delimiter );
 
-        d.do_cat( std::forward<T>(val) );
-        _is_first_arg = false;
+        _delimiter_added = _with_delimiters;
 
         return d;
     }
