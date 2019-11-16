@@ -168,18 +168,6 @@ TEST_F( VLog_Test, test_domain )
 
 //=======================================================================================
 
-//  SUKA! VERY BAD!
-TEST_F( VLog_Test, any_nums_spaces )
-{
-    vlog::clear_executers();
-    vlog::add_log_to_cout();
-
-    vdeb.space()("ololo").num(42,8,'=');
-    // "ololo======= 42"
-}
-
-//=======================================================================================
-
 TEST_F( VLog_Test, examples )
 {
     vlog::clear_executers();
