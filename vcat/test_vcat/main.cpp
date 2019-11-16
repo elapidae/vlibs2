@@ -53,6 +53,8 @@ class VCat_Test: public testing::Test
 
 TEST_F( VCat_Test, hello_world )
 {
+    vdeb << vcat( "Hello", " ", "world", '!', '\n' );
+
     EXPECT_EQ( vcat().str(), "" );
     EXPECT_EQ( vcat("Hello world!").str(), "Hello world!" );
     EXPECT_EQ( vcat("Привет мир!").str(), "Привет мир!" );
