@@ -224,13 +224,60 @@ TEST_F( VLog_Test, examples )
 //=======================================================================================
 
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <thread>
+
+#include "impl_vlog/pre_posix.h"
+#include "impl_vlog/log_file.h"
+
 //=======================================================================================
 //  Main, do not delete...
 //=======================================================================================
 int main(int argc, char *argv[])
 {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    pre_posix::file::log_file lf( "/test.log" );
+    lf.write("ololol");
+    return 0;
+
+    mode_t mode = 0664;
+    auto fd = open( "test.txt", O_WRONLY|O_CREAT|O_APPEND, mode );
+    assert(fd >0);
+
+
+    auto l = [&]
+    {
+        for (int i = 0; i < 10000; ++i)
+        {
+            lseek(fd, 50, SEEK_SET);
+            string msg = vcat( "ololo ", vtime_point::now().nanoseconds(), "\t",
+                               hex, this_thread::get_id(), '\n' );
+            auto cnt = write(fd, msg.c_str(), msg.size() );
+            assert( cnt == msg.size() );
+        }
+    };
+
+    std::thread t1( l );
+    std::thread t2( l );
+    std::thread t3( l );
+    std::thread t4( l );
+    std::thread t5( l );
+    std::thread t6( l );
+    std::thread t7( l );
+    std::thread t8( l );
+
+    t1.join();
+    t2.join();
+    t3.join();
+    t4.join();
+    t5.join();
+    t6.join();
+    t7.join();
+    t8.join();
+
+//    ::testing::InitGoogleTest(&argc, argv);
+//    return RUN_ALL_TESTS();
 }
 //=======================================================================================
 //  Main, do not delete...
