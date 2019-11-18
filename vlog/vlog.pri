@@ -23,6 +23,8 @@ isEmpty(qi_vlog) {
 
     INCLUDEPATH += $$VLIBS_DIR/vlog
 
+    #------------------------------------------------------------------------------------
+    #   CORE
     HEADERS     += $$VLIBS_DIR/vlog/vlog.h
     SOURCES     += $$VLIBS_DIR/vlog/vlog.cpp
 
@@ -35,6 +37,24 @@ isEmpty(qi_vlog) {
     HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/vlog_error.h
     SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/vlog_error.cpp
 
+    #------------------------------------------------------------------------------------
+    #   PRE POSIX FILE LOG
+    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/pre_posix.h
+    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/pre_posix.cpp
+
+    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/log_file.h
+    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/log_file.cpp
+
+    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/rotate_log_file.h
+    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/rotate_log_file.cpp
+
+    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/shared_log.h
+    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/shared_log.cpp
+
+    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/leveled_log.h
+    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/leveled_log.cpp
+
+    #------------------------------------------------------------------------------------
     OTHER_FILES += $$VLIBS_DIR/vlog/vlog.cmake
     OTHER_FILES += $$VLIBS_DIR/vlog/README
     OTHER_FILES += $$VLIBS_DIR/vlog/readme.md

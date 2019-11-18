@@ -21,16 +21,13 @@ public:
     const char* what() const noexcept override;
 
 private:
-    struct
-    {
-        vtime_point  _stamp;
-        const char*  _file;
-        int32_t      _line;
-        const char*  _func;
-    } _info;
+    vtime_point  _stamp;
+    const char*  _file;
+    int32_t      _line;
+    const char*  _func;
 
     bool _sealed = false;
-    std::string _sealed_msg;
+    std::string _sealed_msg {};
     std::ostringstream _stream;
 
     friend class impl_vcat::vcat_iface<vlog::error>;
@@ -45,10 +42,12 @@ private:
 //=======================================================================================
 //      implementation
 //=======================================================================================
+#include <cassert>
 template<typename T>
 void vlog::error::do_cat( T && data )
 {
-    if ( _sealed_msg.empty() )
+    assert( !_sealed );
+    if ( _sealed ) return;
     _stream << std::forward<T>(data);
 }
 //=======================================================================================

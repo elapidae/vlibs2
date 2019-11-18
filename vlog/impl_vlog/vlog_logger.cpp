@@ -17,7 +17,9 @@ vlog::logger::logger( entry::Level  level,
     , _line  ( line  )
     , _func  ( func  )
 {
-    space();    // Включаем пробелы между аргументами по умолчанию.
+    // Включаем флаги по умолчанию.
+    _stream << std::showbase << std::boolalpha;
+    space();
 }
 //=======================================================================================
 vlog::logger::~logger()

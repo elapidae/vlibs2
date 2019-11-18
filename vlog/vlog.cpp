@@ -5,6 +5,10 @@
 #include <unordered_set>
 #include <iostream>
 #include <cassert>
+#include <memory>
+
+#include "impl_vlog/shared_log.h"
+#include "impl_vlog/leveled_log.h"
 
 using namespace std;
 
@@ -15,6 +19,9 @@ static void to_cout( const vlog::entry& e );
 
 static std::vector<vlog::Executer>      executers { to_cout };
 static std::unordered_set<std::string>  omit_domains {};
+
+static std::unique_ptr<pre_posix::file::shared_log>  shared_log;
+static std::unique_ptr<pre_posix::file::leveled_log> leveled_log;
 //---------------------------------------------------------------------------------------
 static void to_cout( const vlog::entry& e )
 {
@@ -31,6 +38,8 @@ static void to_cerr( const vlog::entry& e )
 void vlog::clear_executers()
 {
     executers.clear();
+    shared_log.reset();
+    leveled_log.reset();
 }
 //---------------------------------------------------------------------------------------
 void vlog::add_executer( vlog::Executer e )
@@ -71,6 +80,22 @@ string vlog::base_name(const char *file)
     string fpath( file );
     auto slash_it = std::find( fpath.rbegin(), fpath.rend(), '/' );
     return { slash_it.base(), fpath.end() };
+}
+//=======================================================================================
+void vlog::add_shared_log( string fname, uint bytes_in_one, uint rotates )
+{
+    assert( !shared_log );
+    shared_log.reset(new pre_posix::file::shared_log( fname, bytes_in_one, rotates) );
+
+    add_executer( [](const vlog::entry& e){ shared_log->write(e); } );
+}
+//=======================================================================================
+void vlog::add_leveled_log( string path, uint bytes_in_one, uint rotates )
+{
+    assert( !leveled_log );
+    leveled_log.reset( new pre_posix::file::leveled_log(path,bytes_in_one,rotates) );
+
+    add_executer( [](const vlog::entry& e){ leveled_log->write(e); } );
 }
 //=======================================================================================
 //      vlog

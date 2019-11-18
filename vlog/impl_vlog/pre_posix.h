@@ -36,9 +36,15 @@ public:
         static void   write( int fd, const std::string& data );
         static void   close( int fd );
 
-        static void   rename( const std::string& was, const std::string& will );
+        static void   rename_safe( const std::string& was, const std::string& will );
 
         class log_file;
+        class rotate_log_file;
+
+        static std::string start_line_for_log();
+        static std::string fin_line_for_log();
+        class shared_log;
+        class leveled_log;
     };
     //===================================================================================
 };

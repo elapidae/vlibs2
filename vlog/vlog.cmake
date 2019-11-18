@@ -22,6 +22,8 @@ if ( NOT  VLOG_INCLUDED )
 
     include_directories( "${VLIBS_DIR}/vlog/" )
 
+    #------------------------------------------------------------------------------------
+    #   CORE
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/vlog.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/vlog.cpp" )
 
@@ -33,6 +35,24 @@ if ( NOT  VLOG_INCLUDED )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/vlog_error.h"    )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/vlog_error.cpp"  )
+
+    #------------------------------------------------------------------------------------
+    #   PRE POSIX FILE LOG
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/pre_posix.h"           )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/pre_posix.cpp"         )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/log_file.h"            )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/log_file.cpp"          )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/rotate_log_file.h"     )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/rotate_log_file.cpp"   )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/shared_log.h"          )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/shared_log.cpp"        )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/leveled_log.h"         )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/leveled_log.cpp"       )
+
 
     message( "=== vlog included ===" )
 endif()

@@ -42,14 +42,14 @@ public:
     static void add_log_to_cerr();
 
     //  not implemented yet...
-    static void add_file_shared_log( std::string fname,
-                                     uint bytes_in_one,
-                                     uint rotates );
+    static void add_shared_log( std::string fname,
+                                uint bytes_in_one,
+                                uint rotates );
 
     //  not implemented yet...
-    static void add_file_leveled_log( std::string path,
-                                      uint bytes_in_one,
-                                      uint rotates );
+    static void add_leveled_log( std::string path,
+                                 uint bytes_in_one,
+                                 uint rotates );
 
     //-----------------------------------------------------------------------------------
     //  Кухня работы с доменами логов.

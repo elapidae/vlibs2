@@ -2,8 +2,6 @@
 
 #include <string.h> // OMG!! for strerror_r()
 
-using namespace std;
-
 /****************************************************************************************
  *  [1] sys/stat.h
  *
@@ -13,8 +11,11 @@ using namespace std;
  *  Ссылка откуда решение было позаимствовано:
  *  https://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-usi
 ng-standard-c-c11-c
+ *
+ *  NB! функция exists не совсем exists показывает, может случиться что нет доступа.
+ *
 ****************************************************************************************/
-#include <sys/stat.h>       // Для struct stat, она отвечает за проверку наличия файла.
+#include <sys/stat.h>
 //=======================================================================================
 
 
@@ -25,12 +26,29 @@ ng-standard-c-c11-c
 %8B%D0%B5_%D0%BF%D1%80%D0%B0%D0%B2%D0%B0_unix
 ****************************************************************************************/
 
-
+#include "vcat.h"
 #include "vlog.h"
 
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+
+using namespace std;
+
+//=======================================================================================
+string pre_posix::file::start_line_for_log()
+{
+    return vcat( "------------- BEGIN LOGGING ------------- ",
+                 vtime_point::now().humanable().date_time_zzz(),
+                 " -----------------------\n" );
+}
+//=======================================================================================
+string pre_posix::file::fin_line_for_log()
+{
+    return "------------- END LOGGING ------------------------------------"
+           "---------------------------\n";
+}
+//=======================================================================================
 
 
 //=======================================================================================
@@ -46,6 +64,8 @@ string pre_posix::err_msg()
 
 
 //=======================================================================================
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnoexcept-type"
 template<typename Fun, typename ... Args>
 auto call_no_err( Fun fun, Args ... args) -> decltype( fun(args...) )
 {
@@ -55,21 +75,22 @@ auto call_no_err( Fun fun, Args ... args) -> decltype( fun(args...) )
     {
         res = fun( args ... );
     }
-    while (res == -1 && errno == EINTR);
+    while ( res == -1 && errno == EINTR );
 
     return res;
 }
+#pragma GCC diagnostic pop
 //=======================================================================================
 template<typename Fun, typename ... Args>
 auto call_check( Fun fun, Args ... args) -> decltype( fun(args...) )
 {
     auto res = call_no_err( fun, args... );
-    if ( res < 0 ) throw verror << pre_posix::err_msg();
+    if ( res < 0 )
+        throw verror << pre_posix::err_msg();
 
     return res;
 }
 //=======================================================================================
-//  Перегзки для функций со специфичными агрументами.
 template<typename Fun>
 auto call_check( Fun fun, const char* fname, struct stat* s) -> decltype( fun(fname,s) )
 {
@@ -79,25 +100,25 @@ auto call_check( Fun fun, const char* fname, struct stat* s) -> decltype( fun(fn
     return res;
 }
 //=======================================================================================
-auto call_check_stat( const char* who_call,
-                      const char* fname, struct stat* s) -> decltype( ::stat(fname,s) )
+static
+auto call_check_stat( const char* fname, struct stat* s) -> decltype( ::stat(fname,s) )
 {
     auto res = call_no_err( ::stat, fname, s );
-    if ( res < 0 ) throw verror( "use-for '", who_call, "' ", pre_posix::err_msg() );
+    if ( res < 0 ) throw verror( "filename: '", fname,
+                                 ", err_msg: ", pre_posix::err_msg() );
 
     return res;
 }
 //=======================================================================================
-auto call_check_open( const char* who_call,
-                      const std::string& fname,
-                      int flags,
-                      mode_t mode ) -> decltype( ::open(fname.c_str(),flags,mode) )
+static
+auto call_check_open( const std::string& fname, int flags, mode_t mode )
+                                        -> decltype( ::open(fname.c_str(),flags,mode) )
 {
     auto res = call_no_err( ::open, fname.c_str(), flags, mode );
-    if ( res < 0 ) throw verror( "use-for '", who_call, "' ",
-                                 ", filename '", fname, "'",
-                                 ", flags: ").hex()(flags)(
-                                 ", mode: ", std::oct, mode,
+    if ( res < 0 ) throw verror( std::oct,
+                                 "filename: '", fname, "'",
+                                 ", flags: ", flags,
+                                 ", mode: ", mode,
                                  ", err_msg: ", pre_posix::err_msg() );
 
     return res;
@@ -109,14 +130,16 @@ int pre_posix::file::open_write_append( const std::string& fname )
 {
     mode_t mode = 0664;
 
-    return call_check_open( "pre_posix::file::open_write_append",
-                            fname, O_WRONLY|O_CREAT|O_APPEND, mode );
+    return call_check_open( fname, O_WRONLY|O_CREAT|O_APPEND, mode );
+
+    //  Флаг O_SYNC дает бешеную задержку, ну и ладно с ним.
+    //return call_check_open( fname, O_WRONLY|O_CREAT|O_APPEND|O_SYNC, mode );
 }
 //=======================================================================================
 long pre_posix::file::size( const string& fname )
 {
     struct stat buffer;
-    call_check_stat( "pre_posix::file::size", fname.c_str(), &buffer );
+    call_check_stat( fname.c_str(), &buffer );
     return buffer.st_size;
 }
 //=======================================================================================
@@ -141,14 +164,14 @@ bool pre_posix::file::exists( const std::string& fname )
     return 0 == call_no_err( ::stat, fname.c_str(), &buffer );
 }
 //=======================================================================================
-void pre_posix::file::rename( const std::string& was, const std::string& will )
+void pre_posix::file::rename_safe( const std::string& was, const std::string& will )
 {
     //  Эта магия для промышленной отработки захвата ссылок на нужные методы.
     // Точно пригодится в remove (т.к. там будет конфликт с 17-м Стандартом).
     using rename_type = int(&)(const char *, const char *);
     constexpr auto& rename_ref = static_cast<rename_type>(std::rename);
 
-    call_check( rename_ref, was.c_str(), will.c_str() );
+    call_no_err( rename_ref, was.c_str(), will.c_str() );
 }
 //=======================================================================================
 //  Банально ищем все '/' и пытаемся создать такой каталог.

@@ -196,88 +196,35 @@ TEST_F( VLog_Test, examples )
 }
 
 //=======================================================================================
-//TEST_F( VLog_Test, _2 )
-//{
-//    // Удалим текущие логгеры и будем писать только в файлы.
-//    VLogger::clear_executers();
+TEST_F( VLog_Test, _primitive_file_logs )
+{
+    // Удалим текущие логгеры и будем писать только в файлы.
+    vlog::clear_executers();
+    vlog::add_shared_log ( "test.log",  1000, 2 );
+    vlog::add_leveled_log( "test_logs", 1000, 2 );
 
-//    // Будем вести историю максимум в двух файлах, размеры одного -- 2.5 кб.
-//    VFileLog_Shared shared_flog( vcat("shared-log.log"), 2500, 2 );
-//    shared_flog.register_self(); // Он сам знает где и как регистрироваться.
-
-//    // Будем вести историю максимум в двух файлах, размеры одного -- 1 кб.
-//    VFileLog_Leveled leveled_flog( "./logs", 1000, 2 );
-//    leveled_flog.register_self();
-
-//    for (int i = 0; i < 10; ++i)
-//    {
-//        string msg = vcat("Testing records in file: ", i)
-//                         (", timestamp ms = ", VTimePoint::now().milliseconds());
-//        vtrace   (msg);
-//        vdeb   (msg);
-//        vrunlog  (msg);
-//        vwarning (msg);
-//        vfatal   (msg);
-//    }
-//    // См. логи около бинарника программы.
-//}
+    for (int i = 0; i < 10; ++i)
+    {
+        string msg = vcat("Testing records in file: ", i)
+                         (", timestamp ms = ", vtime_point::now());
+        vtrace   (msg);
+        vdeb     (msg);
+        vrunlog  (msg);
+        vwarning (msg);
+        vfatal   (msg);
+    }
+    // См. логи около бинарника программы.
+}
 //=======================================================================================
 
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <thread>
-
-#include "impl_vlog/pre_posix.h"
-#include "impl_vlog/log_file.h"
 
 //=======================================================================================
 //  Main, do not delete...
 //=======================================================================================
 int main(int argc, char *argv[])
 {
-    pre_posix::file::log_file lf( "/test.log" );
-    lf.write("ololol");
-    return 0;
-
-    mode_t mode = 0664;
-    auto fd = open( "test.txt", O_WRONLY|O_CREAT|O_APPEND, mode );
-    assert(fd >0);
-
-
-    auto l = [&]
-    {
-        for (int i = 0; i < 10000; ++i)
-        {
-            lseek(fd, 50, SEEK_SET);
-            string msg = vcat( "ololo ", vtime_point::now().nanoseconds(), "\t",
-                               hex, this_thread::get_id(), '\n' );
-            auto cnt = write(fd, msg.c_str(), msg.size() );
-            assert( cnt == msg.size() );
-        }
-    };
-
-    std::thread t1( l );
-    std::thread t2( l );
-    std::thread t3( l );
-    std::thread t4( l );
-    std::thread t5( l );
-    std::thread t6( l );
-    std::thread t7( l );
-    std::thread t8( l );
-
-    t1.join();
-    t2.join();
-    t3.join();
-    t4.join();
-    t5.join();
-    t6.join();
-    t7.join();
-    t8.join();
-
-//    ::testing::InitGoogleTest(&argc, argv);
-//    return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
 //=======================================================================================
 //  Main, do not delete...
