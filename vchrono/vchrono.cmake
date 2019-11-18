@@ -22,6 +22,8 @@ if ( NOT  VCHRONO_INCLUDED )
     include_directories( "${VLIBS_DIR}/vchrono/" )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vtime_point.h" )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vchrono/impl_vchrono/vtime_point.cpp" )
+
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vtime_meter.h" )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/impl_vchrono/time_point_base.h" )

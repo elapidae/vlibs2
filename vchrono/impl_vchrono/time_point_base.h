@@ -1,6 +1,7 @@
 #ifndef IMPL_VCHRONO_TIME_POINT_BASE_H
 #define IMPL_VCHRONO_TIME_POINT_BASE_H
 
+#include <ostream>
 #include <chrono>
 #include "impl_vchrono/human_readable_time.h"
 
@@ -367,6 +368,16 @@ namespace impl_vchrono
     {
         tres -= d;
         return Derived( tres.time_point() );
+    }
+    //===================================================================================
+
+    //===================================================================================
+    template<typename Clk, typename Derived>
+    std::ostream & operator << ( std::ostream & os,
+                                 const time_point_base<Clk,Derived> & val )
+    {
+        os << "TimePoint(" << val.humanable().date_time_zzz() << ")";
+        return os;
     }
     //===================================================================================
 } // namespace impl_vchrono

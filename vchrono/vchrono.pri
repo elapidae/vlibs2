@@ -26,6 +26,8 @@ isEmpty(qi_vchrono) {
     HEADERS     += $$VLIBS_DIR/vchrono/VTimeMeter
 
     HEADERS     += $$VLIBS_DIR/vchrono/vtime_point.h
+    SOURCES     += $$VLIBS_DIR/vchrono/impl_vchrono/vtime_point.cpp
+
     HEADERS     += $$VLIBS_DIR/vchrono/vtime_meter.h
 
     HEADERS     += $$VLIBS_DIR/vchrono/impl_vchrono/time_meter.h
