@@ -41,7 +41,7 @@ human_readable_time human_readable_time::from_format( const std::string& dt,
     //        throw std::runtime_error( "human_readable_time: bad date '" + dt +
     //                                  "' with fmt '" + fmt + "'" );
 
-    std::tm t = {};
+    std::tm t {0,0,0,0,0,0,0,0,0,0,nullptr};
     auto end_pos = strptime( dt.c_str(), fmt.c_str(), &t );
     uint distance = uint(end_pos - dt.c_str());
     if ( distance != dt.size() )
@@ -76,7 +76,7 @@ human_readable_time human_readable_time::from_utc( int year, int month,  int day
     if ( minute < 0 || minute > 59 ) th_err( "bad minute"   );
     if ( sec    < 0 || sec    > 59 ) th_err( "bad second"   );
 
-    tm t{};
+    tm t {0,0,0,0,0,0,0,0,0,0,nullptr};
     t.tm_year = year - 1900;
     t.tm_mon  = month - 1;
     t.tm_mday = day;

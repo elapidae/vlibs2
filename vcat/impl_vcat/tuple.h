@@ -75,14 +75,16 @@ namespace impl_vcat
 namespace std
 {
     //===================================================================================
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wunused-function"
     static ostream& operator <<( ostream& os, const std::tuple<>& )
     {
+        // Сиё безобразие чтобы старые компиляторы не мешали ворнингами.
+        using _not_use_ = ostream&(&)(ostream&, const std::tuple<>&);
+        constexpr _not_use_ _val_ = static_cast<_not_use_>(operator<<);
+        (void)(_val_);
+
         os << "{}";
         return os;
     }
-    #pragma GCC diagnostic pop
     //===================================================================================
     template<typename T, typename ... Args>
     ostream& operator <<( ostream& os, const std::tuple<T,Args...> &tup )
