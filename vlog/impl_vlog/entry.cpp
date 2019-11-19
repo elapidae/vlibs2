@@ -3,14 +3,9 @@
 #include <iostream>
 #include <vector>
 
-#include "vcat.h"
-
 using namespace impl_vlog;
 using namespace std;
 
-
-//=======================================================================================
-//      vlog::entry
 //=======================================================================================
 entry::entry( const position_fix& pos,
                     entry::Level        level,
@@ -25,18 +20,6 @@ entry::entry( const position_fix& pos,
 const position_fix& entry::pos() const
 {
     return _pos;
-}
-//=======================================================================================
-string entry::for_std_cxxx() const
-{
-    vcat res( pos().place(), ' ', level_str() );
-
-    if ( has_domain() )
-        res( " {", _domain, '}' );
-
-    res( ":\t", message() );
-
-    return res;
 }
 //=======================================================================================
 const string& entry::message() const

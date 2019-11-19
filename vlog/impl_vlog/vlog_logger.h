@@ -1,7 +1,7 @@
 #ifndef IMPL_VLOG_LOGGER_H
 #define IMPL_VLOG_LOGGER_H
 
-#include "impl_vlog/vlog_entry.h"
+#include "impl_vlog/entry.h"
 #include "impl_vcat/vcat_iface.h"
 
 //=======================================================================================

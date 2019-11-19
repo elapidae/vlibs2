@@ -7,8 +7,6 @@
 #include "impl_vlog/position_fix.h"
 
 //=======================================================================================
-//      vlog::error
-//=======================================================================================
 namespace impl_vlog
 {
     class error final : public std::exception, public impl_vcat::vcat_iface<error>

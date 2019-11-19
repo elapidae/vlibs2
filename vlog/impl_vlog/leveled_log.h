@@ -1,11 +1,11 @@
-#ifndef LEVELED_LOG_H
-#define LEVELED_LOG_H
+#ifndef IMPL_VLOG_LEVELED_LOG_H
+#define IMPL_VLOG_LEVELED_LOG_H
 
 #include "impl_vlog/rotate_log_file.h"
-#include "impl_vlog/vlog_entry.h"
+#include "impl_vlog/entry.h"
 
 //=======================================================================================
-class pre_posix::file::leveled_log
+class pre_posix::file::leveled_log final
 {
 public:
     leveled_log( std::string path,
@@ -21,4 +21,4 @@ public:
 };
 //=======================================================================================
 
-#endif // LEVELED_LOG_H
+#endif // IMPL_VLOG_LEVELED_LOG_H

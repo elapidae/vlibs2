@@ -1,6 +1,6 @@
 #include "impl_vlog/vlog_error.h"
 
-#include "impl_vlog/vlog_entry.h"
+#include "impl_vlog/entry.h"
 #include "vcat.h"
 #include "vlog.h"
 

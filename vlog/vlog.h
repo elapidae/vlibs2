@@ -13,6 +13,49 @@
 #ifndef VLOG_H
 #define VLOG_H
 
+//=======================================================================================
+/*
+ *  2019-11-19      by elapidae
+ *
+ *  Вторая версия системы логирования.
+ *
+ *  Все методы статические. Все сделано так, что API должно покрыть ~100% для разработки
+ *  микросервисов в НИИАС-е.
+ *
+ *  По сравнению с предыдущей версией, обзавелась доменами и флагами выключения.
+ *
+ *  NB! По умолчанию, сообщения выводятся через cout. Не рекомендую разделять вывод
+ *      между cout и cerr, т.к. они по разному синхронизируются. По этой же причине из
+ *      коробки не сделано такого метода вывода.
+ *
+ *
+ *  static void clear_executers();
+ *      Удаляет все логеры.
+ *
+ *  static void add_executer( Executer e );
+ *      Вставляет кастомный логер.
+ *
+ *  static void add_log_to_cout();
+ *  static void add_log_to_cerr();
+ *      Добавляет в выполнители канал по cout, cerr.
+ *      NB! не контролирует количество вызовов.
+ *
+ *  static void set_shared_log( const std::string& fname,
+ *                              uint bytes_in_one,
+ *                              uint rotates );
+ *      Устанавливает штатный shared логер. Заменяет предыдущий.
+ *
+ *  static void set_leveled_log( const std::string& path,
+ *                               uint bytes_in_one,
+ *                               uint rotates );
+ *      Устанавливает штатный leveled логер. Заменяет предыдущий.
+ *
+ *  Логирование по доменам:
+ *  static void omit_domain ( const std::string& domain );  // перестаем логировать.
+ *  static void apply_domain( const std::string& domain );  // будем логировать.
+*/
+//=======================================================================================
+
 #include <string>
 #include <stdexcept>
 #include <functional>
@@ -41,11 +84,11 @@ public:
     static void add_log_to_cout();
     static void add_log_to_cerr();
 
-    static void add_shared_log( std::string fname,
+    static void set_shared_log( const std::string& fname,
                                 uint bytes_in_one,
                                 uint rotates );
 
-    static void add_leveled_log( std::string path,
+    static void set_leveled_log( const std::string& path,
                                  uint bytes_in_one,
                                  uint rotates );
 
@@ -53,10 +96,6 @@ public:
     //  Кухня работы с доменами логов.
     static void omit_domain ( const std::string& domain );  // перестаем логировать.
     static void apply_domain( const std::string& domain );  // будем логировать.
-
-    //-----------------------------------------------------------------------------------
-    //  Utils
-    static std::string base_name( const char* file );
 
     //-----------------------------------------------------------------------------------
 private:

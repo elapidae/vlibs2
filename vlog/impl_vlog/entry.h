@@ -48,26 +48,6 @@ namespace impl_vlog
 
         //-----------------------------------------------------------------------------------
         const position_fix& pos() const;
-        //  Здесь собраны более-менее стандартные способы представления вхождения в виде
-        //  записи в журнале.
-        //  В обозначениях:
-        //  place       --  [filename:123]
-        //  level       --  level_str() == TRC, DBG, RUN, WRN, FLT
-        //  time        --  yyyy-MM-ddThh:mm:ss.zzz
-        //  msg         --  message
-        //  nl          --  new line (\n)
-        //  Возвращает конструкции вида:
-
-        //std::string place_func()        const;  //  "[filename.cpp:123:function]"
-        //std::string place_level_msg()           const;
-        //std::string time_place_msg_nl()         const;
-        //std::string time_place_level_msg_nl()   const;
-
-        //  Сообщение для консольных выводов.
-        std::string for_std_cxxx() const;
-
-        // Линия вида "======= BEGIN LOGGING ========= yyyy-MM-dd hh:mm:ss.zzz ======".
-        static std::string begin_line_time_nl();
 
         //-----------------------------------------------------------------------------------
         //  Обратная функция к level_char(). Нужно при десериализации.

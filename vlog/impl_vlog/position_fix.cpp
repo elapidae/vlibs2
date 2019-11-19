@@ -1,5 +1,6 @@
 #include "impl_vlog/position_fix.h"
 
+#include <algorithm>
 #include "vcat.h"
 #include "vlog.h"
 
@@ -34,7 +35,9 @@ const char* position_fix::filepath() const
 //=======================================================================================
 std::string position_fix::filename() const
 {
-    return vlog::base_name( _file );
+    std::string fpath( _file );
+    auto slash_it = std::find( fpath.rbegin(), fpath.rend(), '/' );
+    return { slash_it.base(), fpath.end() };
 }
 //=======================================================================================
 int32_t position_fix::line() const

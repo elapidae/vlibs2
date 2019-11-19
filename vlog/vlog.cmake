@@ -27,8 +27,8 @@ if ( NOT  VLOG_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/vlog.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/vlog.cpp" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/vlog_entry.h"    )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/vlog_entry.cpp"  )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/entry.h"    )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/entry.cpp"  )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/vlog_logger.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/vlog_logger.cpp" )

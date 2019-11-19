@@ -1,11 +1,11 @@
-#ifndef ROTATE_LOG_FILE_H
-#define ROTATE_LOG_FILE_H
+#ifndef IMPL_VLOG_ROTATE_LOG_FILE_H
+#define IMPL_VLOG_ROTATE_LOG_FILE_H
 
 #include <mutex>
 #include "impl_vlog/log_file.h"
 
 //=======================================================================================
-class pre_posix::file::rotate_log_file
+class pre_posix::file::rotate_log_file final
 {
 public:
     //  NB! Если rotates == 0, то автоматически выставляется в единицу, т.к. иначе
@@ -29,4 +29,4 @@ private:
 };
 //=======================================================================================
 
-#endif // ROTATE_LOG_FILE_H
+#endif // IMPL_VLOG_ROTATE_LOG_FILE_H

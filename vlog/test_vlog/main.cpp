@@ -12,6 +12,8 @@
 
 
 #include <iostream>
+#include <unordered_map>
+
 #include "gtest/gtest.h"
 #include "vcat.h"
 #include "vlog.h"
@@ -57,6 +59,14 @@ void my_log_executer( const impl_vlog::entry &entry )
 
 TEST_F( VLog_Test, _alla )
 {
+    int a = 0;
+    float b = 7.6;
+    std::unordered_map<int, float> map;
+    map.emplace(9, 2.78);
+    map.emplace(91, 2.78);
+    map.emplace(95, 2.78);
+    vdeb("bebe", a, b, map);
+
     vtrace   << "alla";
     vdeb     << "alla";
     vrunlog  << "alla";
@@ -200,8 +210,8 @@ TEST_F( VLog_Test, _primitive_file_logs )
 {
     // Удалим текущие логгеры и будем писать только в файлы.
     vlog::clear_executers();
-    vlog::add_shared_log ( "test.log",  1000, 2 );
-    vlog::add_leveled_log( "test_logs", 1000, 2 );
+    vlog::set_shared_log ( "test.log",  1000, 2 );
+    vlog::set_leveled_log( "test_logs", 1000, 2 );
 
     for (int i = 0; i < 10; ++i)
     {

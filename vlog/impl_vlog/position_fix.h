@@ -6,7 +6,7 @@
 //=======================================================================================
 namespace impl_vlog
 {
-    class position_fix
+    class position_fix final
     {
     public:
         position_fix( const char* file, int line, const char* func );

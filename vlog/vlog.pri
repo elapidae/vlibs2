@@ -31,8 +31,8 @@ isEmpty(qi_vlog) {
     HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/position_fix.h
     SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/position_fix.cpp
 
-    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/vlog_entry.h
-    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/vlog_entry.cpp
+    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/entry.h
+    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/entry.cpp
 
     HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/vlog_logger.h
     SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/vlog_logger.cpp

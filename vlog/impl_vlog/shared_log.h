@@ -1,8 +1,8 @@
-#ifndef SHARED_LOG_H
-#define SHARED_LOG_H
+#ifndef IMPL_VLOG_SHARED_LOG_H
+#define IMPL_VLOG_SHARED_LOG_H
 
 #include "impl_vlog/rotate_log_file.h"
-#include "impl_vlog/vlog_entry.h"
+#include "impl_vlog/entry.h"
 
 
 //=======================================================================================
@@ -22,4 +22,4 @@ private:
 };
 //=======================================================================================
 
-#endif // SHARED_LOG_H
+#endif // IMPL_VLOG_SHARED_LOG_H

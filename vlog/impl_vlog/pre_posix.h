@@ -25,7 +25,7 @@ public:
     //===================================================================================
 
     //===================================================================================
-    struct file
+    struct file final
     {
         static int    open_write_append( const std::string& fname );
         static long   size( const std::string& fname );

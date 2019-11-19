@@ -1,5 +1,5 @@
-#ifndef LOG_FILE_H
-#define LOG_FILE_H
+#ifndef IMPL_VLOG_LOG_FILE_H
+#define IMPL_VLOG_LOG_FILE_H
 
 #include "impl_vlog/pre_posix.h"
 #include <atomic>
@@ -31,4 +31,4 @@ private:
 };
 //=======================================================================================
 
-#endif // LOG_FILE_H
+#endif // IMPL_VLOG_LOG_FILE_H
