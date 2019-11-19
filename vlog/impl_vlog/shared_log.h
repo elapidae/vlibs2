@@ -2,7 +2,8 @@
 #define SHARED_LOG_H
 
 #include "impl_vlog/rotate_log_file.h"
-#include "vlog.h"
+#include "impl_vlog/vlog_entry.h"
+
 
 //=======================================================================================
 class pre_posix::file::shared_log final
@@ -14,7 +15,7 @@ public:
 
     ~shared_log();
 
-    void write( const vlog::entry& entry );
+    void write( const impl_vlog::entry& entry );
 
 private:
     pre_posix::file::rotate_log_file _log;

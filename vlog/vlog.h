@@ -20,18 +20,20 @@
 //=======================================================================================
 //      vlog
 //=======================================================================================
+namespace impl_vlog
+{
+    class entry;
+    class logger;
+    class error;
+}
+//=======================================================================================
 class vlog
 {
 public:
     //-----------------------------------------------------------------------------------
-    class entry;
-    class logger;
-    class error;
-
-    //-----------------------------------------------------------------------------------
     //  Кухня настройки логгирования.
 
-    using Executer = std::function< void(const entry&) >;
+    using Executer = std::function< void(const impl_vlog::entry&) >;
 
     static void clear_executers();
     static void add_executer( Executer e );
@@ -41,12 +43,10 @@ public:
     static void add_log_to_cout();
     static void add_log_to_cerr();
 
-    //  not implemented yet...
     static void add_shared_log( std::string fname,
                                 uint bytes_in_one,
                                 uint rotates );
 
-    //  not implemented yet...
     static void add_leveled_log( std::string path,
                                  uint bytes_in_one,
                                  uint rotates );
@@ -63,12 +63,15 @@ public:
     //-----------------------------------------------------------------------------------
 private:
     //  Вызывается из logger, error.
-    static void _execute( const entry& e );
+    friend class impl_vlog::logger;
+    friend class impl_vlog::error;
+    static void _execute( const impl_vlog::entry& e );
 }; // vlog class
 //=======================================================================================
 //      vlog
 //=======================================================================================
 
+#include "impl_vlog/vlog_position_fix.h"
 #include "impl_vlog/vlog_entry.h"
 #include "impl_vlog/vlog_logger.h"
 #include "impl_vlog/vlog_error.h"
@@ -76,25 +79,25 @@ private:
 //=======================================================================================
 //      defines
 //=======================================================================================
-#define VLOG_FUNCTION __PRETTY_FUNCTION__
+//#define VLOG_FUNCTION __PRETTY_FUNCTION__
 
-#define vtrace          vlog::logger( vlog::entry::Level::Trace,        \
-                                      __FILE__, __LINE__, VLOG_FUNCTION )
+//#define vtrace          vlog::logger( vlog::entry::Level::Trace,        \
+//                                      __FILE__, __LINE__, VLOG_FUNCTION )
 
-#define vdebug          vlog::logger( vlog::entry::Level::Dbg,          \
-                                      __FILE__, __LINE__, VLOG_FUNCTION )
-#define vdeb vdebug
+//#define vdebug          vlog::logger( vlog::entry::Level::Dbg,          \
+//                                      __FILE__, __LINE__, VLOG_FUNCTION )
+//#define vdeb vdebug
 
-#define vrunlog         vlog::logger( vlog::entry::Level::Runlog,       \
-                                      __FILE__, __LINE__, VLOG_FUNCTION )
+//#define vrunlog         vlog::logger( vlog::entry::Level::Runlog,       \
+//                                      __FILE__, __LINE__, VLOG_FUNCTION )
 
-#define vwarning        vlog::logger( vlog::entry::Level::Warning,      \
-                                      __FILE__, __LINE__, VLOG_FUNCTION )
+//#define vwarning        vlog::logger( vlog::entry::Level::Warning,      \
+//                                      __FILE__, __LINE__, VLOG_FUNCTION )
 
-#define vfatal          vlog::logger( vlog::entry::Level::Fatal,        \
-                                      __FILE__, __LINE__, VLOG_FUNCTION )
+//#define vfatal          vlog::logger( vlog::entry::Level::Fatal,        \
+//                                      __FILE__, __LINE__, VLOG_FUNCTION )
 
-#define verror vlog::error( __FILE__, __LINE__, VLOG_FUNCTION )
+//#define verror vlog::error( __FILE__, __LINE__, VLOG_FUNCTION )
 //=======================================================================================
 //      defines
 //=======================================================================================

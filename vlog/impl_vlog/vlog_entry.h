@@ -1,8 +1,7 @@
 #ifndef IMPL_VLOG_VLOG_ENTRY_H
 #define IMPL_VLOG_VLOG_ENTRY_H
 
-#include "vlog.h"
-#include "vtime_point.h"
+#include "impl_vlog/vlog_position_fix.h"
 
 //=======================================================================================
 //      vlog::entry
@@ -13,89 +12,77 @@
 //      были одинаковыми. Также применяется при сериализации (гораздо проще тащить один
 //      символ с очевидным значением).
 //=======================================================================================
-class vlog::entry final
+namespace impl_vlog
 {
-public:
-    //-----------------------------------------------------------------------------------
-    enum class Level { Trace, Dbg, Runlog, Warning, Fatal };
+    class entry final
+    {
+    public:
+        //-----------------------------------------------------------------------------------
+        enum class Level { Trace, Dbg, Runlog, Warning, Fatal };
 
-    //-----------------------------------------------------------------------------------
-    const std::string& message()    const;
+        //-----------------------------------------------------------------------------------
+        const std::string& message()    const;
 
-    const vtime_point& timestamp()  const;
+        Level       level()             const;  //  См. [1]:
+        std::string level_str()         const;  //  3-х символьное обозначение уровня.
+        char        level_char()        const;  //  Односимвольный код уровня.
 
-    const char* filepath()          const;  //  полное имя файла, обычно ведет
-                                            //  к build-папке.
-    std::string filename()          const;  //  только имя файла (путь отсечен).
+        bool        is_trace()          const;
+        bool        is_debug()          const;
+        bool        is_runlog()         const;
+        bool        is_warning()        const;
+        bool        is_fatal()          const;
 
-    int32_t     line()              const;
+        bool        has_domain()        const;
+        const std::string& domain()     const;
 
-    const char* function()          const;  //  Значение макроса VLOG_FUNCTION.
+        //-----------------------------------------------------------------------------------
+        //  Сервисная часть, нормальным людям ни к чему.
 
-    Level       level()             const;  //  См. [1]:
-    std::string level_str()         const;  //  3-х символьное обозначение уровня.
-    char        level_char()        const;  //  Односимвольный код уровня.
+        //  Предназначен для использования внутри других механизмов, конечному
+        //  пользователю конструировать этот объект не нужно.
+        entry( const position_fix&  pos,
+               Level                level,
+               const std::string&   msg,
+               const std::string&   domain );
 
-    bool        is_trace()          const;
-    bool        is_debug()          const;
-    bool        is_runlog()         const;
-    bool        is_warning()        const;
-    bool        is_fatal()          const;
+        //-----------------------------------------------------------------------------------
+        const position_fix& pos() const;
+        //  Здесь собраны более-менее стандартные способы представления вхождения в виде
+        //  записи в журнале.
+        //  В обозначениях:
+        //  place       --  [filename:123]
+        //  level       --  level_str() == TRC, DBG, RUN, WRN, FLT
+        //  time        --  yyyy-MM-ddThh:mm:ss.zzz
+        //  msg         --  message
+        //  nl          --  new line (\n)
+        //  Возвращает конструкции вида:
 
-    bool        has_domain()        const;
-    const std::string& domain()     const;
+        //std::string place_func()        const;  //  "[filename.cpp:123:function]"
+        //std::string place_level_msg()           const;
+        //std::string time_place_msg_nl()         const;
+        //std::string time_place_level_msg_nl()   const;
 
-    //-----------------------------------------------------------------------------------
-    //  Сервисная часть, нормальным людям ни к чему.
+        //  Сообщение для консольных выводов.
+        std::string for_std_cxxx() const;
 
-    //  Предназначен для использования внутри других механизмов, конечному
-    //  пользователю конструировать этот объект не нужно.
-    entry( Level                level,
-           const vtime_point&   stamp,
-           const char*          file,
-           int                  line,
-           const char*          func,
-           const std::string&   msg,
-           const std::string&   domain );
+        // Линия вида "======= BEGIN LOGGING ========= yyyy-MM-dd hh:mm:ss.zzz ======".
+        static std::string begin_line_time_nl();
 
-    //-----------------------------------------------------------------------------------
-    //  Здесь собраны более-менее стандартные способы представления вхождения в виде
-    //  записи в журнале.
-    //  В обозначениях:
-    //  place       --  [filename:123]
-    //  level       --  level_str() == TRC, DBG, RUN, WRN, FLT
-    //  time        --  yyyy-MM-ddThh:mm:ss.zzz
-    //  msg         --  message
-    //  nl          --  new line (\n)
-    //  Возвращает конструкции вида:
-    std::string place()             const;
-    //std::string place_func()        const;  //  "[filename.cpp:123:function]"
-    //std::string place_level_msg()           const;
-    //std::string time_place_msg_nl()         const;
-    //std::string time_place_level_msg_nl()   const;
+        //-----------------------------------------------------------------------------------
+        //  Обратная функция к level_char(). Нужно при десериализации.
+        static Level level_from_char( char ch );
 
-    //  Сообщение для консольных выводов.
-    std::string for_std_cxxx() const;
+        //-----------------------------------------------------------------------------------
+    private:
+        position_fix    _pos;
+        Level           _level;
+        std::string     _msg;
+        std::string     _domain;
 
-    // Линия вида "======= BEGIN LOGGING ========= yyyy-MM-dd hh:mm:ss.zzz ======".
-    static std::string begin_line_time_nl();
-
-    //-----------------------------------------------------------------------------------
-    //  Обратная функция к level_char(). Нужно при десериализации.
-    static Level level_from_char( char ch );
-
-    //-----------------------------------------------------------------------------------
-private:
-    Level           _level;
-    vtime_point     _stamp;
-    const char*     _file;
-    int             _line;
-    const char*     _func;
-    std::string     _msg;
-    std::string     _domain;
-}; // vlog::entry
-//=======================================================================================
-//      vlog::entry
+    }; // vlog::entry
+    //===================================================================================
+} // namespace impl_vlog
 //=======================================================================================
 
 #endif // IMPL_VLOG_VLOG_ENTRY_H

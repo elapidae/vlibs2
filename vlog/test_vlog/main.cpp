@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include "gtest/gtest.h"
-
+#include "vcat.h"
 #include "vlog.h"
 
 class VLog_Test: public testing::Test
@@ -25,21 +25,21 @@ template<class> class TD;
 
 //=======================================================================================
 //  Пример-затравка для пользовательской обработки логов.
-void my_log_executer( const vlog::entry &entry )
+void my_log_executer( const impl_vlog::entry &entry )
 {
     // Ниже приведены содержания из точки логгирования.
     // Их следует использовать для составления собственных сообщений.
 
-    entry.timestamp();  // Метка времени создания вхождения.
+    entry.pos().stamp();  // Метка времени создания вхождения.
 
     entry.level_char(); // Однобуквенный код типа сообщения { T, D, R, W, F }.
     entry.level_str();  // Трехбуквенный код типа сообщения { TRC, DBG, RUN, WRN, FLT }.
     entry.level();      // Тип enum class vlog::vlog::entry::Type.
 
-    entry.filename();   // Имя файла без пути до него.
-    entry.filepath();   // Полное имя файла (то, что дает __FILE__).
-    entry.line();       // Номер строки в исходнике __LINE__
-    entry.function();   // Что дает __PRETTY_FUNCTION__.
+    entry.pos().filename();   // Имя файла без пути до него.
+    entry.pos().filepath();   // Полное имя файла (то, что дает __FILE__).
+    entry.pos().line();       // Номер строки в исходнике __LINE__
+    entry.pos().function();   // Что дает __PRETTY_FUNCTION__.
 
     entry.message();    //  Составленное сообщение.
 
@@ -68,7 +68,7 @@ TEST_F( VLog_Test, _alla )
 
 TEST_F( VLog_Test, _error )
 {
-    EXPECT_THROW( throw verror << "Hello world!", vlog::error );
+    EXPECT_THROW( throw verror << "Hello world!", impl_vlog::error );
 }
 
 //=======================================================================================
@@ -77,7 +77,7 @@ TEST_F( VLog_Test, _1 )
 {
     // По умолчанию будет выводить в консоль.
     vrunlog << "Hello World!"
-            << "sizeof(vlog::entry):"   << sizeof(vlog::entry)
+            << "sizeof(vlog::entry):"   << sizeof(impl_vlog::entry)
             << ", sizeof(vtime_point):" << sizeof(vtime_point)
             << ", sizeof(string):"      << sizeof(string);
 
@@ -128,7 +128,7 @@ TEST_F( VLog_Test, test_on_off )
     vlog::clear_executers();
 
     int count = 0;
-    vlog::add_executer( [&](const vlog::entry&)
+    vlog::add_executer( [&](const impl_vlog::entry&)
     {
         ++count;
     });
@@ -156,7 +156,7 @@ TEST_F( VLog_Test, test_domain )
     vlog::add_log_to_cout();
 
     string d;
-    vlog::add_executer( [&](const vlog::entry& e)
+    vlog::add_executer( [&](const impl_vlog::entry& e)
     {
         d = e.domain();
     });

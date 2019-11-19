@@ -1,28 +1,25 @@
 #include "impl_vlog/vlog_logger.h"
 
 #include <cassert>
+#include "vlog.h"
 
+using namespace impl_vlog;
 using namespace std;
 
 //=======================================================================================
-//      vlog::logger
+//      logger
 //=======================================================================================
-vlog::logger::logger( entry::Level  level,
-                      const char*   file,
-                      int32_t       line,
-                      const char*   func )
-    : _stamp ( vtime_point::now() )
+logger::logger( position_fix && pos,
+                entry::Level    level )
+    : _pos   ( pos   )
     , _level ( level )
-    , _file  ( file  )
-    , _line  ( line  )
-    , _func  ( func  )
 {
     // Включаем флаги по умолчанию.
     _stream << std::showbase << std::boolalpha;
     space();
 }
 //=======================================================================================
-vlog::logger::~logger()
+logger::~logger()
 {
     if ( !_is_on ) return;
 
@@ -32,29 +29,29 @@ vlog::logger::~logger()
     else
         msg.push_back( '\n' );
 
-    auto ent = entry( _level, _stamp, _file, _line, _func, msg, _domain );
+    auto ent = entry( _pos, _level, msg, _domain );
     vlog::_execute( ent );
 }
 //=======================================================================================
-vlog::logger& vlog::logger::operator[]( bool on )
+logger& logger::operator[]( bool on )
 {
     _is_on = on;
     return *this;
 }
 //=======================================================================================
-vlog::logger& vlog::logger::operator[]( const string& domain )
+logger& logger::operator[]( const string& domain )
 {
     assert( _domain.empty() );
     _domain = domain;
     return *this;
 }
 //=======================================================================================
-vlog::logger& vlog::logger::operator[]( const char* domain )
+logger& logger::operator[]( const char* domain )
 {
     assert( _domain.empty() );
     _domain = domain;
     return *this;
 }
 //=======================================================================================
-//      vlog::logger
+//      logger
 //=======================================================================================

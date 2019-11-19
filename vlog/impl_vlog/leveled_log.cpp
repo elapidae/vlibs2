@@ -1,5 +1,9 @@
 #include "leveled_log.h"
 
+#include "vcat.h"
+
+using namespace impl_vlog;
+
 //=======================================================================================
 static const std::string& mk_path( const std::string& path )
 {
@@ -33,20 +37,19 @@ pre_posix::file::leveled_log::~leveled_log()
     _f.write( pre_posix::file::fin_line_for_log() );
 }
 //=======================================================================================
-void pre_posix::file::leveled_log::write( const vlog::entry& entry )
+void pre_posix::file::leveled_log::write( const impl_vlog::entry& entry )
 {
-    vcat msg( entry.timestamp().humanable().date_time_zzz(), '\t',
-              '[', entry.filename(), ':', entry.line(), "]",
+    vcat msg( entry.pos().stamp().humanable().date_time_zzz(), '\t',
               (entry.has_domain() ? vcat("\t{", entry.domain(), '}').str() : "" ), '\t',
               entry.message() );
 
     switch (entry.level())
     {
-    case vlog::entry::Level::Trace:     _t.write( msg ); break;
-    case vlog::entry::Level::Dbg:       _d.write( msg ); break;
-    case vlog::entry::Level::Runlog:    _r.write( msg ); break;
-    case vlog::entry::Level::Warning:   _w.write( msg ); break;
-    case vlog::entry::Level::Fatal:     _f.write( msg ); break;
+    case entry::Level::Trace:     _t.write( msg ); break;
+    case entry::Level::Dbg:       _d.write( msg ); break;
+    case entry::Level::Runlog:    _r.write( msg ); break;
+    case entry::Level::Warning:   _w.write( msg ); break;
+    case entry::Level::Fatal:     _f.write( msg ); break;
     }
 }
 //=======================================================================================
