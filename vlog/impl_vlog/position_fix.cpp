@@ -1,4 +1,4 @@
-#include "impl_vlog/vlog_position_fix.h"
+#include "impl_vlog/position_fix.h"
 
 #include "vcat.h"
 #include "vlog.h"

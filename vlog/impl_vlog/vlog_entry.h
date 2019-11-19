@@ -1,7 +1,7 @@
 #ifndef IMPL_VLOG_VLOG_ENTRY_H
 #define IMPL_VLOG_VLOG_ENTRY_H
 
-#include "impl_vlog/vlog_position_fix.h"
+#include "impl_vlog/position_fix.h"
 
 //=======================================================================================
 //      vlog::entry

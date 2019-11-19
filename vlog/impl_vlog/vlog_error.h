@@ -4,7 +4,7 @@
 #include <sstream>
 
 #include "impl_vcat/vcat_iface.h"
-#include "impl_vlog/vlog_position_fix.h"
+#include "impl_vlog/position_fix.h"
 
 //=======================================================================================
 //      vlog::error

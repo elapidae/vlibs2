@@ -1,5 +1,5 @@
-#ifndef IMPL_VLOG_VLOG_POSITION_FIX_H
-#define IMPL_VLOG_VLOG_POSITION_FIX_H
+#ifndef IMPL_VLOG_POSITION_FIX_H
+#define IMPL_VLOG_POSITION_FIX_H
 
 #include "vtime_point.h"
 
@@ -12,7 +12,7 @@ namespace impl_vlog
         position_fix( const char* file, int line, const char* func );
 
         const vtime_point&  stamp()         const;
-        const char*         filepath()      const;      // Full source path (usual in build).
+        const char*         filepath()      const;      // Full source path.
         std::string         filename()      const;      // File name only.
         int                 line()          const;
         const char*         function()      const;
@@ -31,12 +31,14 @@ namespace impl_vlog
         const char* _file;
         int         _line;
         const char* _func;
-    };
-}
+
+    }; // position_fix
+    //===================================================================================
+} // namespace impl_vlog
 //=======================================================================================
 
 #define V_POSITION_FIX impl_vlog::position_fix( __FILE__, __LINE__, __PRETTY_FUNCTION__ )
 
 //=======================================================================================
 
-#endif // IMPL_VLOG_VLOG_POSITION_FIX_H
+#endif // IMPL_VLOG_POSITION_FIX_H

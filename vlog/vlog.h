@@ -18,8 +18,6 @@
 #include <functional>
 
 //=======================================================================================
-//      vlog
-//=======================================================================================
 namespace impl_vlog
 {
     class entry;
@@ -62,45 +60,17 @@ public:
 
     //-----------------------------------------------------------------------------------
 private:
-    //  Вызывается из logger, error.
+    //  Вызывается только из logger, error.
     friend class impl_vlog::logger;
     friend class impl_vlog::error;
     static void _execute( const impl_vlog::entry& e );
+
 }; // vlog class
 //=======================================================================================
-//      vlog
-//=======================================================================================
 
-#include "impl_vlog/vlog_position_fix.h"
-#include "impl_vlog/vlog_entry.h"
 #include "impl_vlog/vlog_logger.h"
 #include "impl_vlog/vlog_error.h"
 
 //=======================================================================================
-//      defines
-//=======================================================================================
-//#define VLOG_FUNCTION __PRETTY_FUNCTION__
-
-//#define vtrace          vlog::logger( vlog::entry::Level::Trace,        \
-//                                      __FILE__, __LINE__, VLOG_FUNCTION )
-
-//#define vdebug          vlog::logger( vlog::entry::Level::Dbg,          \
-//                                      __FILE__, __LINE__, VLOG_FUNCTION )
-//#define vdeb vdebug
-
-//#define vrunlog         vlog::logger( vlog::entry::Level::Runlog,       \
-//                                      __FILE__, __LINE__, VLOG_FUNCTION )
-
-//#define vwarning        vlog::logger( vlog::entry::Level::Warning,      \
-//                                      __FILE__, __LINE__, VLOG_FUNCTION )
-
-//#define vfatal          vlog::logger( vlog::entry::Level::Fatal,        \
-//                                      __FILE__, __LINE__, VLOG_FUNCTION )
-
-//#define verror vlog::error( __FILE__, __LINE__, VLOG_FUNCTION )
-//=======================================================================================
-//      defines
-//=======================================================================================
-
 
 #endif // VLOG_H

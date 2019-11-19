@@ -36,8 +36,8 @@ if ( NOT  VLOG_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/vlog_error.h"    )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/vlog_error.cpp"  )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/vlog_position_fix.h"    )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/vlog_position_fix.cpp"  )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/position_fix.h"    )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/position_fix.cpp"  )
 
     #------------------------------------------------------------------------------------
     #   PRE POSIX FILE LOG
