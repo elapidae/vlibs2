@@ -29,7 +29,6 @@
 #
 #   UPD 2019-02-06  by Elapidae
 #   Вся механика перенесена в этот файл (vgit_impl.pri) чтобы случайно не затереть.
-#   Хранить всю эту машинерию между неудаляемых "прокладочек" слишком неудобно.
 #
 #========================================================================================
 
@@ -39,14 +38,8 @@ isEmpty(qi_vgit_impl) {
     isEmpty(qi_not_print_pri_messages): message("=== vgit (impl) appended ===")
 
     # MAIN_DIR symbol control -----------------------------------------------------------
-    #   Старое имя Main_Dir много где используется, пусть чуток покиснет...
-    !isEmpty(Main_Dir): warning("vgit: variable \$\$Main_Dir has deprecated, use \
-                                 MAIN_DIR=\$\$PWD instead.")
-    isEmpty(MAIN_DIR) {
-        isEmpty(Main_Dir): error("vgit: Please, specify MAIN_DIR=\$\$PWD in your .pro \
-                                  file BEFORE including vgit.pri")
-        MAIN_DIR = $$Main_Dir
-    }
+    isEmpty(MAIN_DIR): error( "vgit: Please, specify MAIN_DIR=\$\$PWD in your .pro \
+                               file BEFORE including vgit.pri")
 
     # -----------------------------------------------------------------------------------
     #   Основная машинерия с преферансом, бубном и танцами. Страшновато представить как
@@ -71,12 +64,12 @@ isEmpty(qi_vgit_impl) {
 
     # -----------------------------------------------------------------------------------
 
-    DEFINES +=     VGIT_HASH_ELPD=\"$${VGIT_HASH}\"
-    DEFINES += VGIT_REVCOUNT_ELPD=\"$${VGIT_REVCOUNT}\"
-    DEFINES +=   VGIT_BRANCH_ELPD=\"$${VGIT_BRANCH}\"
-    DEFINES +=   VGIT_AUTHOR_NAME_ELPD=\"$${VGIT_AUTHOR_NAME}\"
-    DEFINES +=   VGIT_AUTHOR_EMAIL_ELPD=\"$${VGIT_AUTHOR_EMAIL}\"
-    DEFINES +=     VGIT_DATE_ELPD=\"$${VGIT_DATE}\"
+    DEFINES +=         VGIT_HASH_ELPD=\"$${VGIT_HASH}\"
+    DEFINES +=     VGIT_REVCOUNT_ELPD=\"$${VGIT_REVCOUNT}\"
+    DEFINES +=       VGIT_BRANCH_ELPD=\"$${VGIT_BRANCH}\"
+    DEFINES +=  VGIT_AUTHOR_NAME_ELPD=\"$${VGIT_AUTHOR_NAME}\"
+    DEFINES += VGIT_AUTHOR_EMAIL_ELPD=\"$${VGIT_AUTHOR_EMAIL}\"
+    DEFINES +=         VGIT_DATE_ELPD=\"$${VGIT_DATE}\"
 
     # -----------------------------------------------------------------------------------
 
