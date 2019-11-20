@@ -30,11 +30,11 @@ if ( NOT  VLOG_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/entry.h"    )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/entry.cpp"  )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/vlog_logger.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/vlog_logger.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/logger.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/logger.cpp" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/vlog_error.h"    )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/vlog_error.cpp"  )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/error.h"    )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/error.cpp"  )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vlog/impl_vlog/position_fix.h"    )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vlog/impl_vlog/position_fix.cpp"  )

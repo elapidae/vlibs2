@@ -5,14 +5,13 @@
 #include "impl_vcat/vcat_iface.h"
 
 //=======================================================================================
-//      logger
-//=======================================================================================
 namespace impl_vlog
 {
+    //===================================================================================
     class logger final : public impl_vcat::vcat_iface<logger>
     {
     public:
-        //-----------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
 
         //  Предназначен для создания исключительно из макросов.
         logger( position_fix && pos,
@@ -20,9 +19,10 @@ namespace impl_vlog
 
         ~logger();
 
-        logger& operator[] ( bool on );
-        logger& operator[] ( const std::string& domain );
-        logger& operator[] ( const char* domain );
+        logger& operator[] ( bool on );                     // оператор для выключения.
+
+        logger& operator[] ( const std::string& domain );   // логирование по доменам
+        logger& operator[] ( const char* domain );          //
 
         //-------------------------------------------------------------------------------
     private:
@@ -46,25 +46,22 @@ namespace impl_vlog
         logger( const logger & )              = delete;
         logger& operator= ( logger && )       = delete;
         logger& operator= ( const logger & )  = delete;
-
-        //===============================================================================
     }; // logger class
+    //===================================================================================
 } // impl_vlog namespace
 //=======================================================================================
 
-
 //=======================================================================================
-#define vtrace          impl_vlog::logger( V_POSITION_FIX, impl_vlog::entry::Level::Trace )
+#define vtrace      impl_vlog::logger( V_POSITION_FIX, impl_vlog::entry::Level::Trace   )
 
-#define vdebug          impl_vlog::logger( V_POSITION_FIX, impl_vlog::entry::Level::Dbg )
+#define vdebug      impl_vlog::logger( V_POSITION_FIX, impl_vlog::entry::Level::Dbg     )
 #define vdeb vdebug
 
-#define vrunlog         impl_vlog::logger( V_POSITION_FIX, impl_vlog::entry::Level::Runlog )
+#define vrunlog     impl_vlog::logger( V_POSITION_FIX, impl_vlog::entry::Level::Runlog  )
 
-#define vwarning        impl_vlog::logger( V_POSITION_FIX, impl_vlog::entry::Level::Warning )
+#define vwarning    impl_vlog::logger( V_POSITION_FIX, impl_vlog::entry::Level::Warning )
 
-#define vfatal          impl_vlog::logger( V_POSITION_FIX, impl_vlog::entry::Level::Fatal )
+#define vfatal      impl_vlog::logger( V_POSITION_FIX, impl_vlog::entry::Level::Fatal   )
 //=======================================================================================
-
 
 #endif // IMPL_VLOG_LOGGER_H

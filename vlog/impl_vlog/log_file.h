@@ -18,11 +18,11 @@ public:
 
     void close();
 
-    size_t size() const;
+    off_t size() const;
 
 private:
     int _fd = -1;
-    std::atomic_size_t _len {0};
+    off_t _len = 0;
 
     void _move( log_file&& rhs );
 

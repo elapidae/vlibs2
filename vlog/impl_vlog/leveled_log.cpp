@@ -5,6 +5,7 @@
 using namespace impl_vlog;
 
 //=======================================================================================
+//  Хак для создания пути, чтобы сначала создался путь, а потом уже логеры.
 static const std::string& mk_path( const std::string& path )
 {
     pre_posix::file::make_path( path );

@@ -34,11 +34,11 @@ isEmpty(qi_vlog) {
     HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/entry.h
     SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/entry.cpp
 
-    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/vlog_logger.h
-    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/vlog_logger.cpp
+    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/logger.h
+    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/logger.cpp
 
-    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/vlog_error.h
-    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/vlog_error.cpp
+    HEADERS     += $$VLIBS_DIR/vlog/impl_vlog/error.h
+    SOURCES     += $$VLIBS_DIR/vlog/impl_vlog/error.cpp
 
     #------------------------------------------------------------------------------------
     #   PRE POSIX FILE LOG

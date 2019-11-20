@@ -107,8 +107,8 @@ private:
 }; // vlog class
 //=======================================================================================
 
-#include "impl_vlog/vlog_logger.h"
-#include "impl_vlog/vlog_error.h"
+#include "impl_vlog/logger.h"
+#include "impl_vlog/error.h"
 
 //=======================================================================================
 

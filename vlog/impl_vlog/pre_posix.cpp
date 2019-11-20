@@ -136,7 +136,7 @@ int pre_posix::file::open_write_append( const std::string& fname )
     //return call_check_open( fname, O_WRONLY|O_CREAT|O_APPEND|O_SYNC, mode );
 }
 //=======================================================================================
-long pre_posix::file::size( const string& fname )
+off_t pre_posix::file::size( const string& fname )
 {
     struct stat buffer;
     call_check_stat( fname.c_str(), &buffer );

@@ -1,4 +1,4 @@
-#include "impl_vlog/vlog_logger.h"
+#include "impl_vlog/logger.h"
 
 #include <cassert>
 #include "vlog.h"

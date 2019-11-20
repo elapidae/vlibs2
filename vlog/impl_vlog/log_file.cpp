@@ -2,27 +2,20 @@
 
 
 //=======================================================================================
-//  Просто якоримся на файл. Если кто-то будет его потрошить из других потоков все равно
-//  не поможем. Поэтому просто береме файлы на дозапись.
 pre_posix::file::log_file::log_file( const std::string& fname )
     : _fd  ( file::open_write_append(fname) )
-    , _len ( size_t(file::size(fname)) )
+    , _len ( file::size(fname) )
 {}
 //=======================================================================================
 pre_posix::file::log_file::~log_file()
 {
-    //  if fd < 0 -- nothing strange happen.
-    file::close( _fd );
-    _fd = -1;
+    close();
 }
 //=======================================================================================
-void pre_posix::file::log_file::_move(pre_posix::file::log_file &&rhs)
+void pre_posix::file::log_file::_move( pre_posix::file::log_file &&rhs )
 {
-    std::swap( _fd, rhs._fd );
-
-    size_t tmp = _len;
-    _len.exchange( rhs._len );
-    rhs._len.exchange( tmp );
+    std::swap( _fd,  rhs._fd  );
+    std::swap( _len, rhs._len );
 }
 //=======================================================================================
 pre_posix::file::log_file::log_file( pre_posix::file::log_file&& rhs )
@@ -46,11 +39,12 @@ void pre_posix::file::log_file::write( const std::string& data )
 //=======================================================================================
 void pre_posix::file::log_file::close()
 {
+    //  if fd < 0, nothing strange happen.
     file::close( _fd );
     _fd = -1;
 }
 //=======================================================================================
-size_t pre_posix::file::log_file::size() const
+off_t pre_posix::file::log_file::size() const
 {
     return _len;
 }

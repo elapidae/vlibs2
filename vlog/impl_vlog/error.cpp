@@ -1,4 +1,4 @@
-#include "impl_vlog/vlog_error.h"
+#include "impl_vlog/error.h"
 
 #include "impl_vlog/entry.h"
 #include "vcat.h"
@@ -6,8 +6,6 @@
 
 using namespace impl_vlog;
 
-//=======================================================================================
-//      vlog::error
 //=======================================================================================
 error::error( position_fix && pos )
     : _pos ( pos )
@@ -21,16 +19,16 @@ error::error( position_fix && pos )
 //  Соответственно, в момент копирования сообщение составлено. Будем это сообщение
 //  бросать в систему логирования. Но не через логер, а напрямую (чтобы не захватывать
 //  контекст метода копирования).
-error::error( const error &other )
+error::error( const error& other )
     : impl_vcat::vcat_iface<error>()
-    , _pos ( other._pos )
-    , _sealed ( other._sealed )
-    , _sealed_msg( other._sealed_msg )
+    , _pos        ( other._pos        )
+    , _sealed     ( other._sealed     )
+    , _sealed_msg ( other._sealed_msg )
 {
     if ( _sealed ) return;
     _sealed = true;
 
-    _sealed_msg = vcat( "VERROR AT [", _pos.place(),
+    _sealed_msg = vcat( "VERROR AT ", _pos.place(),
                         '[', _pos.function(), "] ==> ", other._stream.str() );
 
     if ( other.delimiter_was_added() )
@@ -47,6 +45,4 @@ const char* error::what() const noexcept
 {
     return _sealed_msg.c_str();
 }
-//=======================================================================================
-//      vlog::error
 //=======================================================================================
