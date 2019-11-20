@@ -25,7 +25,7 @@ std::string vcat::str() const
 {
     auto res = _stream.str();
 
-    if ( delimiter_was_added() )
+    if ( _delimiter_has_been_added() )
     {
         res.pop_back();
     }

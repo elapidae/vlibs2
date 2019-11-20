@@ -70,7 +70,7 @@ human_readable_time human_readable_time::from_utc( int year, int month,  int day
                                                    int hour, int minute, int sec )
 {
     if ( year   < 1900 )             th_err( "bad year"     );
-    if ( month  < 1 || month  > 12 ) th_err( "bad year"     );
+    if ( month  < 1 || month  > 12 ) th_err( "bad month"    );
     if ( day    < 1 || day    > 31 ) th_err( "bad day"      );
     if ( hour   < 0 || hour   > 23 ) th_err( "bad hour"     );
     if ( minute < 0 || minute > 59 ) th_err( "bad minute"   );

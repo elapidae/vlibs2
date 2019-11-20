@@ -31,7 +31,7 @@ error::error( const error& other )
     _sealed_msg = vcat( "VERROR AT ", _pos.place(),
                         '[', _pos.function(), "] ==> ", other._stream.str() );
 
-    if ( other.delimiter_was_added() )
+    if ( other._delimiter_has_been_added() )
         _sealed_msg.back() = '\n';
     else
         _sealed_msg.push_back( '\n' );

@@ -97,8 +97,7 @@ namespace impl_vcat
 
         //-------------------------------------------------------------------------------
     protected:
-
-        bool delimiter_was_added() const { return _delimiter_added; }
+        bool _delimiter_has_been_added() const;
 
         vcat_iface();
 
@@ -116,12 +115,12 @@ namespace impl_vcat
         D& _cat ( T&& val );
 
         template< typename T >
-        D& _mod_cat ( T && modifier );
+        D& _mod_cat ( T&& modifier );
 
-        D& _cat ( _std_hex_type modifier          );
+        D& _cat ( _std_hex_type          modifier );
         D& _cat ( _std_setprecision_type modifier );
-        D& _cat ( _std_setfill_type modifier      );
-        D& _cat ( _std_setw_type modifier         );
+        D& _cat ( _std_setfill_type      modifier );
+        D& _cat ( _std_setw_type         modifier );
     };
     //===================================================================================
     //      vcat_iface
@@ -146,6 +145,12 @@ namespace impl_vcat
     }
     //===================================================================================
 
+    //===================================================================================
+    template<typename D>
+    bool vcat_iface<D>::_delimiter_has_been_added() const
+    {
+        return _delimiter_added;
+    }
     //===================================================================================
     template< typename D >
     template< typename T >

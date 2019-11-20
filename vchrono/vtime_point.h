@@ -81,7 +81,9 @@ public:
     template<typename Duration>
     vsystem_time_point( const Duration& d ) : _base_type(d) {}
 };
+
 using vtime_point = vsystem_time_point;
+
 //=======================================================================================
 class vsteady_time_point
         : public impl_vchrono::time_point_base< std::chrono::steady_clock,

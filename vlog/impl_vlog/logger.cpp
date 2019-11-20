@@ -24,7 +24,7 @@ logger::~logger()
     if ( !_is_on ) return;
 
     auto msg = _stream.str();
-    if ( delimiter_was_added() )
+    if ( _delimiter_has_been_added() )
         msg.back() = '\n';
     else
         msg.push_back( '\n' );
