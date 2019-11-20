@@ -17,6 +17,10 @@
 #include <iomanip>
 #include <limits>
 
+#include "impl_vcat/tuple.h"
+#include "impl_vcat/containers.h"
+#include "impl_vcat/vcat_qt_deploy.h"
+
 //=======================================================================================
 /*  UPD 2018-07-03  by Elapidae
  *

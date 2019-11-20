@@ -19,10 +19,6 @@
 #include <stdexcept>
 
 #include "impl_vcat/vcat_iface.h"
-#include "impl_vcat/tuple.h"
-#include "impl_vcat/containers.h"
-#include "impl_vcat/vcat_qt_deploy.h"
-
 
 //=======================================================================================
 /*      2018-03-20       VCAT
