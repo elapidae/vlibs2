@@ -16,12 +16,18 @@ isEmpty(qi_v_has_qt) {
     qi_v_has_qt = 1;
     isEmpty(qi_not_print_pri_messages): message("=== v_has_qt appended ===")
 
-    #<<< Start your code here -----------------------------------------------------------
     contains( CONFIG, qt ) {
         DEFINES += V_HAS_QT
         isEmpty(qi_not_print_pri_messages): message("=== macro V_HAS_QT added ===")
-    }
-    #>>> Stop your code here ------------------------------------------------------------
+
+        contains( QT, network ) {
+            DEFINES += V_HAS_QT_NETWORK
+            isEmpty(qi_not_print_pri_messages){
+                message("=== macro V_HAS_QT_NETWORK added ===")
+            } # message about network
+        } # QT contains network
+
+    } # CONFIG contains qt
 }
 # v_has_qt.pri
 #========================================================================================

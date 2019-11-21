@@ -29,6 +29,10 @@
     #include <QByteArray>
     #include <QPoint>
     #include <QPointF>
+
+    #ifdef V_HAS_QT_NETWORK
+        #include <QHostAddress>
+    #endif
 #endif // has qt
 
 
@@ -192,6 +196,13 @@ TEST_F( VCat_Test, simple_qt_test )
     EXPECT_EQ( vcat(QByteArray{"qbytearray"}).str(), "qbytearray" );
     EXPECT_EQ( vcat(QPoint{1,-2}).str(), "QPoint(1,-2)" );
     EXPECT_EQ( vcat(QPointF{1.5,-2.5}).str(), "QPointF(1.5,-2.5)" );
+
+    #ifdef V_HAS_QT_NETWORK
+        EXPECT_EQ( vcat(QHostAddress("1.2.3.4")).str(),
+                        "QHostAddress(1.2.3.4)" );
+        EXPECT_EQ( vcat(QHostAddress("ffff::506:708")).str(),
+                        "QHostAddress(ffff::506:708)" );
+    #endif
 }
 #endif // V_HAS_QT
 //=======================================================================================

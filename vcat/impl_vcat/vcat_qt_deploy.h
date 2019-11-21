@@ -27,6 +27,13 @@
 
     class QPointF;
     std::ostream& operator <<( std::ostream& os, const QPointF& );
+
+    #ifdef V_HAS_QT_NETWORK
+        class QHostAddress;
+        std::ostream& operator <<( std::ostream& os, const QHostAddress& );
+    #endif // V_HAS_QT_NETWORK
+
 #endif // V_HAS_QT
+
 
 #endif // IMPL_VCAT_QT_DEPLOY_H
