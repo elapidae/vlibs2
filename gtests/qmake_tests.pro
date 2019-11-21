@@ -1,9 +1,23 @@
 TEMPLATE = subdirs
 
+#   Столь странное подключение проектов сделано, чтобы писать имя микромодуля только раз.
+#   Копипастите последнюю пару строк и меняйте PROJECT = <microname>
+#   Если были соблюдены все правила именования, тест должен подцепиться.
 
-SUBDIRS += vlibs/vcat/test_vcat
-SUBDIRS += vlibs/vgit/test_vgit
-SUBDIRS += vlibs/vcompiler_traits/test_vcompiler_traits
-SUBDIRS += vlibs/vsignal/test_vsignal
-SUBDIRS += vlibs/vchrono/test_vchrono
-SUBDIRS += vlibs/vlog/test_vlog
+PROJECT = vcat
+SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
+
+PROJECT = vgit
+SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
+
+PROJECT = vcompiler_traits
+SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
+
+PROJECT = vsignal
+SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
+
+PROJECT = vchrono
+SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
+
+PROJECT = vlog
+SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
