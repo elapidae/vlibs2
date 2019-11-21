@@ -19,14 +19,7 @@
 using namespace std;
 
 //=======================================================================================
-std::string last_fname(const char *filepath)
-{
-    std::string fp(filepath);
-    auto pos = fp.find_last_of( '/' );
-    if ( pos == std::string::npos ) return fp;
-    return fp.substr( pos + 1 );
-}
-#define vdeb std::cout << last_fname(__FILE__) << ":" << __LINE__ << "==> "
+#define vdeb std::cout << basename(__FILE__) << ":" << __LINE__ << "==> "
 //=======================================================================================
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
@@ -94,6 +87,26 @@ TEST_F( VSignal_Test, simple3 )
 
 //=======================================================================================
 
+//  Проверка, что старые компиляторы могут
+TEST_F( VSignal_Test, simple_link_class )
+{
+    VSignal<int,double,char> sig;
+
+    struct Foo
+    {
+        void bar(int i, float f, char c)
+        {
+            vdeb << i << " " << f << " " << c << endl;
+        }
+    };
+    Foo foo;
+
+    sig.link( &foo, &Foo::bar );
+    sig( 42, 3.14, 'A' );
+}
+
+//=======================================================================================
+
 TEST_F( VSignal_Test, simple4 )
 {
     VSignal<std::string> s;
@@ -108,6 +121,23 @@ TEST_F( VSignal_Test, simple4 )
 
     EXPECT_EQ( s1, s2 );
     EXPECT_EQ( s1, "ololo" );
+}
+
+//=======================================================================================
+
+TEST_F( VSignal_Test, check_link_wrong )
+{
+    VSignal<std::string> s1;
+    VSignal<std::string> s2;
+
+    auto l1 = s1.link( [](string){} );
+    auto l2 = s2.link( [](string){} );
+
+    EXPECT_THROW( s1.unlink(l2), std::runtime_error );
+    EXPECT_THROW( s2.unlink(l1), std::runtime_error );
+
+    s1.unlink(l1);
+    s2.unlink(l2);
 }
 
 //=======================================================================================
@@ -142,8 +172,6 @@ TEST_F( VSignal_Test, unlink )
 }
 
 //=======================================================================================
-
-
 
 
 //=======================================================================================

@@ -2,12 +2,6 @@
 **
 **  VLIBS codebase, NIIAS
 **
-**  Authors:
-**  Alexandre Gromtsev aka elapidae     elapidae@yandex.ru
-**  Nadezhda Churikova aka claorisel    claorisel@gmail.com
-**  Ekaterina Boltenkova aka kataretta  kitkat52@yandex.ru
-**  Ivan Deylid aka sid1057             ivanov.dale@gmail.com>
-**
 **  GNU Lesser General Public License Usage
 **  This file may be used under the terms of the GNU Lesser General Public License
 **  version 3 as published by the Free Software Foundation and appearing in the file
@@ -111,7 +105,6 @@ private:
 //=======================================================================================
 
 
-
 //=======================================================================================
 //      IMPLEMENTATION
 //=======================================================================================
@@ -124,11 +117,13 @@ public:
 private:
     friend class VSignal<Args...>;
 
-    link_id( int id )
-        : _id(id)
+    link_id( int id, VSignal<Args...> * owner )
+        : _id    ( id    )
+        , _owner ( owner )
     {}
 
     int _id = -1;
+    VSignal<Args...> * _owner = nullptr;
 };
 //=======================================================================================
 template< typename ... Args >
@@ -140,15 +135,14 @@ template< typename Fn >
 typename VSignal<Args...>::link_id VSignal<Args...>::link( Fn&& fn )
 {
     _funcs.insert( {++_cur_id, Func(std::forward<Fn>(fn))} );
-    return _cur_id;
+    return { _cur_id, this };
 }
 //=======================================================================================
 template< typename ... Args >
 template< typename Fn >
 typename VSignal<Args...>::link_id VSignal<Args...>::operator+=( Fn&& fn )
 {
-    _funcs.insert( {++_cur_id, std::forward<Fn>(fn)} );
-    return _cur_id;
+    return link( std::forward<Fn>(fn) );
 }
 //=======================================================================================
 template< typename ... Args >
@@ -161,9 +155,12 @@ typename VSignal<Args...>::link_id VSignal<Args...>::link( Cls *cls, Fn fn )
 template< typename ... Args >
 void VSignal<Args...>::unlink( link_id id )
 {
+    if ( id._owner != this )
+        throw std::runtime_error( "VSignal::unlink(id): signal not an owner." );
+
     auto count = _funcs.erase( id._id );
     if ( count == 0 )
-        throw std::runtime_error( "Cannot unlink VSignal::link_id." );
+        throw std::runtime_error( "VSignal::unlink(id): link has been lost." );
 }
 //=======================================================================================
 template< typename ... Args >
