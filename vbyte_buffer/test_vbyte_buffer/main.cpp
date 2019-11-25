@@ -1,0 +1,273 @@
+/****************************************************************************************
+**
+**  VLIBS codebase, NIIAS
+**
+**  GNU Lesser General Public License Usage
+**  This file may be used under the terms of the GNU Lesser General Public License
+**  version 3 as published by the Free Software Foundation and appearing in the file
+**  LICENSE.LGPL3 included in the packaging of this file. Please review the following
+**  information to ensure the GNU Lesser General Public License version 3 requirements
+**  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+****************************************************************************************/
+
+#include "gtest/gtest.h"
+
+#include "vbyte_buffer.h"
+#include "vbyte_buffer_view.h"
+
+template<class> class TD;
+
+using namespace std;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpragmas"
+#pragma GCC diagnostic ignored "-Wweak-vtables"
+class VByteBuffer_Test: public testing::Test
+{};
+#pragma GCC diagnostic pop
+
+
+//=======================================================================================
+TEST_F( VByteBuffer_Test, ctors )
+{
+    vbyte_buffer bb_empty;
+    EXPECT_EQ( bb_empty.str(), string{} );
+
+    vbyte_buffer bb( "ololo" );
+    EXPECT_EQ( bb.str(), string{"ololo"} );
+
+    // for operator string().
+    string s = bb;
+    EXPECT_TRUE( s == string("ololo") );
+}
+
+//=======================================================================================
+
+TEST_F( VByteBuffer_Test, compare )
+{
+    vbyte_buffer b1{"123"};
+    vbyte_buffer b2{"123"};
+    vbyte_buffer b3{"12"};
+    EXPECT_EQ( b1, b1 );
+    EXPECT_EQ( b1, b2 );
+    EXPECT_NE( b1, b3 );
+    EXPECT_NE( b2, b3 );
+
+    EXPECT_TRUE ( b1 == b2 );
+    EXPECT_FALSE( b1 == b3 );
+
+    EXPECT_TRUE ( b1 != b3 );
+    EXPECT_FALSE( b1 != b2 );
+}
+
+//=======================================================================================
+
+TEST_F( VByteBuffer_Test, appends )
+{
+    vbyte_buffer bb;
+    uint8_t u8 = 'U';
+    int8_t  i8 = 'I';
+    char c = 'C';
+
+    bb.append( u8 );
+    bb.append( i8 );
+    bb.append( c  );
+    bb.append( string{" str "} );
+    bb.append( "const char*"   );
+
+    EXPECT_EQ( bb.str(), string{"UIC str const char*"} );
+}
+
+//=======================================================================================
+
+TEST_F( VByteBuffer_Test, chops_resize )
+{
+    vbyte_buffer bb{ "1234567890" };
+    bb.chop_front(5);
+    EXPECT_EQ( bb.str(), "67890" );
+    bb.chop_front(50);
+    EXPECT_EQ( bb.str(), "" );
+
+    bb = vbyte_buffer{ "1234567890" };
+    bb.chop_back(1);
+    EXPECT_EQ( bb.str(), "123456789" );
+    bb.chop_back(2);
+    EXPECT_EQ( bb.str(), "1234567" );
+    bb.chop_back(21111);
+    EXPECT_EQ( bb.str(), "" );
+
+    bb = vbyte_buffer{ "1234567890" };
+    bb.resize(7);
+    EXPECT_EQ( bb.str(), "1234567" );
+    bb.resize(7);
+    EXPECT_EQ( bb.str(), "1234567" );
+    EXPECT_THROW( bb.resize(8), std::length_error );
+    EXPECT_EQ( bb.str(), "1234567" );
+    bb.resize(0);
+    EXPECT_EQ( bb.str(), "" );
+}
+
+//=======================================================================================
+
+TEST_F( VByteBuffer_Test, left_right_middle )
+{
+    vbyte_buffer bb{ "1234567890" };
+    EXPECT_EQ( bb.left(0).str(), "" );
+    EXPECT_EQ( bb.left(3).str(), "123" );
+    EXPECT_EQ( bb.left(7).str(), "1234567" );
+    EXPECT_EQ( bb.left(9).str(), "123456789" );
+    EXPECT_EQ( bb.left(10).str(), "1234567890" );
+    EXPECT_EQ( bb.left(11).str(), "1234567890" );
+    EXPECT_EQ( bb.left(100).str(), "1234567890" );
+
+    EXPECT_EQ( bb.right(0).str(), "" );
+    EXPECT_EQ( bb.right(3).str(), "890" );
+    EXPECT_EQ( bb.right(7).str(), "4567890" );
+    EXPECT_EQ( bb.right(9).str(), "234567890" );
+    EXPECT_EQ( bb.right(10).str(), "1234567890" );
+    EXPECT_EQ( bb.right(11).str(), "1234567890" );
+    EXPECT_EQ( bb.right(100).str(), "1234567890" );
+
+    EXPECT_EQ( bb.middle(0).str(), "1234567890" );
+    EXPECT_EQ( bb.middle(1).str(), "234567890" );
+    EXPECT_EQ( bb.middle(1, 3).str(), "234" );
+    EXPECT_EQ( bb.middle(1, 8).str(), "23456789" );
+    EXPECT_EQ( bb.middle(1, 9).str(), "234567890" );
+    EXPECT_EQ( bb.middle(1, 10).str(), "234567890" );
+    EXPECT_EQ( bb.middle(9, 10).str(), "0" );
+    EXPECT_EQ( bb.middle(10,10).str(), "" );
+}
+
+//=======================================================================================
+
+TEST_F( VByteBuffer_Test, starts_ends_with )
+{
+    vbyte_buffer bb{ "1234567890" };
+
+    EXPECT_TRUE ( bb.starts_with("123") );
+    EXPECT_FALSE( bb.starts_with("23") );
+    EXPECT_TRUE ( bb.starts_with("1234567890") );
+    EXPECT_FALSE( bb.starts_with("12345678900") );
+
+    EXPECT_TRUE ( bb.ends_with("890") );
+    EXPECT_FALSE( bb.ends_with("89") );
+    EXPECT_TRUE ( bb.ends_with("1234567890") );
+    EXPECT_FALSE( bb.ends_with("01234567890") );
+}
+
+//=======================================================================================
+
+TEST_F( VByteBuffer_Test, text )
+{
+    EXPECT_EQ( vbyte_buffer("12345").text_to_int(), 12345 );
+    EXPECT_EQ( vbyte_buffer("123456").text_to_uint(), 123456 );
+
+    EXPECT_DOUBLE_EQ( vbyte_buffer("123.45").text_to_double(), 123.45 );
+    EXPECT_FLOAT_EQ( vbyte_buffer("123.456").text_to_double(), 123.456f );
+
+    EXPECT_EQ( vbyte_buffer("0123456789012345").text_to_long(), 123456789012345l );
+    EXPECT_EQ( vbyte_buffer("012345678901234567 ").text_to_ulong(), 12345678901234567ul);
+}
+
+//=======================================================================================
+
+TEST_F( VByteBuffer_Test, splitters )
+{
+    //------------------------------------------------------------------
+    auto must = vbyte_buffer::vector{};
+    auto vec  = vbyte_buffer("").split('|');
+    EXPECT_EQ( vec, must );
+    vec  = vbyte_buffer("").split_by_spaces();
+    EXPECT_EQ( vec, must );
+    //------------------------------------------------------------------
+    must = vbyte_buffer::vector{ vbyte_buffer("") };
+    vec  = vbyte_buffer("|").split('|');
+    EXPECT_EQ( vec, must );
+    vec  = vbyte_buffer(" ").split_by_spaces();
+    EXPECT_EQ( vec, must );
+
+    must = vbyte_buffer::vector{ vbyte_buffer(""),vbyte_buffer("") };
+    vec  = vbyte_buffer("||").split('|');
+    EXPECT_EQ( vec, must );
+    vec  = vbyte_buffer("  ").split_by_spaces();
+    EXPECT_EQ( vec, must );
+    //------------------------------------------------------------------
+    vec  = vbyte_buffer("|1|2||345|").split('|');
+    must = vbyte_buffer::vector
+        {
+            vbyte_buffer(""),
+            vbyte_buffer("1"),
+            vbyte_buffer("2"),
+            vbyte_buffer(""),
+            vbyte_buffer("345")
+            // has not last empty value.
+        };
+    EXPECT_EQ( vec, must );
+    //------------------------------------------------------------------
+    {
+        vbyte_buffer bbt{"\t\n \r\f  12345  \n\n\n  \t \r"};
+        bbt.trim_spaces();
+        EXPECT_EQ( bbt.str(), "12345" );
+    }
+    {
+        vbyte_buffer bbt{"\t\n \r\f  12345  \n\n\n  \t \r"};
+        EXPECT_EQ( bbt.trim_spaces().str(), "12345" );
+    }
+    //------------------------------------------------------------------
+    vec = vbyte_buffer("123 \t 456 ").split_by_spaces();
+    must = vbyte_buffer::vector
+        {
+            vbyte_buffer("123"),
+            vbyte_buffer(""),
+            vbyte_buffer(""),
+            // not three, first splitter omitted.
+            vbyte_buffer("456"),
+        };
+    EXPECT_EQ( vec, must );
+    //------------------------------------------------------------------
+}
+
+//=======================================================================================
+
+TEST_F( VByteBuffer_Test, hex )
+{
+    auto abra = vbyte_buffer::from_hex( "Abracadabra" ).to_Hex();
+    EXPECT_EQ( abra.str(), "0A BA CA DA BA" );
+
+    //При нечетном количестве шестнадцатеричных символов, считается, что первый байт
+    //обозначен одним символом:
+    auto odd_syms = vbyte_buffer::from_hex("123").to_Hex();
+    EXPECT_EQ( odd_syms.str(), "01 23" );
+
+    vbyte_buffer test;
+    test.append( char(0x05) );
+    test.append( char(0x0A) );
+    test.append( char(0x1B) );
+
+    auto res = test.tohex();        // "050a1b"
+    EXPECT_EQ( res.str(), "050a1b" );
+
+    res = test.toHex();             // "050A1B"
+    EXPECT_EQ( res.str(), "050A1B" );
+
+    res = test.to_hex();            // "05 0a 1b"
+    EXPECT_EQ( res.str(), "05 0a 1b" );
+
+    res = test.to_Hex();            // "05 0A 1B"
+    EXPECT_EQ( res.str(), "05 0A 1B" );
+
+    res = test.to_Hex('#');         // "05#0A#1B"
+    EXPECT_EQ( res.str(), "05#0A#1B" );
+}
+
+//=======================================================================================
+//  Main, do not delete...
+//=======================================================================================
+int main(int argc, char *argv[])
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
+//=======================================================================================
+//  Main, do not delete...
+//=======================================================================================
