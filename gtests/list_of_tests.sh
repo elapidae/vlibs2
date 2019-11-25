@@ -25,13 +25,16 @@ PROJECT=vlog
 vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
 
 echo ====================================================================================
+PROJECT=vbyte_buffer
+vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
+
+echo ====================================================================================
+
 
 
 #vlibs/vgio/keyfile/test_keyfile/test_keyfile            || exit 1
 #echo ====================================================================================
 #vlibs/vcrc/test_vcrc/test_vcrc                          || exit 1
-#echo ====================================================================================
-#vlibs/vstring/test_vstring/test_vstring                 || exit 1
 #echo ====================================================================================
 #vlibs/vgeometry/test_vgeometry/test_vgeometry           || exit 1
 #echo ====================================================================================
