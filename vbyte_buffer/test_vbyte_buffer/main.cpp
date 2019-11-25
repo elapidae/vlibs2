@@ -327,6 +327,8 @@ TEST_F( VByteBuffer_Test, simple_view_1 )
     eu16 = view.u16_LE();  EXPECT_EQ( eu16, u16 );
     ef = view.float_LE();  EXPECT_EQ( ef, f );
     ed = view.double_LE(); EXPECT_EQ( ed, d );
+    EXPECT_TRUE( view.finished() );
+    EXPECT_TRUE( view.remained() == 0 );
     EXPECT_TRUE( buf.starts_with("Hello") );
     EXPECT_EQ( buf.middle(5,4).to_Hex().str(), "78 56 34 12" );
 }

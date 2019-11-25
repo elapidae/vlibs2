@@ -27,6 +27,9 @@ if ( NOT  VCAT_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vbyte_buffer/vbyte_buffer_view.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vbyte_buffer/vbyte_buffer_view.cpp" )
 
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vbyte_buffer/VByteBuffer"     )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vbyte_buffer/VByteBufferView" )
+
     message( "=== vbyte_buffer included ===" )
 endif()
 # vcat.cmake

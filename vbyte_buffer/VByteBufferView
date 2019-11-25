@@ -1,0 +1,5 @@
+#pragma once
+
+#include "vbyte_buffer_view.h"
+
+using VByteBufferView = vbyte_buffer_view;
