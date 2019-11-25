@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <algorithm>
+#include "vbyte_buffer_view.h"
 
 using namespace std;
 
@@ -23,6 +24,16 @@ const std::string& vbyte_buffer::str() const
 size_t vbyte_buffer::size() const
 {
     return _buf.size();
+}
+//=======================================================================================
+vbyte_buffer_view vbyte_buffer::view() const
+{
+    return { _buf.data(), _buf.size() };
+}
+//=======================================================================================
+void vbyte_buffer::clear()
+{
+    _buf.clear();
 }
 //=======================================================================================
 bool vbyte_buffer::operator ==( const vbyte_buffer& rhs ) const

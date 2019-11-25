@@ -106,7 +106,7 @@ template<typename T>
 T vbyte_buffer_view::_show() const
 {
     if ( _remained < sizeof(T) )
-        throw std::out_of_range( "vbyte_buffer_view: not enouth data");
+        throw std::out_of_range( "vbyte_buffer_view: not enouth data" );
 
     T res;
     auto ptr = static_cast<char*>( static_cast<void*>(&res) );

@@ -261,6 +261,79 @@ TEST_F( VByteBuffer_Test, hex )
 }
 
 //=======================================================================================
+
+TEST_F( VByteBuffer_Test, append_LE_BE )
+{
+    char     center = 0x00;
+    int32_t  i32    = 0x12345678;
+    uint16_t u16    = 0xABCD;
+
+    vbyte_buffer be, le;
+
+    be.append_BE(i32);
+    be.append(center);
+    be.append_BE(u16);
+    auto be_Hex = be.to_Hex();
+
+    le.append_LE(i32);
+    le.append_LE(center);
+    le.append_LE(u16);
+    auto le_Hex = le.to_Hex();
+
+    EXPECT_EQ( be_Hex.str(), "12 34 56 78 00 AB CD" );
+    EXPECT_EQ( le_Hex.str(), "78 56 34 12 00 CD AB" );
+}
+
+//=======================================================================================
+
+TEST_F( VByteBuffer_Test, simple_view_1 )
+{
+    const string   s    = "Hello"; // size = 5.
+    const int32_t  i32  = 0x12345678;
+    const uint16_t u16  = 0xABCD;
+    const float    f    = 123.45f;
+    const double   d    = 6789.1234456;
+
+    vbyte_buffer buf;
+
+    buf.append( s );
+    buf.append_BE( i32 );
+    buf.append_BE( u16 );
+    buf.append_BE( f );
+    buf.append_BE( d );
+
+    auto view = buf.view();
+    auto es = view.string(5);   EXPECT_EQ( es, s );
+    auto ei32 = view.i32_BE();  EXPECT_EQ( ei32, i32 );
+    auto eu16 = view.u16_BE();  EXPECT_EQ( eu16, u16 );
+    auto ef = view.float_BE();  EXPECT_EQ( ef, f );
+    auto ed = view.double_BE(); EXPECT_EQ( ed, d );
+    EXPECT_TRUE( view.finished() );
+    EXPECT_TRUE( view.remained() == 0 );
+    EXPECT_TRUE( buf.starts_with("Hello") );
+    EXPECT_EQ( buf.middle(5,4).to_Hex().str(), "12 34 56 78" );
+
+    buf.clear();
+
+    buf.append( s );
+    buf.append_LE( i32 );
+    buf.append_LE( u16 );
+    buf.append_LE( f );
+    buf.append_LE( d );
+
+    view = buf.view();
+    es = view.string(5);   EXPECT_EQ( es, s );
+    ei32 = view.i32_LE();  EXPECT_EQ( ei32, i32 );
+    eu16 = view.u16_LE();  EXPECT_EQ( eu16, u16 );
+    ef = view.float_LE();  EXPECT_EQ( ef, f );
+    ed = view.double_LE(); EXPECT_EQ( ed, d );
+    EXPECT_TRUE( buf.starts_with("Hello") );
+    EXPECT_EQ( buf.middle(5,4).to_Hex().str(), "78 56 34 12" );
+}
+//=======================================================================================
+
+
+//=======================================================================================
 //  Main, do not delete...
 //=======================================================================================
 int main(int argc, char *argv[])

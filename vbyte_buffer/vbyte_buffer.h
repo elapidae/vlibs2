@@ -21,6 +21,8 @@
 #include <sstream>
 
 //=======================================================================================
+class vbyte_buffer_view;
+//=======================================================================================
 class vbyte_buffer
 {
 public:
@@ -37,6 +39,11 @@ public:
     operator const std::string&() const;
 
     size_t size() const;
+
+    //  NB! Ни в коем случае не изменяйте буффер пока пользуетесь view!
+    vbyte_buffer_view view() const;
+
+    void clear();
 
     bool operator == ( const vbyte_buffer& rhs ) const;
     bool operator != ( const vbyte_buffer& rhs ) const;
@@ -171,6 +178,8 @@ T vbyte_buffer::text_to_any() const
     return res;
 }
 //=======================================================================================
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 template<typename T>
 typename std::enable_if< std::is_arithmetic<T>::value, T>::type
 vbyte_buffer::reverse_T( T val )
@@ -190,6 +199,7 @@ vbyte_buffer::reverse_T( T val )
 
     return val;
 }
+#pragma GCC diagnostic pop
 //=======================================================================================
 template<typename T>
 void vbyte_buffer::_append( const T& val )
