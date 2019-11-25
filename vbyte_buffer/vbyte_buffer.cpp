@@ -1,6 +1,5 @@
 #include "vbyte_buffer.h"
 
-#include <stdexcept>
 #include <algorithm>
 #include "vbyte_buffer_view.h"
 

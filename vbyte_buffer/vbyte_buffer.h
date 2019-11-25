@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <stdexcept>
 
 //=======================================================================================
 class vbyte_buffer_view;

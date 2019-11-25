@@ -23,8 +23,11 @@ add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
 set( PROJECT vlog )
 add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
 
+set( PROJECT vbyte_buffer )
+add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
+
+
 #add_subdirectory( "${VLIBS_DIR}/vcrc/test_vcrc/" )
-#add_subdirectory( "${VLIBS_DIR}/vstring/test_vstring/" )
 #add_subdirectory( "${VLIBS_DIR}/vgeometry/test_vgeometry/" )
 #add_subdirectory( "${VLIBS_DIR}/vgio/keyfile/test_keyfile/" )
 #add_subdirectory( "${VLIBS_DIR}/vapplication/test_vapplication/" )

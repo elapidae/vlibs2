@@ -21,3 +21,6 @@ SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
 
 PROJECT = vlog
 SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
+
+PROJECT = vbyte_buffer
+SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
