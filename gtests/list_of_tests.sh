@@ -29,6 +29,10 @@ PROJECT=vbyte_buffer
 vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
 
 echo ====================================================================================
+PROJECT=vposix
+vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
+
+echo ====================================================================================
 
 
 
