@@ -26,10 +26,12 @@ if ( NOT  VPOSIX_INCLUDED )
     #------------------------------------------------------------------------------------
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/vposix.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vposix.cpp" )
+    #set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vposix.cpp" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/verrno.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/verrno.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/linux_call.h"   )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_errno.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_errno.cpp" )
 
     #------------------------------------------------------------------------------------
 

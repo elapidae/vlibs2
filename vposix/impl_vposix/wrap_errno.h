@@ -1,5 +1,5 @@
-#ifndef IMPL_VPOSIX_VERRNO_H
-#define IMPL_VPOSIX_VERRNO_H
+#ifndef IMPL_VPOSIX_WRAP_ERRNO_H
+#define IMPL_VPOSIX_WRAP_ERRNO_H
 
 //=======================================================================================
 /*
@@ -7,7 +7,8 @@
  *
  * http://man7.org/linux/man-pages/man3/errno.3.html
  *
- *  Введено такое имя, чтобы никак не совпасть с errno, errno.h etc.
+ * Соответствия ошибок есть здесь:
+ * https://ru.cppreference.com/w/cpp/error/errc
 */
 //=======================================================================================
 
@@ -17,15 +18,15 @@
 namespace impl_vposix
 {
     //===================================================================================
-    class VErrNo final
+    class ErrNo final
     {
     public:
-        VErrNo();
+        ErrNo();
 
         bool has() const;
         std::string text() const;
 
-        //  Бросает std::runtime_error(text) если есть ошибка.
+        //  Бросает verror(text) если есть ошибка.
         void throw_if_has();
 
         //  EINTR -- Interrupted system call, надо повторить последний вызов.
@@ -38,4 +39,4 @@ namespace impl_vposix
 } // namespace impl_vposix
 //=======================================================================================
 
-#endif // IMPL_VPOSIX_VERRNO_H
+#endif // IMPL_VPOSIX_WRAP_ERRNO_H

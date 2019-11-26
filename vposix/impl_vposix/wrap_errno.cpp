@@ -1,17 +1,18 @@
-#include "verrno.h"
+#include "wrap_errno.h"
 
 #include <cerrno>
 #include <cstring>
 #include "vcat.h"
+#include "vlog.h"
 
 using namespace impl_vposix;
 
 //=======================================================================================
-VErrNo::VErrNo()
+ErrNo::ErrNo()
     : _err( errno )
 {}
 //=======================================================================================
-std::string VErrNo::text() const
+std::string ErrNo::text() const
 {
     if ( _err == 0 ) return {};
 
@@ -22,18 +23,18 @@ std::string VErrNo::text() const
     return vcat( '[', _err, "] ", ::strerror_r(_err, buf, buf_size) );
 }
 //=======================================================================================
-void VErrNo::throw_if_has()
+void ErrNo::throw_if_has()
 {
     if ( has() )
-        throw std::runtime_error( text() );
+        throw verror( text() );
 }
 //=======================================================================================
-bool VErrNo::has() const
+bool ErrNo::has() const
 {
     return _err == 0;
 }
 //=======================================================================================
-bool VErrNo::need_repeat_last_call() const
+bool ErrNo::need_repeat_last_call() const
 {
     return _err == EINTR;
 }

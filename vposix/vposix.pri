@@ -24,13 +24,31 @@ isEmpty(qi_vposix) {
     INCLUDEPATH += $$VLIBS_DIR/vposix
 
     #------------------------------------------------------------------------------------
-    #   CORE
+
     HEADERS     += $$VLIBS_DIR/vposix/vposix.h
-    SOURCES     += $$VLIBS_DIR/vposix/vposix.cpp
+    #SOURCES     += $$VLIBS_DIR/vposix/vposix.cpp
+
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/linux_call.h
+
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_errno.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_errno.cpp
+
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_fcntl.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_fcntl.cpp
+
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_stdio.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_stdio.cpp
+
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_stat.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_stat.cpp
+
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_unistd.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_unistd.cpp
 
     #------------------------------------------------------------------------------------
 
     OTHER_FILES += $$VLIBS_DIR/vposix/vposix.cmake
+    OTHER_FILES += $$VLIBS_DIR/vposix/README
 }
 # vposix.pri
 #========================================================================================
