@@ -36,7 +36,8 @@ TEST_F( VThread_Test, join_with_exception )
     try
     {
         thread.join();
-    } catch (int i)
+    }
+    catch (int i)
     {
         check = i;
     }

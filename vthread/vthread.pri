@@ -20,6 +20,7 @@ isEmpty(qi_vthread) {
 
     include( $$VLIBS_DIR/qmake/vposix.pri )
     include( $$VLIBS_DIR/qmake/vpoll.pri  )
+    include( $$VLIBS_DIR/qmake/vcompiler_traits.pri )
 
     INCLUDEPATH += $$VLIBS_DIR/vthread
 

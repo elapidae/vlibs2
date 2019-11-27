@@ -20,6 +20,7 @@ if ( NOT  VTHREAD_INCLUDED )
     include( "${VLIBS_DIR}/cmake/c++11.cmake"  )
     include( "${VLIBS_DIR}/cmake/vposix.cmake" )
     include( "${VLIBS_DIR}/cmake/vpoll.cmake"  )
+    include( "${VLIBS_DIR}/cmake/vcompiler_traits.cmake" )
 
     include_directories( "${VLIBS_DIR}/vthread/" )
 
