@@ -9,10 +9,8 @@ static thread_local epoll local_poll;
 static thread_local bool  local_let_stop = false;
 
 //=======================================================================================
-#include "vlog.h"
 void impl_vpoll::real_poll::poll()
 {
-    vdeb << "poll in" << &local_poll << &local_let_stop;
     while ( !local_let_stop )
     {
         local_poll.wait_once();

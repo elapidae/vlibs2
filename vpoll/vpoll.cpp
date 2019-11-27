@@ -1,20 +1,17 @@
 #include "vpoll.h"
 
-#include "impl_vposix/wrap_sys_epoll.h"
+#include "impl_vpoll/real_poll.h"
 
-using namespace impl_vposix;
+using namespace impl_vpoll;
 
 //=======================================================================================
-
-static thread_local epoll local_poll;
-
 void vpoll::poll()
 {
-
+    real_poll::poll();
 }
 //=======================================================================================
 void vpoll::stop()
 {
-
+    real_poll::stop();
 }
 //=======================================================================================

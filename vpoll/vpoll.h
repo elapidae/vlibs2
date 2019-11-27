@@ -5,11 +5,10 @@
 class vpoll final
 {
 public:
-    //-----------------------------------------------------------------------------------
 
     static void poll();
-    static void stop();
 
+    static void stop();
 
 private:
     vpoll() = delete;
