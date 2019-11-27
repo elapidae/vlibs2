@@ -21,6 +21,8 @@ namespace impl_vposix
         //-------------------------------------------------------------------------------
         static void close( int fd );
 
+        static void usleep( uint usec );
+
         static void write( int fd, const std::string& data );
         //-------------------------------------------------------------------------------
     };
