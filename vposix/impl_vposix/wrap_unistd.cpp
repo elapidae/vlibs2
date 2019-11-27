@@ -12,6 +12,11 @@ void wrap_unistd::close( int fd )
     linux_call::check( ::close, fd );
 }
 //=======================================================================================
+void wrap_unistd::usleep( uint usec )
+{
+    ::usleep( usec );
+}
+//=======================================================================================
 void wrap_unistd::write( int fd, const std::string& data )
 {
     ssize_t res = linux_call::no_err( ::write, fd, data.c_str(), data.size() );
