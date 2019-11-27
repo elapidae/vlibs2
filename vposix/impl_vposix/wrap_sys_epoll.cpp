@@ -106,7 +106,6 @@ static void econtrol( int efd,
                       uint32_t events,
                       epoll_receiver* receiver )
 {
-    assert( receiver );
     epoll_event event;
     event.data.ptr = receiver;
     event.events   = events|EPOLLRDHUP|EPOLLPRI;
@@ -127,12 +126,14 @@ static uint32_t direction( wrap_sys_epoll::Direction d )
 void wrap_sys_epoll::add( int efd, int fd, wrap_sys_epoll::Direction d,
                           epoll_receiver *receiver )
 {
+    assert( receiver );
     econtrol( efd, fd, EPOLL_CTL_ADD, direction(d), receiver );
 }
 //=======================================================================================
 void wrap_sys_epoll::mod( int efd, int fd, wrap_sys_epoll::Direction d,
                           epoll_receiver *receiver )
 {
+    assert( receiver );
     econtrol( efd, fd, EPOLL_CTL_MOD, direction(d), receiver );
 }
 //=======================================================================================
