@@ -1,0 +1,1 @@
+../vthread/vthread.pri
