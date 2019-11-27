@@ -2,10 +2,14 @@
 
 #include <sys/epoll.h>
 #include "impl_vposix/linux_call.h"
+#include "impl_vposix/wrap_unistd.h"
 #include "vlog.h"
 
 using namespace impl_vposix;
 
+
+//=======================================================================================
+//      epoll_receiver, throws not implemented message
 //=======================================================================================
 impl_vposix::epoll_receiver::~epoll_receiver()
 {}
@@ -26,6 +30,61 @@ void impl_vposix::epoll_receiver::on_hang_up()
 }
 //=======================================================================================
 
+//=======================================================================================
+//      epoll as normal class
+//=======================================================================================
+epoll::epoll()
+    : _efd( wrap_sys_epoll::create() )
+{}
+//=======================================================================================
+epoll::~epoll()
+{
+    wrap_unistd::close( _efd );
+}
+//=======================================================================================
+void epoll::add_read( int fd, epoll_receiver *receiver )
+{
+    wrap_sys_epoll::add( _efd, fd, wrap_sys_epoll::In, receiver );
+}
+//=======================================================================================
+void epoll::add_write( int fd, epoll_receiver *receiver )
+{
+    wrap_sys_epoll::add( _efd, fd, wrap_sys_epoll::Out, receiver );
+}
+//=======================================================================================
+void epoll::add_rw( int fd, epoll_receiver *receiver )
+{
+    wrap_sys_epoll::add( _efd, fd, wrap_sys_epoll::InOut, receiver );
+}
+//=======================================================================================
+void epoll::mod_read( int fd, epoll_receiver *receiver )
+{
+    wrap_sys_epoll::mod( _efd, fd, wrap_sys_epoll::In, receiver );
+}
+//=======================================================================================
+void epoll::mod_write( int fd, epoll_receiver *receiver )
+{
+    wrap_sys_epoll::mod( _efd, fd, wrap_sys_epoll::Out, receiver );
+}
+//=======================================================================================
+void epoll::mod_rw( int fd, epoll_receiver *receiver )
+{
+    wrap_sys_epoll::mod( _efd, fd, wrap_sys_epoll::InOut, receiver );
+}
+//=======================================================================================
+void epoll::remove( int fd )
+{
+    wrap_sys_epoll::del( _efd, fd );
+}
+//=======================================================================================
+void epoll::wait_once()
+{
+    wrap_sys_epoll::wait_once( _efd );
+}
+//=======================================================================================
+
+//=======================================================================================
+//      wrap_sys_epoll, only wrappers for kernel calls
 //=======================================================================================
 //  http://man7.org/linux/man-pages/man2/epoll_create.2.html
 int wrap_sys_epoll::create()
@@ -63,13 +122,13 @@ void wrap_sys_epoll::add( int efd, int fd, wrap_sys_epoll::Direction d,
     econtrol( efd, fd, EPOLL_CTL_ADD, direction(d), receiver );
 }
 //=======================================================================================
-void wrap_sys_epoll::change( int efd, int fd, wrap_sys_epoll::Direction d,
-                             epoll_receiver *receiver )
+void wrap_sys_epoll::mod( int efd, int fd, wrap_sys_epoll::Direction d,
+                          epoll_receiver *receiver )
 {
     econtrol( efd, fd, EPOLL_CTL_MOD, direction(d), receiver );
 }
 //=======================================================================================
-void wrap_sys_epoll::remove( int efd, int fd )
+void wrap_sys_epoll::del( int efd, int fd )
 {
     econtrol( efd, fd, EPOLL_CTL_DEL, 0, nullptr );
 }

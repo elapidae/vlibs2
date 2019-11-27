@@ -26,6 +26,30 @@ namespace impl_vposix
         virtual void on_hang_up();
     };
     //===================================================================================
+    class epoll final
+    {
+    public:
+        epoll();
+        ~epoll();
+
+        void add_read   ( int fd, epoll_receiver * receiver );
+        void add_write  ( int fd, epoll_receiver * receiver );
+        void add_rw     ( int fd, epoll_receiver * receiver );
+
+        void mod_read   ( int fd, epoll_receiver * receiver );
+        void mod_write  ( int fd, epoll_receiver * receiver );
+        void mod_rw     ( int fd, epoll_receiver * receiver );
+
+        void remove     ( int fd );
+
+        void wait_once();
+
+    private:
+        int _efd;
+    };
+    //===================================================================================
+
+    //===================================================================================
     //  на все события, помимо In, Out выставляются флаги |EPOLLRDHUP|EPOLLPRI;
     //  efd -- epoll file descriptor.
     //  fd  -- controlled file descriptor.
@@ -35,10 +59,10 @@ namespace impl_vposix
 
         static int create();
 
-        static void add    ( int efd, int fd, Direction d, epoll_receiver * receiver );
-        static void change ( int efd, int fd, Direction d, epoll_receiver * receiver );
+        static void add( int efd, int fd, Direction d, epoll_receiver * receiver );
+        static void mod( int efd, int fd, Direction d, epoll_receiver * receiver );
 
-        static void remove ( int efd, int fd );
+        static void del( int efd, int fd );
 
         static void wait_once( int efd );
     };

@@ -19,6 +19,7 @@
 #include "impl_vposix/wrap_unistd.h"
 #include "impl_vposix/wrap_sys_file.h"
 #include "impl_vposix/wrap_sys_epoll.h"
+#include "impl_vposix/wrap_sys_eventfd.h"
 
 
 class VPosix_Test: public testing::Test
@@ -70,12 +71,32 @@ TEST_F( VPosix_Test, 3 )
     using namespace std;
     using namespace impl_vposix;
 
-    int fd = wrap_fcntl::open_append( "ttt.txt" );
-
+    eventfd efd;
+    epoll ep;
+    int count = 0;
     struct R : epoll_receiver
-    {} r;
-    auto efd = wrap_sys_epoll::create();
-    //wrap_sys_epoll::add( efd, fd, wrap_sys_epoll::Out, &r );
+    {
+        eventfd *efd;
+        int *count;
+        void on_ready_read() override
+        {
+            while( efd->read() )
+                ++(*count);
+        }
+    } r;
+    r.efd = &efd;
+    r.count = &count;
+
+    ep.add_read( efd.handle(), &r );
+
+    efd.write();
+    efd.write();
+    efd.write();
+    efd.write();
+
+    ep.wait_once();
+
+    EXPECT_EQ( count, 4 );
 }
 
 //=======================================================================================
