@@ -10,10 +10,6 @@
 **  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 ****************************************************************************************/
 
-
-#include <iostream>
-#include <unordered_map>
-
 #include "gtest/gtest.h"
 #include "vcat.h"
 #include "vlog.h"
@@ -21,18 +17,18 @@
 #include "impl_vposix/wrap_stdio.h"
 #include "impl_vposix/wrap_fcntl.h"
 #include "impl_vposix/wrap_unistd.h"
+#include "impl_vposix/wrap_sys_file.h"
+#include "impl_vposix/wrap_sys_epoll.h"
+
 
 class VPosix_Test: public testing::Test
 {};
 
-using namespace std;
-
 template<class> class TD;
-
 
 //=======================================================================================
 
-TEST_F( VPosix_Test, _1_ )
+TEST_F( VPosix_Test, 1 )
 {
     using namespace impl_vposix;
     auto fd = wrap_fcntl::open_append( "test.txt" );
@@ -49,28 +45,37 @@ TEST_F( VPosix_Test, _1_ )
 }
 
 //=======================================================================================
-#include <fcntl.h>
-TEST_F( VPosix_Test, _2_ )
+
+TEST_F( VPosix_Test, 2 )
 {
     using namespace impl_vposix;
-    auto fd1 = wrap_fcntl::open_append( "t.txt" );
 
-    //EXPECT_ANY_THROW( wrap_fcntl::open_write_append("t.txt") );
+    // к сожалению, не умею делать блокировку файлов.
+    auto fd1 = wrap_fcntl::open_append( "1.txt" );
+    wrap_unistd::close( fd1 );
 
-    auto flags = wrap_fcntl::file_control_get( fd1 );
-    flags |= O_EXCL;
-    wrap_fcntl::file_control_set( fd1, flags );
-    vdeb << wrap_fcntl::file_control_get( fd1 );
+    //wrap_unistd::write( fd1, vcat(getpid(), "\n") );
 
-    auto fd2 = wrap_fcntl::open_append( "t.txt" );
+    //wrap_sys_file::lock_exclusive( fd1 );
+    //wrap_fcntl::set_write_lock( fd1 );
+    //wrap_fcntl::get_print_lock( fd1 );
+    //vdeb << "locked";
+    //sleep(1000);
+}
 
-//    wrap_unistd::write( fd, "1\n" );
-//    //  Хмм, можно переименовать открытый файл и продолжать в него писать.
-//    wrap_stdio::file_rename( "test.txt", "test.1.txt" );
-//    wrap_unistd::write( fd, "2\n" );
-//    //  Хмм, можно переписать тот открытый файл.
-//    wrap_unistd::write( fd2, "3\n" );
-//    wrap_stdio::file_rename( "test.txt", "test.1.txt" );
+//=======================================================================================
+
+TEST_F( VPosix_Test, 3 )
+{
+    using namespace std;
+    using namespace impl_vposix;
+
+    int fd = wrap_fcntl::open_append( "ttt.txt" );
+
+    struct R : epoll_receiver
+    {} r;
+    auto efd = wrap_sys_epoll::create();
+    //wrap_sys_epoll::add( efd, fd, wrap_sys_epoll::Out, &r );
 }
 
 //=======================================================================================

@@ -1,5 +1,5 @@
-#ifndef WRAP_STDIO_H
-#define WRAP_STDIO_H
+#ifndef IMPL_VPOSIX_WRAP_STDIO_H
+#define IMPL_VPOSIX_WRAP_STDIO_H
 
 
 //=======================================================================================
@@ -108,4 +108,4 @@ namespace impl_vposix
        The following sections are informative.
 */
 
-#endif // WRAP_STDIO_H
+#endif // IMPL_VPOSIX_WRAP_STDIO_H

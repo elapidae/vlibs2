@@ -18,7 +18,7 @@ void wrap_unistd::write( int fd, const std::string& data )
 
     if ( res == ssize_t(data.size()) ) return;
 
-    if ( res < 0 ) ErrNo().throw_if_has();
+    if ( res < 0 ) ErrNo().do_throw( "wrap_unistd::write" );
     throw verror << "Not all data was written";
 }
 //=======================================================================================

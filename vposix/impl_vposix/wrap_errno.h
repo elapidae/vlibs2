@@ -27,10 +27,13 @@ namespace impl_vposix
         std::string text() const;
 
         //  Бросает verror(text) если есть ошибка.
-        void throw_if_has();
+        void do_throw( const std::string& msg );
 
         //  EINTR -- Interrupted system call, надо повторить последний вызов.
         bool need_repeat_last_call() const;
+
+        //  EAGAIN || EWOULDBLOCK;
+        bool resource_unavailable_try_again() const;
 
     private:
         int _err;

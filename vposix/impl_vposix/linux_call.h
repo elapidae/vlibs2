@@ -61,7 +61,7 @@ namespace impl_vposix
         auto res = no_err( fun, args... );
 
         if ( res < 0 )
-            ErrNo().throw_if_has();
+            ErrNo().do_throw( "linux_call::check" );
 
         return res;
     }

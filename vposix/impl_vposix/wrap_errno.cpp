@@ -1,7 +1,9 @@
 #include "wrap_errno.h"
 
+//#include <system_error> там std::errc, может и понадобится, хоть нормальные имена.
 #include <cerrno>
 #include <cstring>
+
 #include "vcat.h"
 #include "vlog.h"
 
@@ -23,20 +25,27 @@ std::string ErrNo::text() const
     return vcat( '[', _err, "] ", ::strerror_r(_err, buf, buf_size) );
 }
 //=======================================================================================
-void ErrNo::throw_if_has()
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-noreturn"
+void ErrNo::do_throw( const std::string& msg )
 {
-    if ( has() )
-        throw verror( text() );
+    throw verror( text(), '(', msg, ')' );
 }
+#pragma GCC diagnostic pop
 //=======================================================================================
 bool ErrNo::has() const
 {
-    return _err == 0;
+    return _err != 0;
 }
 //=======================================================================================
 bool ErrNo::need_repeat_last_call() const
 {
-    return _err == EINTR;
+    return _err == EINTR; // std::errc::interrupted;
+}
+//=======================================================================================
+bool ErrNo::resource_unavailable_try_again() const
+{
+    return _err == EAGAIN || _err == EWOULDBLOCK;
 }
 //=======================================================================================
 
