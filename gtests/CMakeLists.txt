@@ -26,6 +26,9 @@ add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
 set( PROJECT vbyte_buffer )
 add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
 
+set( PROJECT vposix )
+add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
+
 
 #add_subdirectory( "${VLIBS_DIR}/vcrc/test_vcrc/" )
 #add_subdirectory( "${VLIBS_DIR}/vgeometry/test_vgeometry/" )

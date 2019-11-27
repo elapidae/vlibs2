@@ -24,3 +24,6 @@ SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
 
 PROJECT = vbyte_buffer
 SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
+
+PROJECT = vposix
+SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
