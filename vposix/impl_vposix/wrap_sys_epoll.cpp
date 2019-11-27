@@ -39,22 +39,29 @@ epoll::epoll()
 //=======================================================================================
 epoll::~epoll()
 {
+    //  Никаких исключений в деструкторе.
+    if ( _count != 0 )
+        vfatal << "Bad counter for add/del handles in epoll:" << _count;
+
     wrap_unistd::close( _efd );
 }
 //=======================================================================================
 void epoll::add_read( int fd, epoll_receiver *receiver )
 {
     wrap_sys_epoll::add( _efd, fd, wrap_sys_epoll::In, receiver );
+    ++_count;
 }
 //=======================================================================================
 void epoll::add_write( int fd, epoll_receiver *receiver )
 {
     wrap_sys_epoll::add( _efd, fd, wrap_sys_epoll::Out, receiver );
+    ++_count;
 }
 //=======================================================================================
 void epoll::add_rw( int fd, epoll_receiver *receiver )
 {
     wrap_sys_epoll::add( _efd, fd, wrap_sys_epoll::InOut, receiver );
+    ++_count;
 }
 //=======================================================================================
 void epoll::mod_read( int fd, epoll_receiver *receiver )
@@ -72,9 +79,10 @@ void epoll::mod_rw( int fd, epoll_receiver *receiver )
     wrap_sys_epoll::mod( _efd, fd, wrap_sys_epoll::InOut, receiver );
 }
 //=======================================================================================
-void epoll::remove( int fd )
+void epoll::del( int fd )
 {
     wrap_sys_epoll::del( _efd, fd );
+    --_count;
 }
 //=======================================================================================
 void epoll::wait_once()

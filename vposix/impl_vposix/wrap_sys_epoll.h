@@ -40,12 +40,13 @@ namespace impl_vposix
         void mod_write  ( int fd, epoll_receiver * receiver );
         void mod_rw     ( int fd, epoll_receiver * receiver );
 
-        void remove     ( int fd );
+        void del        ( int fd );
 
         void wait_once();
 
     private:
         int _efd;
+        int _count = 0;
     };
     //===================================================================================
 
