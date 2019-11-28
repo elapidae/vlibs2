@@ -20,7 +20,7 @@
 
 //=======================================================================================
 /*
- *      VSignal -- некоторый аналог сигналов в Qt. Используется для обеспечения
+ *      vsignal -- некоторый аналог сигналов в Qt. Используется для обеспечения
  *      модульности программ.
  *
  *      Принцип использования:
@@ -62,15 +62,15 @@
 
 
 //=======================================================================================
-//      VSignal
+//      vsignal
 //=======================================================================================
 template< typename ... Args >
-class VSignal
+class vsignal
 {
 public:
     class link_id;
 
-    VSignal();
+    vsignal();
 
     template< typename Fn >
     link_id link( Fn&& fn );
@@ -89,7 +89,7 @@ public:
 
 private:
     // do not use this connector.
-    void link( VSignal<Args...> repeater ) = delete;
+    void link( vsignal<Args...> repeater ) = delete;
 
     using Func = std::function< void(const Args&...) >;
 
@@ -97,8 +97,8 @@ private:
 
     int _cur_id = 0;
 
-    VSignal( const VSignal& ) = delete;
-    const VSignal& operator = ( const VSignal& ) = delete;
+    vsignal( const vsignal& ) = delete;
+    const vsignal& operator = ( const vsignal& ) = delete;
 };
 //=======================================================================================
 //      VSignal
@@ -109,30 +109,30 @@ private:
 //      IMPLEMENTATION
 //=======================================================================================
 template< typename ... Args >
-class VSignal<Args...>::link_id
+class vsignal<Args...>::link_id
 {
 public:
     link_id() {}
 
 private:
-    friend class VSignal<Args...>;
+    friend class vsignal<Args...>;
 
-    link_id( int id, VSignal<Args...> * owner )
+    link_id( int id, vsignal<Args...> * owner )
         : _id    ( id    )
         , _owner ( owner )
     {}
 
     int _id = -1;
-    VSignal<Args...> * _owner = nullptr;
+    vsignal<Args...> * _owner = nullptr;
 };
 //=======================================================================================
 template< typename ... Args >
-VSignal<Args...>::VSignal()
+vsignal<Args...>::vsignal()
 {}
 //=======================================================================================
 template< typename ... Args >
 template< typename Fn >
-typename VSignal<Args...>::link_id VSignal<Args...>::link( Fn&& fn )
+typename vsignal<Args...>::link_id vsignal<Args...>::link( Fn&& fn )
 {
     _funcs.insert( {++_cur_id, Func(std::forward<Fn>(fn))} );
     return { _cur_id, this };
@@ -140,20 +140,20 @@ typename VSignal<Args...>::link_id VSignal<Args...>::link( Fn&& fn )
 //=======================================================================================
 template< typename ... Args >
 template< typename Fn >
-typename VSignal<Args...>::link_id VSignal<Args...>::operator+=( Fn&& fn )
+typename vsignal<Args...>::link_id vsignal<Args...>::operator+=( Fn&& fn )
 {
     return link( std::forward<Fn>(fn) );
 }
 //=======================================================================================
 template< typename ... Args >
 template< typename Cls, typename Fn >
-typename VSignal<Args...>::link_id VSignal<Args...>::link( Cls *cls, Fn fn )
+typename vsignal<Args...>::link_id vsignal<Args...>::link( Cls *cls, Fn fn )
 {
     return link( [cls,fn](const Args& ... args){ (cls->*fn)(args...); } );
 }
 //=======================================================================================
 template< typename ... Args >
-void VSignal<Args...>::unlink( link_id id )
+void vsignal<Args...>::unlink( link_id id )
 {
     if ( id._owner != this )
         throw std::runtime_error( "VSignal::unlink(id): signal not an owner." );
@@ -164,13 +164,13 @@ void VSignal<Args...>::unlink( link_id id )
 }
 //=======================================================================================
 template< typename ... Args >
-void VSignal<Args...>::operator-=( link_id id )
+void vsignal<Args...>::operator-=( link_id id )
 {
     unlink( id );
 }
 //=======================================================================================
 template< typename ... Args >
-void VSignal<Args...>::call( const Args& ... args )
+void vsignal<Args...>::call( const Args& ... args )
 {
     for( const auto& f: _funcs )
     {
@@ -179,7 +179,7 @@ void VSignal<Args...>::call( const Args& ... args )
 }
 //=======================================================================================
 template< typename ... Args >
-void VSignal<Args...>::operator()( const Args& ... args )
+void vsignal<Args...>::operator()( const Args& ... args )
 {
     call( args... );
 }

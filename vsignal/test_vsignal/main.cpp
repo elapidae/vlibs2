@@ -34,7 +34,7 @@ class VSignal_Test: public testing::Test
 
 TEST_F( VSignal_Test, simple1 )
 {
-    VSignal<> s;
+    vsignal<> s;
 
     bool ok = false;
     s += [&]
@@ -50,7 +50,7 @@ TEST_F( VSignal_Test, simple1 )
 
 TEST_F( VSignal_Test, simple2 )
 {
-    VSignal<> s;
+    vsignal<> s;
 
     int count = 0;
     auto lid1 = s += [&] { ++count; };
@@ -71,11 +71,11 @@ TEST_F( VSignal_Test, simple2 )
 
 TEST_F( VSignal_Test, simple3 )
 {
-    VSignal<int> s;
+    vsignal<int> s;
 
     int count = 42;
 
-    VSignal<int>::link_id id;
+    vsignal<int>::link_id id;
     for (int i = 0; i < 1000; ++i)
     {
         s += [&](int){--count;};
@@ -90,7 +90,7 @@ TEST_F( VSignal_Test, simple3 )
 //  Проверка, что старые компиляторы могут
 TEST_F( VSignal_Test, simple_link_class )
 {
-    VSignal<int,double,char> sig;
+    vsignal<int,double,char> sig;
 
     struct Foo
     {
@@ -109,7 +109,7 @@ TEST_F( VSignal_Test, simple_link_class )
 
 TEST_F( VSignal_Test, simple4 )
 {
-    VSignal<std::string> s;
+    vsignal<std::string> s;
 
     string s1 = "yes";
     string s2 = "no";
@@ -127,8 +127,8 @@ TEST_F( VSignal_Test, simple4 )
 
 TEST_F( VSignal_Test, check_link_wrong )
 {
-    VSignal<std::string> s1;
-    VSignal<std::string> s2;
+    vsignal<std::string> s1;
+    vsignal<std::string> s2;
 
     auto l1 = s1.link( [](string){} );
     auto l2 = s2.link( [](string){} );
@@ -150,7 +150,7 @@ TEST_F( VSignal_Test, classes )
         void bar() { ++foo; }
     } cls;
 
-    VSignal<> s;
+    vsignal<> s;
 
     s.link( &cls, &Cls::bar );
     s();
@@ -162,7 +162,7 @@ TEST_F( VSignal_Test, classes )
 
 TEST_F( VSignal_Test, unlink )
 {
-    VSignal<> s;
+    vsignal<> s;
 
     auto lid = s.link( []{} );
     s.unlink( lid );
