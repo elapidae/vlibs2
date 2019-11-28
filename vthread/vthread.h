@@ -20,15 +20,23 @@ public:
     void invoke( func_invokable );
 
     #if V_CAN_VARIADIC_TEMPLATES_IN_LAMBDAS
+        template< typename Fn, typename A1, typename ... Args >
+        void invoke( Fn fn, A1 a1, Args ... args );
+
         template< typename Cls, typename Fn, typename ... Args >
-        void invoke( Cls* cls, Fn fn, Args&& ... args );
+        void invoke( Cls* cls, Fn fn, Args ... args );
     #else
+        template< typename Fn, typename A1 >
+        void invoke( Fn fn, A1 a1 );
+        template< typename Fn, typename A1, typename A2 >
+        void invoke( Fn fn, A1 a1, A2 a2 );
+
         template< typename Cls, typename Fn >
         void invoke( Cls* cls, Fn fn );
         template< typename Cls, typename Fn, typename A1 >
-        void invoke( Cls* cls, Fn fn, A1 && a1 );
+        void invoke( Cls* cls, Fn fn, A1 a1 );
         template< typename Cls, typename Fn, typename A1, typename A2 >
-        void invoke( Cls* cls, Fn fn, A1 && a1, A2 && a2 );
+        void invoke( Cls* cls, Fn fn, A1 a1, A2 a2 );
     #endif
 
 private:
@@ -43,27 +51,51 @@ private:
 //      Implementation
 //=======================================================================================
 #if V_CAN_VARIADIC_TEMPLATES_IN_LAMBDAS
-    template< typename Cls, typename Fn, typename ... Args >
-    void vthread::invoke( Cls* cls, Fn fn, Args&& ... args )
+    //===================================================================================
+    template< typename Fn, typename A1, typename ... Args >
+    void vthread::invoke( Fn fn, A1 a1, Args ... args )
     {
-        invoke( [=](){ (cls->*fn)(std::forward<Args>(args)...); } );
+        invoke( [=]{ fn(a1, args...); } );
     }
+    //===================================================================================
+    template< typename Cls, typename Fn, typename ... Args >
+    void vthread::invoke( Cls* cls, Fn fn, Args ... args )
+    {
+        invoke( [=]{ (cls->*fn)(args...); } );
+    }
+    //===================================================================================
 #else
+    //===================================================================================
+    template< typename Fn, typename A1 >
+    void vthread::invoke( Fn fn, A1 a1 )
+    {
+        invoke( [=]{ fn(a1); } );
+    }
+    //-----------------------------------------------------------------------------------
+    template< typename Fn, typename A1, typename A2 >
+    void vthread::invoke( Fn fn, A1 a1, A2 a2 )
+    {
+        invoke( [=]{ fn(a1,a2); } );
+    }
+    //===================================================================================
     template< typename Cls, typename Fn >
     void vthread::invoke( Cls* cls, Fn fn )
     {
-        invoke( [=](){ (cls->*fn)(); } );
+        invoke( [=]{ (cls->*fn)(); } );
     }
+    //-----------------------------------------------------------------------------------
     template< typename Cls, typename Fn, typename A1 >
-    void vthread::invoke( Cls* cls, Fn fn, A1 && a1 )
+    void vthread::invoke( Cls* cls, Fn fn, A1 a1 )
     {
-        invoke( [=](){ (cls->*fn)(std::forward<A1>(a1)); } );
+        invoke( [=]{ (cls->*fn)(a1); } );
     }
+    //-----------------------------------------------------------------------------------
     template< typename Cls, typename Fn, typename A1, typename A2 >
-    void vthread::invoke( Cls* cls, Fn fn, A1 && a1, A2 && a2 )
+    void vthread::invoke( Cls* cls, Fn fn, A1 a1, A2 a2 )
     {
-        invoke( [=](){ (cls->*fn)(std::forward<A1>(a1),std::forward<A2>(a2)); } );
+        invoke( [=]{ (cls->*fn)(a1,a2); } );
     }
+    //===================================================================================
 #endif
 //=======================================================================================
 

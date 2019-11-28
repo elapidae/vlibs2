@@ -22,11 +22,10 @@ class VThread_Test: public testing::Test
 {};
 #pragma GCC diagnostic pop
 
-#include <thread>
-
 using namespace std;
 
 //=======================================================================================
+
 TEST_F( VThread_Test, join_with_exception )
 {
     vthread thread;
@@ -43,6 +42,56 @@ TEST_F( VThread_Test, join_with_exception )
     }
     EXPECT_EQ( check, 42 );
 }
+
+//=======================================================================================
+
+TEST_F( VThread_Test, func_invokes )
+{
+    vthread thread;
+
+    int a0 = -1;
+    int b1 = -1;
+    int c1 = -1, c2 = -1;
+
+    thread.invoke( [&]{ a0 = 1;} );
+    thread.invoke( [&](int _1){b1 = _1;}, 2 );
+    thread.invoke( [&](int _1, int _2){c1 = _1; c2 = _2;}, 3, 4 );
+
+    thread.join();
+    EXPECT_EQ( a0, 1 );
+    EXPECT_EQ( b1, 2 );
+    EXPECT_EQ( c1, 3 );
+    EXPECT_EQ( c2, 4 );
+}
+
+//=======================================================================================
+
+TEST_F( VThread_Test, class_invokes )
+{
+    vthread thread;
+
+    struct S
+    {
+        int n = -1;
+        void non() { n = 1; }
+
+        int f = -1;
+        void foo(int v) { f = v; }
+
+        int b1 = -1, b2 = -1;
+        void bar(int v1, int v2) { b1 = v1; b2 = v2; }
+    } s;
+
+    thread.invoke( &s, &S::non );
+    thread.invoke( &s, &S::foo, 2 );
+    thread.invoke( &s, &S::bar, 3, 4 );
+    thread.join();
+    EXPECT_EQ( s.n, 1 );
+    EXPECT_EQ( s.f, 2 );
+    EXPECT_EQ( s.b1, 3 );
+    EXPECT_EQ( s.b2, 4 );
+}
+
 //=======================================================================================
 
 

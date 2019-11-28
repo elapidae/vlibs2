@@ -68,7 +68,10 @@ struct in_thread_ctl final
     in_thread_ctl( vthread::_pimpl *p )
         : sem_fd( p->semaphore.handle() )
     {
-        p->my_queue = &tasks_queue;         // is thread_local.
+        {   // set correct thread local ptr.
+            std::lock_guard<std::mutex> lock( p->queue_mutex );
+            p->my_queue = &tasks_queue;
+        }
 
         real_poll::add_read( sem_fd, p );
     }
