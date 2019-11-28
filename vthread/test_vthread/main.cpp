@@ -13,6 +13,7 @@
 #include "gtest/gtest.h"
 #include "vlog.h"
 #include "vthread.h"
+#include "vpoll.h"
 
 
 #pragma GCC diagnostic push
@@ -26,6 +27,22 @@ using namespace std;
 
 //=======================================================================================
 
+TEST_F( VThread_Test, 1 )
+{
+    vthread thread;
+    thread.invoke( []
+    {
+        vdeb << "in l1";
+        vpoll::poll();
+    });
+    thread.invoke([]
+    {
+        vdeb << "in l2";
+    });
+}
+
+//=======================================================================================
+
 TEST_F( VThread_Test, join_with_exception )
 {
     vthread thread;
@@ -34,6 +51,7 @@ TEST_F( VThread_Test, join_with_exception )
     int check = -1;
     try
     {
+        vdeb << "about join";
         thread.join();
     }
     catch (int i)
@@ -94,6 +112,15 @@ TEST_F( VThread_Test, class_invokes )
 
 //=======================================================================================
 
+TEST_F( VThread_Test, alternate_func )
+{
+    auto l = []
+    {
+        vdeb << "alt func";
+        vpoll::poll();
+    };
+    vthread thread(l);
+}
 
 //=======================================================================================
 //  Main, do not delete...

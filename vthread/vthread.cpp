@@ -22,24 +22,30 @@ static thread_local task_queue_type tasks_queue;
 class vthread::_pimpl : public epoll_receiver
 {
 public:
-
-    template<typename T>
-    _pimpl( T && thread )
-        : future( std::move(thread) )
-    {}
+    _pimpl( func_invokable alternate_func_ );
 
     void on_ready_read() override; // on_ready_read()
 
     std::future<void> future;
 
+    func_invokable alternate_func;
+
     std::mutex queue_mutex;
-    task_queue_type *my_queue { nullptr };
+    task_queue_type * volatile my_queue { nullptr };
 
     eventfd semaphore;
 
     bool joined = false;
 };
 #pragma GCC diagnostic pop
+//---------------------------------------------------------------------------------------
+#include "vlog.h"
+vthread::_pimpl::_pimpl( func_invokable alternate_func_ )
+    : alternate_func( alternate_func_ )
+{
+    vdeb << "about to async";
+    future = std::async( std::launch::async, _run, this );
+}
 //---------------------------------------------------------------------------------------
 void vthread::_pimpl::on_ready_read()
 {
@@ -84,19 +90,23 @@ private:
     int sem_fd;
 };
 //=======================================================================================
-void vthread::_run(vthread *self)
+void vthread::_run( vthread::_pimpl *p )
 {
-    in_thread_ctl ctl( self->_p.get() );
+    vdeb << "in run";
+    in_thread_ctl ctl( p );
 
-    real_poll::poll(); // in my thread :)
+    if ( p->alternate_func )
+        p->alternate_func();
+    else
+        real_poll::poll(); // in my thread :)
 }
 
 //=======================================================================================
-vthread::vthread()
-    : _p( new _pimpl( std::async(std::launch::async, _run, this) ) )
+vthread::vthread( func_invokable alternate_func )
+    : _p( new _pimpl(alternate_func) )
 {}
 //=======================================================================================
-vthread::~vthread()
+vthread::~vthread() noexcept(false)
 {
     join();
 }
@@ -122,8 +132,12 @@ void vthread::_invoke( vthread::func_invokable && func )
     assert( !_p->joined );
 
     //  Waiting before thread start.
-    while ( !_p->my_queue )
+    while ( 1 )
     {
+        {
+            std::lock_guard<std::mutex> lock( _p->queue_mutex );
+            if ( _p->my_queue ) break;
+        }
         wrap_unistd::usleep(1);
     }
 
