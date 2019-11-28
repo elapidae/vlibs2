@@ -51,6 +51,9 @@ isEmpty(qi_vposix) {
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_stat.h
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_stat.cpp
 
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_timerfd.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_timerfd.cpp
+
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_unistd.h
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_unistd.cpp
 

@@ -24,6 +24,9 @@ namespace impl_vposix
         static void usleep( uint usec );
 
         static void write( int fd, const std::string& data );
+
+        static ssize_t read( int fd, void *buf, size_t buf_size );
+        static ssize_t read_no_err( int fd, void *buf, size_t buf_size );
         //-------------------------------------------------------------------------------
     };
     //===================================================================================
