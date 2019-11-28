@@ -27,3 +27,15 @@ void wrap_unistd::write( int fd, const std::string& data )
     throw verror << "Not all data was written";
 }
 //=======================================================================================
+ssize_t wrap_unistd::read(int fd, void *buf, size_t buf_size)
+{
+    auto res = linux_call::no_err( ::read, fd, buf, buf_size );
+    if ( res < 0 ) ErrNo().do_throw( "wrap_unistd::read" );
+    return res;
+}
+//=======================================================================================
+ssize_t wrap_unistd::read_no_err( int fd, void *buf, size_t buf_size )
+{
+    return linux_call::no_err( ::read, fd, buf, buf_size );
+}
+//=======================================================================================

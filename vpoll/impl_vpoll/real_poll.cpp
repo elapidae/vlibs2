@@ -11,6 +11,7 @@ static thread_local bool  local_let_stop = false;
 //=======================================================================================
 void impl_vpoll::real_poll::poll()
 {
+    local_let_stop = false;
     while ( !local_let_stop )
     {
         local_poll.wait_once();
