@@ -18,26 +18,29 @@ using namespace std;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wweak-vtables"
-class VThread_Test: public testing::Test
+class VPoll_Test: public testing::Test
 {};
 #pragma GCC diagnostic pop
 
 #include <future>
+#include "vapplication.h"
 
-#include "impl_vpoll/real_poll.h"
+#include "vpoll.h"
 
 //=======================================================================================
-TEST_F( VThread_Test, _test_name )
+
+//TEST_F( VPoll_Test, 1 )
+void fake()
 {
     std::future<void> f1 = std::async(std::launch::async, []
     {
         vdeb << this_thread::get_id();
-        impl_vpoll::real_poll::poll();
+        vpoll::poll();
     });
     std::future<void> f2 = std::async(std::launch::async, []
     {
         vdeb << this_thread::get_id();
-        impl_vpoll::real_poll::poll();
+        vpoll::poll();
         throw 42;
     });
 
@@ -46,9 +49,21 @@ TEST_F( VThread_Test, _test_name )
     } catch (int i) {
         vdeb << i;
     }
-
-
+    f1.get();
 }
+
+//=======================================================================================
+
+TEST_F( VPoll_Test, _test_app )
+{
+    vapplication.invoke( []{ vdeb << "Hello"; } );
+    vapplication.invoke( []{ vdeb << "World"; } );
+    vapplication.invoke( []{ vapplication.stop(); } );
+
+    vpoll::poll();
+    vdeb << "stopped";
+}
+
 //=======================================================================================
 
 

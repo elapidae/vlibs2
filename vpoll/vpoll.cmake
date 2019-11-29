@@ -25,6 +25,8 @@ if ( NOT  VPOLL_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vpoll/vpoll.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vpoll/vpoll.cpp" )
 
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vpoll/vinvoke_iface.h" )
+
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vpoll/impl_vpoll/real_poll.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vpoll/impl_vpoll/real_poll.cpp" )
 

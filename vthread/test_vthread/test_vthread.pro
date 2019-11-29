@@ -9,4 +9,8 @@ include( $$VLIBS_DIR/qmake/gtest.pri    )
 include( $$VLIBS_DIR/qmake/vthread.pri  )
 include( $$VLIBS_DIR/qmake/vlog.pri     )
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    ../../vpoll/vapplication.cpp
+
+HEADERS += \
+    ../../vpoll/vapplication.h

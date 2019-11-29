@@ -27,9 +27,34 @@ using namespace std;
 
 //=======================================================================================
 
+void f1()
+{
+    int a = -1, b = -1;
+    vthread thread;
+    thread.invoke( [&]
+    {
+        a = 1;
+        vpoll::poll();
+    });
+    thread.invoke([&]
+    {
+        b = 2;
+    });
+    thread.join();
+    EXPECT_EQ(a, 1);
+    EXPECT_EQ(b, 2);
+}
+
 TEST_F( VThread_Test, 1 )
 {
+    for (int i = 0; i < 100; ++i)
+    {
+        f1();
+    }
+    vdeb << "before thread";
     vthread thread;
+    vdeb << "after thread";
+
     thread.invoke( []
     {
         vdeb << "in l1";
@@ -113,6 +138,18 @@ TEST_F( VThread_Test, class_invokes )
 //=======================================================================================
 
 TEST_F( VThread_Test, alternate_func )
+{
+    auto l = []
+    {
+        vdeb << "alt func";
+        vpoll::poll();
+    };
+    vthread thread(l);
+}
+
+//=======================================================================================
+
+TEST_F( VThread_Test, app_thread )
 {
     auto l = []
     {

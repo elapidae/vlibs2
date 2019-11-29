@@ -26,8 +26,17 @@ isEmpty(qi_vpoll) {
     HEADERS     += $$VLIBS_DIR/vpoll/vpoll.h
     SOURCES     += $$VLIBS_DIR/vpoll/vpoll.cpp
 
+    HEADERS     += $$VLIBS_DIR/vpoll/vapplication.h
+    SOURCES     += $$VLIBS_DIR/vpoll/vapplication.cpp
+
+    HEADERS     += $$VLIBS_DIR/vpoll/vinvoke_iface.h
+    SOURCES     += $$VLIBS_DIR/vpoll/vinvoke_iface.cpp
+
     HEADERS     += $$VLIBS_DIR/vpoll/impl_vpoll/real_poll.h
     SOURCES     += $$VLIBS_DIR/vpoll/impl_vpoll/real_poll.cpp
+
+    HEADERS     += $$VLIBS_DIR/vpoll/impl_vpoll/task_queue.h
+    SOURCES     += $$VLIBS_DIR/vpoll/impl_vpoll/task_queue.cpp
 
     OTHER_FILES += $$VLIBS_DIR/vpoll/vpoll.cmake
 }
