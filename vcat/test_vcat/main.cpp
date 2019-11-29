@@ -86,7 +86,7 @@ TEST_F( VCat_Test, hello_modifiers )
     EXPECT_EQ( vcat(true).str(), "true" );
     EXPECT_EQ( vcat(false).str(), "false" );
 
-    EXPECT_EQ( vcat().num(42, 7, '=').str(), "=====42" );
+    EXPECT_EQ( vcat().aligned(42, 7, '=').str(), "=====42" );
 }
 
 //=======================================================================================
@@ -165,7 +165,7 @@ TEST_F( VCat_Test, simple_from_text )
 //  Также проверяется, что оно работает как задумано.
 TEST_F( VCat_Test, modifiers_spaces )
 {
-    EXPECT_EQ( vcat().num(42, 5, '0').str(), "00042" );
+    EXPECT_EQ( vcat().aligned(42, 5, '0').str(), "00042" );
 
     vcat ccc;
     ccc.space();
@@ -205,6 +205,29 @@ TEST_F( VCat_Test, simple_qt_test )
     #endif
 }
 #endif // V_HAS_QT
+
+//=======================================================================================
+
+TEST_F( VCat_Test, aligned )
+{
+    auto rd = []
+    {
+        return rand() % 100000 / 1000.;
+    };
+
+    vcat l1("|"), l2("|"), l3("|");
+    l1.precision(6).aligned(rd(), 7)("|").aligned(rd(), 7)("|").aligned(rd(),7) << "|";
+    l2.precision(6).aligned(rd(), 7)("|").aligned(rd(), 7)("|").aligned(rd(),7) << "|";
+    l3.precision(6).aligned(rd(), 7)("|").aligned(rd(), 7)("|").aligned(rd(),7) << "|";
+
+    vdeb << vcat().aligned('-', 25, '-') << endl;
+    vdeb << l1 << endl;
+    vdeb << l2 << endl;
+    vdeb << l3 << endl;
+    vdeb << vcat().aligned('-', 25, '-') << endl;
+
+}
+
 //=======================================================================================
 
 

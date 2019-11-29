@@ -97,7 +97,9 @@ namespace impl_vcat
         D& delimiter(char d);        // Произвольный символ между аргументами.
         D& nodelimiter();            // Отключает вывод символа между аргументами.
 
-        D& num( long long val, int field_width, char fill = ' ' );
+        //  2019-11-29 -- num был унифицирован и выпилен. Не зря тесты сделаны :).
+        template<typename T>
+        D& aligned( T && val, int field_width, char fill = ' ' );
 
         //-------------------------------------------------------------------------------
     protected:
@@ -302,12 +304,11 @@ namespace impl_vcat
         return nodelimiter();
     }
     //===================================================================================
-    //  2018-06-08 -- проба восстановить справедливость к достаточно важной функции:
-    //  выводу выровненных целых чисел.
     template< typename D >
-    D& vcat_iface<D>::num( long long val, int f_width, char fill_ch )
+    template<typename T>
+    D& vcat_iface<D>::aligned( T && val, int f_width, char fill )
     {
-        return  fill_char(fill_ch).field_width(f_width)( val );
+        return  fill_char(fill).field_width(f_width)( std::forward<T>(val) );
     }
     //===================================================================================
 } // namespace impl_vcat
