@@ -18,37 +18,83 @@ using namespace std;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wweak-vtables"
-class VThread_Test: public testing::Test
+class VPoll_Test: public testing::Test
 {};
 #pragma GCC diagnostic pop
 
-#include <future>
+#include "impl_vpoll/poll_context.h"
 
-#include "impl_vpoll/real_poll.h"
+#include <future>
+#include "vapplication.h"
+
+//#include "vpoll.h"
 
 //=======================================================================================
-TEST_F( VThread_Test, _test_name )
+
+//TEST_F( VPoll_Test, 1 )
+//void fake()
+//{
+//    std::future<void> f1 = std::async(std::launch::async, []
+//    {
+//        vdeb << this_thread::get_id();
+//        vpoll::poll();
+//    });
+//    std::future<void> f2 = std::async(std::launch::async, []
+//    {
+//        vdeb << this_thread::get_id();
+//        vpoll::poll();
+//        throw 42;
+//    });
+
+//    try {
+//        f2.get();
+//    } catch (int i) {
+//        vdeb << i;
+//    }
+//    f1.get();
+//}
+
+//=======================================================================================
+
+//TEST_F( VPoll_Test, _test_app )
+//{
+//    vapplication.invoke( []{ vdeb << "Hello"; } );
+//    vapplication.invoke( []{ vdeb << "World"; } );
+//    vapplication.invoke( []{ vapplication.stop(); } );
+
+//    vpoll::poll();
+//    vdeb << "stopped";
+//}
+
+//=======================================================================================
+
+TEST_F( VPoll_Test, _poll_ctx )
 {
-    std::future<void> f1 = std::async(std::launch::async, []
-    {
-        vdeb << this_thread::get_id();
-        impl_vpoll::real_poll::poll();
-    });
-    std::future<void> f2 = std::async(std::launch::async, []
-    {
-        vdeb << this_thread::get_id();
-        impl_vpoll::real_poll::poll();
-        throw 42;
-    });
+    using namespace impl_vpoll;
 
-    try {
-        f2.get();
-    } catch (int i) {
-        vdeb << i;
-    }
-
-
+    poll_context ctx;
+    ctx.push( [&]{ vdeb << 1; } );
+    ctx.push( [&]{ vdeb << 2; } );
+    ctx.push( [&]{ ctx.stop(); } );
+    ctx.poll();
 }
+
+//=======================================================================================
+
+TEST_F( VPoll_Test, vapplication )
+{
+    vapplication app;
+    app.invoke( []{vdeb << 1;} );
+    app.invoke( []{vdeb << 2;} );
+    app.invoke( []{vdeb << 3;} );
+    app.invoke( []{vdeb << 4;} );
+    app.invoke( []{vdeb << 5;} );
+    app.invoke( [](int i){vdeb << i;}, 42 );
+    app.invoke( [&]{app.stop();} );
+
+    app.poll();
+}
+
 //=======================================================================================
 
 

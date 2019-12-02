@@ -1,17 +1,14 @@
-#include "vpoll.h"
+#include "vinvoke_iface.h"
 
-#include "impl_vpoll/real_poll.h"
-
-using namespace impl_vpoll;
+#include <cassert>
 
 //=======================================================================================
-void vpoll::poll()
+void vinvoke_iface::invoke( vinvoke_iface::func_invokable f )
 {
-    real_poll::poll();
+    assert( f );
+    _invoke( std::move(f) );
 }
 //=======================================================================================
-void vpoll::stop()
-{
-    real_poll::stop();
-}
+vinvoke_iface::~vinvoke_iface()
+{}
 //=======================================================================================

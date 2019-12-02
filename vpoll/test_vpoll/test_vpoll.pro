@@ -10,3 +10,4 @@ include( $$VLIBS_DIR/qmake/vpoll.pri )
 include( $$VLIBS_DIR/qmake/vlog.pri  )
 
 SOURCES += main.cpp
+

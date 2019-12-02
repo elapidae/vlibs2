@@ -1,8 +1,11 @@
-#ifndef VPOLL_H
-#define VPOLL_H
+#ifndef VAPPLICATION_H
+#define VAPPLICATION_H
+
+#include "vinvoke_iface.h"
+
 
 //=======================================================================================
-class vpoll final
+class vapplication final : public vinvoke_iface
 {
 public:
 
@@ -11,8 +14,9 @@ public:
     static void stop();
 
 private:
-    vpoll() = delete;
+    void _invoke( func_invokable && f ) override;
 };
 //=======================================================================================
 
-#endif // VPOLL_H
+
+#endif // VAPPLICATION_H
