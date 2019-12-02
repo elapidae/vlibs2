@@ -13,7 +13,7 @@
 #include "gtest/gtest.h"
 #include "vlog.h"
 #include "vthread.h"
-#include "vpoll.h"
+#include "vapplication.h"
 
 
 #pragma GCC diagnostic push
@@ -34,7 +34,6 @@ void f1()
     thread.invoke( [&]
     {
         a = 1;
-        vpoll::poll();
     });
     thread.invoke([&]
     {
@@ -58,7 +57,7 @@ TEST_F( VThread_Test, 1 )
     thread.invoke( []
     {
         vdeb << "in l1";
-        vpoll::poll();
+        EXPECT_THROW( vthread::poll(), impl_vlog::error );
     });
     thread.invoke([]
     {
@@ -68,7 +67,7 @@ TEST_F( VThread_Test, 1 )
 
 //=======================================================================================
 
-TEST_F( VThread_Test, join_with_exception )
+static void jwe()
 {
     vthread thread;
     thread.invoke( []{throw 42;} );
@@ -76,7 +75,7 @@ TEST_F( VThread_Test, join_with_exception )
     int check = -1;
     try
     {
-        vdeb << "about join";
+       // vdeb << "about join";
         thread.join();
     }
     catch (int i)
@@ -86,8 +85,13 @@ TEST_F( VThread_Test, join_with_exception )
     EXPECT_EQ( check, 42 );
 }
 
-//=======================================================================================
+TEST_F( VThread_Test, join_with_exception )
+{
+    for (int i = 0; i < 100000; ++i)
+        jwe();
+}
 
+//=======================================================================================
 TEST_F( VThread_Test, func_invokes )
 {
     vthread thread;
@@ -142,7 +146,7 @@ TEST_F( VThread_Test, alternate_func )
     auto l = []
     {
         vdeb << "alt func";
-        vpoll::poll();
+        vthread::poll();
     };
     vthread thread(l);
 }
@@ -151,25 +155,31 @@ TEST_F( VThread_Test, alternate_func )
 
 TEST_F( VThread_Test, app_thread )
 {
-    auto l = []
+    vapplication app;
+
+    int ck = -1;
+    auto l = [&]
     {
         vdeb << "alt func";
-        vpoll::poll();
+        ck = 42;
+        vapplication::stop();
     };
-    vthread thread(l);
+    vthread thread;
+    thread.invoke( l );
+
+    app.poll();
 }
+
+//=======================================================================================
+
 
 //=======================================================================================
 //  Main, do not delete...
 //=======================================================================================
 int main(int argc, char *argv[])
 {
-//    vdeb << this_thread::get_id();
-//    vthread thread;
-//    thread.invoke( []{vdeb << this_thread::get_id() << 1;} );
-//    thread.invoke( []{vdeb << this_thread::get_id() << 2;} );
-//    thread.invoke( []{vdeb << this_thread::get_id() << 3;} );
-//    return 0;
+//    vthread th;
+  //  return 0;
 
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

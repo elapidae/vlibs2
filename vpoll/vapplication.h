@@ -10,6 +10,7 @@ class vapplication final : public vinvoke_iface
 public:
 
     static void poll();
+
     static void stop();
 
 private:

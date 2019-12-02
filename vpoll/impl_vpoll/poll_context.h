@@ -13,16 +13,17 @@ namespace impl_vpoll
     public:
         using task_type = vinvoke_iface::func_invokable;
 
-        static void poll();     //  Только из текущего потока.
-        void stop();            //  Из любого потока.
-
         poll_context();
+        ~poll_context();
 
         void push( task_type && task );
 
-        class thread_local_pimpl;
+        void poll();
+        void stop();
+
     private:
-        thread_local_pimpl * p;
+        class pimpl;
+        std::unique_ptr<pimpl> p;
     };
     //===================================================================================
 } // namespace impl_vpoll

@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <memory>
+#include <atomic>
 
 #include "vinvoke_iface.h"
 
@@ -56,30 +57,14 @@
 //=======================================================================================
 
 
-
-//=======================================================================================
-//      vapplication_thread
-//=======================================================================================
-//class _vapplication_thread final : public vinvoke_iface
-//{
-//private:
-//    _vapplication_thread();
-//    virtual void _invoke( func_invokable&& ) override;
-//};
-//extern _vapplication_thread vapplication;
-//=======================================================================================
-//      vapplication_thread
-//=======================================================================================
-
-
-//=======================================================================================
-//      vthread
 //=======================================================================================
 class vthread final : public vinvoke_iface
 {
 public:
     //-----------------------------------------------------------------------------------
-    using func_invokable = std::function<void()>;
+
+    //  Only with alternate func.
+    static void poll();
 
     explicit vthread( func_invokable alternate_func = nullptr );
     ~vthread() noexcept(false);
@@ -92,13 +77,10 @@ private:
     class _pimpl;
     std::unique_ptr<_pimpl> _p;
 
-    static void _run( _pimpl *p );
+    static void _run( _pimpl *p, std::atomic_bool *started );
 
     virtual void _invoke( func_invokable&& ) override;
 };
 //=======================================================================================
-//      vthread
-//=======================================================================================
-
 
 #endif // VTHREAD_H

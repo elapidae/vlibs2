@@ -8,11 +8,7 @@
 #include "impl_vposix/wrap_sys_epoll.h"
 #include "impl_vposix/wrap_sys_eventfd.h"
 
-#include "vlog.h"
-
 using namespace impl_vpoll;
-
-
 
 //=======================================================================================
 #pragma GCC diagnostic push
