@@ -20,12 +20,11 @@ public:
     _pimpl( func_invokable alternate_func_, std::atomic_bool *started );
 
     std::future<void> future;
-    func_invokable alternate_func { nullptr };
+    func_invokable    alternate_func { nullptr };
 
-    std::atomic_bool joined  { false };
+    std::atomic_bool  joined  { false };
 
-    std::unique_ptr<poll_context> my_ctx;
-    //poll_context* my_ctx { nullptr };
+    poll_context      my_ctx;
 };
 #pragma GCC diagnostic pop
 
@@ -42,8 +41,8 @@ vthread::_pimpl::_pimpl( func_invokable alternate_func_, std::atomic_bool *start
 //=======================================================================================
 void vthread::_run( _pimpl *p , std::atomic_bool *started )
 {
-    p->my_ctx.reset( new poll_context );
-    current_ctx = p->my_ctx.get();
+    p->my_ctx.recatch_thread_id();
+    current_ctx = &p->my_ctx;
     *started = true;
 
     try
@@ -51,7 +50,7 @@ void vthread::_run( _pimpl *p , std::atomic_bool *started )
         if ( p->alternate_func )
             p->alternate_func();
         else
-            p->my_ctx->poll();
+            p->my_ctx.poll();
     }
     catch (...)
     {
@@ -88,11 +87,7 @@ vthread::~vthread() noexcept(false)
 //=======================================================================================
 void vthread::join()
 {
-    assert( _p->my_ctx );
-
-    //vdeb.hex() << _p->my_ctx;// << _p.get()->my_ctx->ppp();
-
-    _p->my_ctx->stop();
+    _p->my_ctx.stop();
 
     _p->joined = true;  //  сначала выставляем флаг, т.к. _invoke его проверяет;
     _p->future.get();   //  и только теперь завершаем поток, если будет исключение,
@@ -103,6 +98,6 @@ void vthread::_invoke( vthread::func_invokable && func )
 {
     assert( !_p->joined );
 
-    _p->my_ctx->push( std::move(func) );
+    _p->my_ctx.push( std::move(func) );
 }
 //=======================================================================================
