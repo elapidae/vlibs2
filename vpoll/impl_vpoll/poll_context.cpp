@@ -7,6 +7,12 @@
 using namespace impl_vpoll;
 
 //=======================================================================================
+poll_context *poll_context::current()
+{
+    static thread_local poll_context res;
+    return &res;
+}
+//=======================================================================================
 poll_context::poll_context()
 {
     my_id = std::this_thread::get_id();
@@ -18,16 +24,11 @@ poll_context::~poll_context()
     epoll.del( semaphore.handle() );
 }
 //=======================================================================================
-void poll_context::recatch_thread_id()
-{
-    my_id = std::this_thread::get_id();
-}
-//=======================================================================================
 void poll_context::on_ready_read()
 {
-    task_type task;
     while ( semaphore.read() )
     {
+        task_type task { nullptr };
         {
             std::lock_guard<std::mutex> lock( tasks_mutex );
             assert( !tasks.empty() );
@@ -35,12 +36,17 @@ void poll_context::on_ready_read()
             tasks.pop();
         }
 
-        if ( task )
+        if (task)
+        {
             task();
+        }
         else
+        {
             let_stop = true;
-
-    } // while has task.
+            break;              //  Сразу прерываем обработку очереди задач.
+                                //  Не зря же нас попросили остановится.
+        }
+    } // while has task or null received.
 }
 //=======================================================================================
 void poll_context::poll()
@@ -69,6 +75,8 @@ void poll_context::poll()
 //=======================================================================================
 void poll_context::stop()
 {
+    //  Здесь могут быть вызовы из других потоков,
+    //  нельзя трогать никаких не atomic переменных.
     push( nullptr );
 }
 //=======================================================================================
@@ -79,5 +87,19 @@ void poll_context::push( task_type && task )
         tasks.push( std::move(task) );
     }
     semaphore.write();
+}
+//=======================================================================================
+size_t poll_context::tasks_count() const
+{
+    std::lock_guard<std::mutex> lock( tasks_mutex );
+    return tasks.size();
+}
+//=======================================================================================
+void poll_context::tasks_clear()
+{
+    std::lock_guard<std::mutex> lock( tasks_mutex );
+
+    while ( semaphore.read() )
+        tasks.pop();
 }
 //=======================================================================================

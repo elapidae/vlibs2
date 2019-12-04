@@ -28,9 +28,6 @@ SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
 PROJECT = vposix
 SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
 
-PROJECT = vthread
-SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
-
 PROJECT = vtimer
 SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
 

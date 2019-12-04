@@ -81,6 +81,7 @@ public:
     template< typename Fn >
     link_id operator += ( Fn&& fn );
 
+    void unlink_all();
     void unlink( link_id id );
     void operator -= ( link_id id );
 
@@ -150,6 +151,12 @@ template< typename Cls, typename Fn >
 typename vsignal<Args...>::link_id vsignal<Args...>::link( Cls *cls, Fn fn )
 {
     return link( [cls,fn](const Args& ... args){ (cls->*fn)(args...); } );
+}
+//=======================================================================================
+template< typename ... Args >
+void vsignal<Args...>::unlink_all()
+{
+    _funcs.clear();
 }
 //=======================================================================================
 template< typename ... Args >

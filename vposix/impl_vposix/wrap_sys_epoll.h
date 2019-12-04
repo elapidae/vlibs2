@@ -42,7 +42,7 @@ namespace impl_vposix
 
         void del        ( int fd );
 
-        void wait_once();
+        void wait_once  ();
 
     private:
         int _efd;

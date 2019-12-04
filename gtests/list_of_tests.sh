@@ -33,10 +33,6 @@ PROJECT=vposix
 vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
 
 echo ====================================================================================
-PROJECT=vthread
-vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
-
-echo ====================================================================================
 PROJECT=vtimer
 vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
 

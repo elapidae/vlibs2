@@ -45,7 +45,7 @@
 //  NB! С версией не уверен.
 //  Use V_NORETURN macro instead of real [[noreturn]] :((
 #define V_NORETURN_ENABLED (V_GNUC_COMPILER_VERSION > 0x040703)
-#ifdef V_NORETURN_ENABLED
+#if V_NORETURN_ENABLED
     #define V_NORETURN [[noreturn]]
 #else
     #define V_NORETURN __attribute__((noreturn))
@@ -63,9 +63,16 @@
 
 //=======================================================================================
 // V_CAN_VARIADIC_TEMPLATES_IN_LAMBDAS -- может работать с variadic templates с лямбдами.
-//  См. vapplication/vinvoke_iface
+//  См. vpoll/vinvoke_iface
 //  NB! С версией не уверен.
 #define V_CAN_VARIADIC_TEMPLATES_IN_LAMBDAS (V_GNUC_COMPILER_VERSION > 0x040804)
+//=======================================================================================
+
+
+//=======================================================================================
+//  Старые компиляторы не умеют конструкторы-прокси.
+//  NB! С версией не уверен.
+#define V_CAN_PROXY_CONSTRUCTORS (V_GNUC_COMPILER_VERSION > 0x040804)
 //=======================================================================================
 
 
@@ -78,6 +85,7 @@
 
 
 //=======================================================================================
+//  Deprecated, в vchrono стал использовать только posix функции.
 // V_HAS_GET_TIME -- знает std::get_time().
 //  NB! С версией не уверен.
 #define V_HAS_GET_TIME (V_GNUC_COMPILER_VERSION > 0x040703)

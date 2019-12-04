@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <memory>
-#include <atomic>
 
 #include "vinvoke_iface.h"
 
@@ -66,10 +65,13 @@ public:
     //  Only with alternate func.
     static void poll();
 
-    explicit vthread( func_invokable alternate_func = nullptr );
+    explicit vthread( task_type alternate_func = nullptr );
     ~vthread() noexcept(false);
 
     void join();
+
+    size_t tasks_count() const override;
+    void   tasks_clear() override;
 
     //-----------------------------------------------------------------------------------
 private:
@@ -77,9 +79,9 @@ private:
     class _pimpl;
     std::unique_ptr<_pimpl> _p;
 
-    static void _run( _pimpl *p, std::atomic_bool *started );
+    static void _run( _pimpl *p );
 
-    virtual void _invoke( func_invokable&& ) override;
+    virtual void _invoke( task_type&& ) override;
 };
 //=======================================================================================
 

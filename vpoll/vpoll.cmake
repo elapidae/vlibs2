@@ -22,13 +22,17 @@ if ( NOT  VPOLL_INCLUDED )
 
     include_directories( "${VLIBS_DIR}/vpoll/" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vpoll/vpoll.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vpoll/vpoll.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vpoll/vinvoke_iface.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vpoll/vinvoke_iface.cpp" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vpoll/vinvoke_iface.h" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vpoll/vapplication.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vpoll/vapplication.cpp" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vpoll/impl_vpoll/real_poll.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vpoll/impl_vpoll/real_poll.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vpoll/vthread.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vpoll/vthread.cpp" )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vpoll/impl_vpoll/poll_context.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vpoll/impl_vpoll/poll_context.cpp" )
 
     message( "=== vpoll included ===" )
 endif()

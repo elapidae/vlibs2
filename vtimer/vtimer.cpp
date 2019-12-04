@@ -2,7 +2,7 @@
 
 #include "impl_vposix/wrap_sys_timerfd.h"
 #include "impl_vposix/wrap_unistd.h"
-#include "impl_vpoll/real_poll.h"
+#include "impl_vpoll/poll_context.h"
 
 using namespace impl_vposix;
 using namespace impl_vpoll;
@@ -29,12 +29,12 @@ vtimer::_pimpl::_pimpl( vtimer * owner_ )
     : owner( owner_ )
     , fd( wrap_sys_timerfd::create() )
 {
-    real_poll::add_read( fd, this );
+    poll_context::current()->epoll.add_read( fd, this );
 }
 //---------------------------------------------------------------------------------------
 vtimer::_pimpl::~_pimpl()
 {
-    real_poll::del( fd );
+    poll_context::current()->epoll.del( fd );
     wrap_unistd::close( fd );
 }
 //---------------------------------------------------------------------------------------

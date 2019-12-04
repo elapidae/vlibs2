@@ -4,6 +4,7 @@
 #include <chrono>
 #include <memory>
 #include "vsignal.h"
+#include "vcompiler_traits.h"
 
 //=======================================================================================
 class vtimer final
@@ -11,8 +12,10 @@ class vtimer final
 public:
     explicit vtimer();
 
-    template<typename Duration>
-    explicit vtimer( const Duration& d );
+    #if V_CAN_PROXY_CONSTRUCTORS
+        template<typename Duration>
+        explicit vtimer( const Duration& d );
+    #endif
 
     ~vtimer();
 
@@ -34,12 +37,14 @@ private:
 //=======================================================================================
 //      Implementation
 //=======================================================================================
-template<typename Duration>
-vtimer::vtimer( const Duration& d )
-    : vtimer()
-{
-    start( d );
-}
+#if V_CAN_PROXY_CONSTRUCTORS
+    template<typename Duration>
+    vtimer::vtimer( const Duration& d )
+        : vtimer()
+    {
+        start( d );
+    }
+#endif
 //=======================================================================================
 template<typename Duration>
 void vtimer::start( const Duration& d )

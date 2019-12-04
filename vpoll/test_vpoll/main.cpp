@@ -11,9 +11,6 @@
 ****************************************************************************************/
 
 #include "gtest/gtest.h"
-#include "vlog.h"
-
-using namespace std;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
@@ -22,37 +19,9 @@ class VPoll_Test: public testing::Test
 {};
 #pragma GCC diagnostic pop
 
-#include "impl_vpoll/poll_context.h"
-
-#include <future>
 #include "vapplication.h"
-
-//#include "vpoll.h"
-
-//=======================================================================================
-
-//TEST_F( VPoll_Test, 1 )
-//void fake()
-//{
-//    std::future<void> f1 = std::async(std::launch::async, []
-//    {
-//        vdeb << this_thread::get_id();
-//        vpoll::poll();
-//    });
-//    std::future<void> f2 = std::async(std::launch::async, []
-//    {
-//        vdeb << this_thread::get_id();
-//        vpoll::poll();
-//        throw 42;
-//    });
-
-//    try {
-//        f2.get();
-//    } catch (int i) {
-//        vdeb << i;
-//    }
-//    f1.get();
-//}
+#include "vthread.h"
+#include "vlog.h"
 
 //=======================================================================================
 
@@ -67,20 +36,19 @@ class VPoll_Test: public testing::Test
 //}
 
 //=======================================================================================
+//  Maybe need for correct poll context
+//TEST_F( VPoll_Test, _poll_ctx )
+//{
+//    using namespace impl_vpoll;
 
-TEST_F( VPoll_Test, _poll_ctx )
-{
-    using namespace impl_vpoll;
-
-    poll_context ctx;
-    ctx.push( [&]{ vdeb << 1; } );
-    ctx.push( [&]{ vdeb << 2; } );
-    ctx.push( [&]{ ctx.stop(); } );
-    ctx.poll();
-}
+//    poll_context ctx;
+//    ctx.push( [&]{ vdeb << 1; } );
+//    ctx.push( [&]{ vdeb << 2; } );
+//    ctx.push( [&]{ ctx.stop(); } );
+//    ctx.poll();
+//}
 
 //=======================================================================================
-
 TEST_F( VPoll_Test, vapplication )
 {
     vapplication app;
@@ -91,6 +59,153 @@ TEST_F( VPoll_Test, vapplication )
     app.invoke( []{vdeb << 5;} );
     app.invoke( [](int i){vdeb << i;}, 42 );
     app.invoke( [&]{app.stop();} );
+
+    app.poll();
+}
+
+//=======================================================================================
+void f1()
+{
+    int a = -1, b = -1;
+    vthread thread;
+    thread.invoke( [&]
+    {
+        a = 1;
+    });
+    thread.invoke([&]
+    {
+        b = 2;
+    });
+    thread.join();
+    EXPECT_EQ(a, 1);
+    EXPECT_EQ(b, 2);
+}
+
+TEST_F( VPoll_Test, 1 )
+{
+    for (int i = 0; i < 100; ++i)
+    {
+        f1();
+    }
+    vdeb << "before thread";
+    vthread thread;
+    vdeb << "after thread";
+
+    thread.invoke( []
+    {
+        vdeb << "in l1";
+        EXPECT_THROW( vthread::poll(), impl_vlog::error );
+    });
+    thread.invoke([]
+    {
+        vdeb << "in l2";
+    });
+}
+
+//=======================================================================================
+//  Были ошибки соревнования, которые детектировались подобным подходом.
+static void jwe()
+{
+    vthread thread;
+    thread.invoke( []{throw 42;} );
+
+    int check = -1;
+    try
+    {
+       // vdeb << "about join";
+        thread.join();
+    }
+    catch (int i)
+    {
+        check = i;
+    }
+    EXPECT_EQ( check, 42 );
+}
+
+TEST_F( VPoll_Test, join_with_exception )
+{
+    auto one_ck = []
+    {
+        for (int i = 0; i < 10000; ++i)
+            jwe();
+    };
+    one_ck();
+    vthread t1( one_ck );
+    vthread t2( one_ck );
+}
+
+//=======================================================================================
+TEST_F( VPoll_Test, func_invokes )
+{
+    vthread thread;
+
+    int a0 = -1;
+    int b1 = -1;
+    int c1 = -1, c2 = -1;
+
+    thread.invoke( [&]{ a0 = 1;} );
+    thread.invoke( [&](int _1){b1 = _1;}, 2 );
+    thread.invoke( [&](int _1, int _2){c1 = _1; c2 = _2;}, 3, 4 );
+
+    thread.join();
+    EXPECT_EQ( a0, 1 );
+    EXPECT_EQ( b1, 2 );
+    EXPECT_EQ( c1, 3 );
+    EXPECT_EQ( c2, 4 );
+}
+
+//=======================================================================================
+TEST_F( VPoll_Test, class_invokes )
+{
+    vthread thread;
+
+    struct S
+    {
+        int n = -1;
+        void non() { n = 1; }
+
+        int f = -1;
+        void foo(int v) { f = v; }
+
+        int b1 = -1, b2 = -1;
+        void bar(int v1, int v2) { b1 = v1; b2 = v2; }
+    } s;
+
+    thread.invoke( &s, &S::non );
+    thread.invoke( &s, &S::foo, 2 );
+    thread.invoke( &s, &S::bar, 3, 4 );
+    thread.join();
+    EXPECT_EQ( s.n, 1 );
+    EXPECT_EQ( s.f, 2 );
+    EXPECT_EQ( s.b1, 3 );
+    EXPECT_EQ( s.b2, 4 );
+}
+
+//=======================================================================================
+TEST_F( VPoll_Test, alternate_func )
+{
+    auto l = []
+    {
+        vdeb << "alt func";
+        vthread::poll();
+    };
+    vthread thread(l);
+}
+
+//=======================================================================================
+TEST_F( VPoll_Test, app_thread )
+{
+    vapplication app;
+
+    int ck = -1;
+    auto l = [&]
+    {
+        vdeb << "alt func";
+        ck = 42;
+        vapplication::stop();
+    };
+    vthread thread;
+    thread.invoke( l );
 
     app.poll();
 }

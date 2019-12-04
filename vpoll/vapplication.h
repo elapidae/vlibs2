@@ -8,13 +8,14 @@
 class vapplication final : public vinvoke_iface
 {
 public:
+    size_t tasks_count() const override;
+    void   tasks_clear() override;
 
     static void poll();
-
     static void stop();
 
 private:
-    void _invoke( func_invokable && f ) override;
+    void _invoke( task_type && f ) override;
 };
 //=======================================================================================
 

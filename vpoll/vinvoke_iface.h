@@ -10,9 +10,12 @@ class vinvoke_iface
 public:
     //-----------------------------------------------------------------------------------
 
-    using func_invokable = std::function<void()>;
+    using task_type = std::function<void()>;
 
-    void invoke( func_invokable f );
+    void invoke( task_type f );
+
+    virtual size_t tasks_count() const = 0;
+    virtual void   tasks_clear() = 0;
 
     #if V_CAN_VARIADIC_TEMPLATES_IN_LAMBDAS
         template< typename Fn, typename A1, typename ... Args >
@@ -36,7 +39,7 @@ public:
 
     //-----------------------------------------------------------------------------------
 protected:
-    virtual void _invoke( func_invokable&& ) = 0;
+    virtual void _invoke( task_type&& ) = 0;
     ~vinvoke_iface(); // not virtual, all ok.
 };
 //=======================================================================================

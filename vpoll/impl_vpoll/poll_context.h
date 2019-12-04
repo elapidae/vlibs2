@@ -18,28 +18,36 @@ namespace impl_vpoll
     class poll_context final : public impl_vposix::epoll_receiver
     {
     public:
-        using task_type = vinvoke_iface::func_invokable;
+        using task_type = vinvoke_iface::task_type;
+
+        static poll_context * current();
 
         poll_context();
         ~poll_context() override;
 
-        void push( task_type && task );
+        void   push( task_type && task );
+        size_t tasks_count() const;
+        void   tasks_clear();
 
-        void poll();
-        void stop();
+        void poll();    //  Сколько раз будет вызыван stop(), столько раз
+        void stop();    //  будет прекращен poll().
 
-        //  for vthread, for checking poll thread.
-        void recatch_thread_id();
+        //  Для регистрации в системе поллинга, используется сервисными классами.
+        //  Если надо чего-нибудь поллить, следует делать:
+        //
+        //  poll_context::current()->epoll.add_*( fd )
+        //  poll_context::current()->epoll.mod_*( fd )
+        //  poll_context::current()->epoll.del  ( fd )
+        impl_vposix::epoll epoll;
 
     private:
         std::queue<task_type> tasks;
-        std::mutex tasks_mutex;
+        mutable std::mutex tasks_mutex;
 
         std::thread::id my_id;
 
         impl_vposix::eventfd semaphore;
 
-        impl_vposix::epoll epoll;
         bool in_poll  { false };
         bool let_stop { false };
 

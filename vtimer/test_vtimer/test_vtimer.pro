@@ -12,3 +12,5 @@ include( $$VLIBS_DIR/qmake/vlog.pri   )
 SOURCES += main.cpp
 
 OTHER_FILES += CMakeLists.txt
+
+QMAKE_CXXFLAGS += -fno-omit-frame-pointer -funwind-tables -g

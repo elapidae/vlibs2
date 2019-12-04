@@ -13,7 +13,7 @@
 #include "gtest/gtest.h"
 #include "vlog.h"
 #include "vtimer.h"
-#include "vpoll.h"
+#include "vapplication.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
@@ -35,33 +35,59 @@ TEST_F( VTimer_Test, 1 )
     t.timeout += [&]
     {
         check = 42;
-        vpoll::stop();
+        vapplication::stop();
     };
     t.timeout_times += [](uint64_t times)
     {
         vdeb << times;
     };
 
-    vpoll::poll();
+    vapplication::poll();
 
     EXPECT_EQ( check, 42 );
 }
 
 //=======================================================================================
 
-TEST_F( VTimer_Test, 2 )
+TEST_F( VTimer_Test, _2 )
 {
-    vtimer t( nanoseconds(1) );
+    #if V_CAN_PROXY_CONSTRUCTORS
+        vtimer t( nanoseconds(1) );
+    #else
+        vtimer t;
+        t.start( nanoseconds(1) );
+    #endif
 
     int count = -1;
     t.timeout_times += [&](uint64_t times)
     {
-        vdeb << "times:" << times;
-        if (++count == 5)
-            vpoll::stop();
+        ++count;
+        vdeb << count << "times:" << times;
+        if ( count == 5 )
+            vapplication::stop();
     };
 
-    vpoll::poll();
+    vapplication::poll();
+
+    //  Столь странная проверка, если таймер успеет прилететь на поллинг.
+    EXPECT_TRUE( count == 5 || count == 6 );
+    //-----------------------------------------------------------------------------------
+    //  Вторая часть на аккуратную остановку.
+    count = -1;
+    t.timeout_times.unlink_all();
+    t.timeout_times += [&](uint64_t times)
+    {
+        ++count;
+        vdeb << count << "times 2:" << times;
+        if ( count == 5 )
+        {
+            t.stop();   //  Здесь разница между предыдущей частью. Остановленный таймер
+                        //  не должен дать еще сигнал.
+            vapplication::stop();
+        }
+    };
+
+    vapplication::poll();
 
     EXPECT_EQ( count, 5 );
 }
