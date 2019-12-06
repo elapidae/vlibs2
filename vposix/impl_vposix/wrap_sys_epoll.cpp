@@ -7,6 +7,25 @@
 
 using namespace impl_vposix;
 
+//=======================================================================================
+//EPOLLRDHUP (since Linux 2.6.17)
+//              Stream socket peer closed connection, or shut down writing
+//              half of connection.  (This flag is especially useful for writ‐
+//              ing simple code to detect peer shutdown when using Edge Trig‐
+//              gered monitoring.)
+//
+//EPOLLHUP
+//              Hang up happened on the associated file descriptor.
+//              epoll_wait(2) will always wait for this event; it is not nec‐
+//              essary to set it in events.
+
+//              Note that when reading from a channel such as a pipe or a
+//              stream socket, this event merely indicates that the peer
+//              closed its end of the channel.  Subsequent reads from the
+//              channel will return 0 (end of file) only after all outstanding
+//              data in the channel has been consumed.
+//=======================================================================================
+
 
 //=======================================================================================
 //      epoll_receiver, throws not implemented message
@@ -24,7 +43,18 @@ void impl_vposix::epoll_receiver::on_ready_write()
     throw verror << "not implemented";
 }
 //=======================================================================================
-void impl_vposix::epoll_receiver::on_hang_up()
+//  EPOLLRDHUP
+void impl_vposix::epoll_receiver::on_peer_shut_down_writing()
+{
+    throw verror << "not implemented";
+}
+//=======================================================================================
+void epoll_receiver::on_hang_up()
+{
+    throw verror << "not implemented";
+}
+//=======================================================================================
+void epoll_receiver::on_error()
 {
     throw verror << "not implemented";
 }
@@ -154,17 +184,20 @@ void wrap_sys_epoll::wait_once( int efd )
         epoll_receiver *receiver = static_cast<epoll_receiver*>( events[i].data.ptr );
         uint32_t event = events[i].events;
 
-        if ( event & EPOLLIN )
-            receiver->on_ready_read();
-        event &= ~EPOLLIN;
+        if(event & EPOLLIN)     receiver->on_ready_read();
+         event &= ~EPOLLIN;
 
-        if ( event & EPOLLOUT )
-            receiver->on_ready_write();
-        event &= ~EPOLLOUT;
+        if(event & EPOLLOUT)    receiver->on_ready_write();
+         event &= ~EPOLLOUT;
 
-        if ( event & EPOLLRDHUP )
-            receiver->on_hang_up();
-        event &= ~EPOLLRDHUP;
+        if(event & EPOLLRDHUP)  receiver->on_peer_shut_down_writing();
+         event &= ~EPOLLRDHUP;
+
+        if(event & EPOLLHUP)    receiver->on_hang_up();
+         event &= ~EPOLLHUP;
+
+        if(event & EPOLLERR)    receiver->on_error();
+         event &= ~EPOLLERR;
 
         if ( event )
             throw verror.hex()("Not all flags was recognized, leaved: ", event );

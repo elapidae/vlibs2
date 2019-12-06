@@ -23,7 +23,9 @@ namespace impl_vposix
 
         virtual void on_ready_read();
         virtual void on_ready_write();
-        virtual void on_hang_up();
+        virtual void on_peer_shut_down_writing();       // EPOLLRDHUP
+        virtual void on_hang_up();                      // EPOLLHUP
+        virtual void on_error();
     };
     //===================================================================================
     class epoll final

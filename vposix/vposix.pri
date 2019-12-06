@@ -20,6 +20,7 @@ isEmpty(qi_vposix) {
 
     include( $$VLIBS_DIR/qmake/vcat.pri )
     include( $$VLIBS_DIR/qmake/vlog.pri )
+    include( $$VLIBS_DIR/qmake/vcompiler_traits.pri )
 
     INCLUDEPATH += $$VLIBS_DIR/vposix
 
@@ -29,6 +30,9 @@ isEmpty(qi_vposix) {
     #SOURCES     += $$VLIBS_DIR/vposix/vposix.cpp
 
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/linux_call.h
+
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_arpa_inet.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_arpa_inet.cpp
 
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_errno.h
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_errno.cpp
@@ -47,6 +51,9 @@ isEmpty(qi_vposix) {
 
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_file.h
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_file.cpp
+
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_socket.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_socket.cpp
 
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_stat.h
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_stat.cpp

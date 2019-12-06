@@ -20,6 +20,7 @@
 #include "impl_vposix/wrap_sys_file.h"
 #include "impl_vposix/wrap_sys_epoll.h"
 #include "impl_vposix/wrap_sys_eventfd.h"
+#include "impl_vposix/wrap_arpa_inet.h"
 
 
 class VPosix_Test: public testing::Test
@@ -98,7 +99,6 @@ TEST_F( VPosix_Test, 3 )
 
     EXPECT_EQ( count, 4 );
 }
-
 //=======================================================================================
 
 
