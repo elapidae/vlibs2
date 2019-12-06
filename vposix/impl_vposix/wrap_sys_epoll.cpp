@@ -8,6 +8,8 @@
 using namespace impl_vposix;
 
 //=======================================================================================
+//  Шпаргалки.
+//=======================================================================================
 //EPOLLRDHUP (since Linux 2.6.17)
 //              Stream socket peer closed connection, or shut down writing
 //              half of connection.  (This flag is especially useful for writ‐
@@ -18,7 +20,7 @@ using namespace impl_vposix;
 //              Hang up happened on the associated file descriptor.
 //              epoll_wait(2) will always wait for this event; it is not nec‐
 //              essary to set it in events.
-
+//
 //              Note that when reading from a channel such as a pipe or a
 //              stream socket, this event merely indicates that the peer
 //              closed its end of the channel.  Subsequent reads from the
@@ -32,29 +34,26 @@ using namespace impl_vposix;
 //=======================================================================================
 impl_vposix::epoll_receiver::~epoll_receiver()
 {}
-//=======================================================================================
+//---------------------------------------------------------------------------------------
+void epoll_receiver::on_many_flags( epoll_receiver::events )
+{
+    throw verror << "not implemented";
+}
+//---------------------------------------------------------------------------------------
+//  EPOLLIN
 void impl_vposix::epoll_receiver::on_ready_read()
 {
     throw verror << "not implemented";
 }
-//=======================================================================================
+//---------------------------------------------------------------------------------------
+//  EPOLLOUT
 void impl_vposix::epoll_receiver::on_ready_write()
 {
     throw verror << "not implemented";
 }
-//=======================================================================================
+//---------------------------------------------------------------------------------------
 //  EPOLLRDHUP
 void impl_vposix::epoll_receiver::on_peer_shut_down_writing()
-{
-    throw verror << "not implemented";
-}
-//=======================================================================================
-void epoll_receiver::on_hang_up()
-{
-    throw verror << "not implemented";
-}
-//=======================================================================================
-void epoll_receiver::on_error()
 {
     throw verror << "not implemented";
 }
@@ -184,23 +183,66 @@ void wrap_sys_epoll::wait_once( int efd )
         epoll_receiver *receiver = static_cast<epoll_receiver*>( events[i].data.ptr );
         uint32_t event = events[i].events;
 
-        if(event & EPOLLIN)     receiver->on_ready_read();
-         event &= ~EPOLLIN;
+        switch( event )
+        {
+        case EPOLLIN:       receiver->on_ready_read();              break;
+        case EPOLLOUT:      receiver->on_ready_write();             break;
+        case EPOLLRDHUP:    receiver->on_peer_shut_down_writing();  break;
+        default:
+            receiver->on_many_flags( epoll_receiver::events(event) );
+        }
 
-        if(event & EPOLLOUT)    receiver->on_ready_write();
-         event &= ~EPOLLOUT;
-
-        if(event & EPOLLRDHUP)  receiver->on_peer_shut_down_writing();
-         event &= ~EPOLLRDHUP;
-
-        if(event & EPOLLHUP)    receiver->on_hang_up();
-         event &= ~EPOLLHUP;
-
-        if(event & EPOLLERR)    receiver->on_error();
-         event &= ~EPOLLERR;
-
-        if ( event )
-            throw verror.hex()("Not all flags was recognized, leaved: ", event );
     }
 }
 //=======================================================================================
+
+
+//=======================================================================================
+epoll_receiver::events::events( uint32_t e )
+    : _events(e)
+{}
+//---------------------------------------------------------------------------------------
+//  NB! non const reference, здесь так удобнее.
+static bool get_clear_flag( uint32_t& ev, uint32_t flag )
+{
+    bool res = ev & flag;
+    ev &= ~flag;
+    return res;
+}
+//---------------------------------------------------------------------------------------
+bool epoll_receiver::events::take_read()
+{
+    return get_clear_flag( _events, EPOLLIN );
+}
+//---------------------------------------------------------------------------------------
+bool epoll_receiver::events::take_write()
+{
+    return get_clear_flag( _events, EPOLLOUT );
+}
+//---------------------------------------------------------------------------------------
+bool epoll_receiver::events::take_read_hang_up()
+{
+    return get_clear_flag( _events, EPOLLRDHUP );
+}
+//---------------------------------------------------------------------------------------
+bool epoll_receiver::events::take_hang_up()
+{
+    return get_clear_flag( _events, EPOLLHUP );
+}
+//---------------------------------------------------------------------------------------
+bool epoll_receiver::events::take_error()
+{
+    return get_clear_flag( _events, EPOLLERR );
+}
+//---------------------------------------------------------------------------------------
+bool epoll_receiver::events::empty() const
+{
+    return _events == 0;
+}
+//---------------------------------------------------------------------------------------
+void epoll_receiver::events::throw_if_need( const std::string& src )
+{
+    if ( !empty() ) throw verror( src, ": not all events from EPOLL." );
+}
+//=======================================================================================
+

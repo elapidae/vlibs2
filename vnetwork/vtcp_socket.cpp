@@ -2,8 +2,6 @@
 
 #include <atomic>
 
-#include "impl_vpoll/poll_context.h"
-
 #include "impl_vposix/wrap_errno.h"
 #include "impl_vposix/wrap_unistd.h"
 #include "impl_vposix/wrap_sys_socket.h"
@@ -11,7 +9,6 @@
 #include "vlog.h"
 
 using namespace impl_vposix;
-using namespace impl_vpoll;
 
 //=======================================================================================
 //EINPROGRESS
@@ -26,6 +23,9 @@ using namespace impl_vpoll;
 //              listed here, explaining the reason for the failure).
 //=======================================================================================
 
+
+//=======================================================================================
+//      pimpl
 //=======================================================================================
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpadded"
@@ -37,31 +37,38 @@ public:
 
     ~_pimpl() override;
 
-    void on_ready_read()                override;
-    void on_ready_write()               override;
-    void on_peer_shut_down_writing()    override;
-    void on_hang_up()                   override;
-    void on_error()                     override;
+    void on_many_flags( epoll_receiver::events ev ) override;
+
+    void on_ready_read()             override;
+    void on_ready_write()            override;
+    void on_peer_shut_down_writing() override;
 
     void close();
 
     void connect( const vsocket_address& addr );
 
-    safe_fd fd;
+    bool shutdown_read();
+    bool shutdown_write();
+    bool shutdown_rw();
 
 private:
+    enum Stage { Unconnected, WaitConnection, Connected, Corrupted };
+
+    Stage stage = Unconnected;
+
+    safe_fd fd;
     vtcp_socket *owner;
 };
 #pragma GCC diagnostic pop
 //=======================================================================================
-void vtcp_socket::_pimpl::connect(const vsocket_address &addr)
+void vtcp_socket::_pimpl::connect( const vsocket_address& addr )
 {
     if ( !addr.is_valid() ) throw verror << "Not valid socket address for connect.";
 
     fd = addr.is_ip4() ? wrap_sys_socket::socket_tcp_ip4()
                        : wrap_sys_socket::socket_tcp_ip6();
 
-    bool conn_ok = wrap_sys_socket::connect( fd, addr.data(), addr.data_size() );
+    bool conn_ok = wrap_sys_socket::connect_no_err( fd, addr.data(), addr.data_size() );
 
     //  Socket should be nonblock, so error must be EINPROGRESS
     if ( conn_ok ) throw verror << "Bad connect logic!";
@@ -72,16 +79,43 @@ void vtcp_socket::_pimpl::connect(const vsocket_address &addr)
 
     wrap_sys_socket::set_out_of_band_data( fd, true );
     fd.poll_add_rw( this );
+
+    stage = WaitConnection;
 }
 //---------------------------------------------------------------------------------------
-vtcp_socket::_pimpl::_pimpl(vtcp_socket *owner_)
+vtcp_socket::_pimpl::_pimpl( vtcp_socket *owner_ )
     : owner ( owner_ )
 {}
 //---------------------------------------------------------------------------------------
 vtcp_socket::_pimpl::~_pimpl()
 {
     if ( !fd.has() ) return;
-    wrap_sys_socket::shutdown_rdwr_no_err( fd );
+    shutdown_rw();
+}
+//---------------------------------------------------------------------------------------
+void vtcp_socket::_pimpl::on_many_flags( epoll_receiver::events ev )
+{
+    //  Когда прилетает ошибка 111, в ней вот так флаги выставлены.
+    if ( !ev.take_error()        )  throw verror("Bad logic");
+    if ( !ev.take_read()         )  throw verror("Bad logic");
+    if ( !ev.take_write()        )  throw verror("Bad logic");
+    if ( !ev.take_hang_up()      )  throw verror("Bad logic");
+    if ( !ev.take_read_hang_up() )  throw verror("Bad logic");
+    ev.throw_if_need( "vtcp_socket::on_many_flags" );
+
+
+    auto err = wrap_sys_socket::get_error( fd );
+    fd.close();
+
+    stage = Corrupted;
+
+    if ( err.connect_refused() )
+        owner->error_occured_code( err_codes::connection_refused );
+    else
+        vwarning << "Unknown tcp error code" << err.text();
+
+    owner->error_occured_text( err.text() );
+    owner->disconnected();
 }
 //---------------------------------------------------------------------------------------
 void vtcp_socket::_pimpl::on_ready_read()
@@ -91,7 +125,13 @@ void vtcp_socket::_pimpl::on_ready_read()
 //---------------------------------------------------------------------------------------
 void vtcp_socket::_pimpl::on_ready_write()
 {
-    vdeb;
+    if ( stage != WaitConnection )
+        throw verror( "Bad logic, do not wait write signal" );
+
+    fd.poll_mod_read( this );
+    stage = Connected;
+
+    owner->connected();
 }
 //---------------------------------------------------------------------------------------
 void vtcp_socket::_pimpl::on_peer_shut_down_writing()
@@ -100,77 +140,88 @@ void vtcp_socket::_pimpl::on_peer_shut_down_writing()
     owner->disconnected();
 }
 //---------------------------------------------------------------------------------------
-void vtcp_socket::_pimpl::on_hang_up()
-{
-    vdeb << wrap_sys_socket::get_error( fd );
-    //vdeb << ErrNo().text();
-}
-//---------------------------------------------------------------------------------------
-void vtcp_socket::_pimpl::on_error()
-{
-    //vdeb  << "err" << ErrNo().text();
-}
-//---------------------------------------------------------------------------------------
 void vtcp_socket::_pimpl::close()
 {
+    stage = Unconnected;
+
     if ( !fd.has() ) return;
-    wrap_sys_socket::shutdown_rdwr_no_err( fd );
+
+    shutdown_rw();
     fd.close();
 }
+//---------------------------------------------------------------------------------------
+bool vtcp_socket::_pimpl::shutdown_read()
+{
+    return wrap_sys_socket::shutdown_rd_no_err( fd );
+}
+//---------------------------------------------------------------------------------------
+bool vtcp_socket::_pimpl::shutdown_write()
+{
+    return wrap_sys_socket::shutdown_wr_no_err( fd );
+}
+//---------------------------------------------------------------------------------------
+bool vtcp_socket::_pimpl::shutdown_rw()
+{
+    return wrap_sys_socket::shutdown_rdwr_no_err( fd );
+}
+//=======================================================================================
+//      pimpl
 //=======================================================================================
 
 
+//=======================================================================================
+//      vtcp_socket interface
 //=======================================================================================
 vtcp_socket::vtcp_socket()
     : _p( new _pimpl(this) )
 {}
-//=======================================================================================
+//---------------------------------------------------------------------------------------
 vtcp_socket::~vtcp_socket()
 {}
-//=======================================================================================
+//---------------------------------------------------------------------------------------
 void vtcp_socket::connect( const vsocket_address& addr )
 {
     _p->connect( addr );
 }
-//=======================================================================================
+//---------------------------------------------------------------------------------------
 void vtcp_socket::listen( const vsocket_address& addr )
 {
 
 }
-//=======================================================================================
+//---------------------------------------------------------------------------------------
 void vtcp_socket::listen_any( uint16_t port )
 {
 
 }
-//=======================================================================================
+//---------------------------------------------------------------------------------------
 void vtcp_socket::listen_loopback( uint16_t port )
 {
 
 }
-//=======================================================================================
+//---------------------------------------------------------------------------------------
 void vtcp_socket::close()
 {
     if ( _p ) _p->close();
 }
-//=======================================================================================
+//---------------------------------------------------------------------------------------
 bool vtcp_socket::shutdown_read()
 {
-    return _p ? wrap_sys_socket::shutdown_rd_no_err( _p->fd )
-              : false;
+    return _p->shutdown_read();
 }
-//=======================================================================================
+//---------------------------------------------------------------------------------------
 bool vtcp_socket::shutdown_write()
 {
-    return _p ? wrap_sys_socket::shutdown_wr_no_err( _p->fd )
-              : false;
+    return _p->shutdown_write();
 }
-//=======================================================================================
+//---------------------------------------------------------------------------------------
 bool vtcp_socket::shutdown_rw()
 {
-    return _p ? wrap_sys_socket::shutdown_rdwr_no_err( _p->fd )
-              : false;
+    return _p->shutdown_rw();
 }
 //=======================================================================================
+//      vtcp_socket interface
+//=======================================================================================
+
 
 //=======================================================================================
 //      vtcp_socket::accepted_socket
@@ -178,14 +229,14 @@ bool vtcp_socket::shutdown_rw()
 vtcp_socket::accepted_socket::accepted_socket( int fd )
     : _p( std::make_shared<std::atomic<int>>(fd) )
 {}
-//=======================================================================================
+//---------------------------------------------------------------------------------------
 vtcp_socket::accepted_socket::~accepted_socket()
 {
     if ( !_p ) return;
-    vfatal << "accepted_socket destroyed, but socket not used, will close forced";
+    vwarning << "accepted_socket destroyed, but socket not used, will close forced";
     wrap_unistd::close_safe( take() );
 }
-//=======================================================================================
+//---------------------------------------------------------------------------------------
 int vtcp_socket::accepted_socket::take()
 {
     assert( _p );
@@ -193,4 +244,6 @@ int vtcp_socket::accepted_socket::take()
     _p.reset();
     return res;
 }
+//=======================================================================================
+//      vtcp_socket::accepted_socket
 //=======================================================================================

@@ -62,13 +62,14 @@ TEST_F( VNetwork_Test, sock )
 //=======================================================================================
 int main(int argc, char *argv[])
 {
-    QTcpServer serv;
-    auto ok = serv.listen( QHostAddress::Any, 1234 );
-    Q_ASSERT( ok );
+    //QTcpServer serv;
+    //auto ok = serv.listen( QHostAddress::Any, 1234 );
+    //Q_ASSERT( ok );
 
     vtcp_socket s;
-    //s.connect( vsocket_address::any_ip4(1234) );
-    s.connect( vsocket_address::loopback_ip4(1234) );
+    s.connect( vsocket_address::any_ip4(1234) );
+    //s.connect( vsocket_address::loopback_ip4(1234) );
+    s.error_occured_text += [](std::string msg){ vdeb << msg; };
 
     vapplication::poll();
     return 1;

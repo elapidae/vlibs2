@@ -10,15 +10,20 @@
 class vtcp_socket final
 {
 public:
+    enum class err_codes { no, connection_refused };
+
     class accepted_socket;
 
     vtcp_socket();
+    vtcp_socket( accepted_socket );
     ~vtcp_socket();
 
     vsignal<> connected;
     vsignal<> disconnected;
-    vsignal<const std::string&> received;
-    vsignal<const std::string&> error_occured;
+    vsignal<std::string> received;
+
+    vsignal<err_codes>   error_occured_code;
+    vsignal<std::string> error_occured_text;
 
     void connect( const vsocket_address& addr );
 

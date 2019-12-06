@@ -11,6 +11,7 @@
 //=======================================================================================
 
 #include <stdint.h>
+#include <string>
 
 //=======================================================================================
 namespace impl_vposix
@@ -19,13 +20,33 @@ namespace impl_vposix
     class epoll_receiver
     {
     public:
+        struct events
+        {
+            bool take_read();           //  EPOLLIN
+            bool take_write();          //  EPOLLOUT
+            bool take_read_hang_up();   //  EPOLLRDHUP
+            bool take_hang_up();        //  EPOLLHUP
+            bool take_error();          //  EPOLLERR
+
+            bool empty() const;
+
+            //  Бросает исключение, если не пустой.
+            void throw_if_need( const std::string& src );
+
+        private:
+            friend class wrap_sys_epoll; events( uint32_t e );
+            uint32_t _events;
+        };
+
         virtual ~epoll_receiver();
 
-        virtual void on_ready_read();
-        virtual void on_ready_write();
-        virtual void on_peer_shut_down_writing();       // EPOLLRDHUP
-        virtual void on_hang_up();                      // EPOLLHUP
-        virtual void on_error();
+        virtual void on_many_flags( events ev );
+
+        virtual void on_ready_read();               //  only EPOLLIN
+        virtual void on_ready_write();              //  only EPOLLOUT
+        virtual void on_peer_shut_down_writing();   //  only EPOLLRDHUP
+        //virtual void on_hang_up();                  // EPOLLHUP
+        //virtual void on_error();
     };
     //===================================================================================
     class epoll final

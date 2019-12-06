@@ -17,44 +17,54 @@ int _socket( int domain, int type )
 
     return linux_call::check( ::socket, domain, type, 0 );
 }
-//=======================================================================================
-int wrap_sys_socket::socket_tcp( int af_type )
+//---------------------------------------------------------------------------------------
+safe_fd wrap_sys_socket::socket_tcp( int af_type )
 {
     return _socket( af_type, SOCK_STREAM );
 }
-//=======================================================================================
-int wrap_sys_socket::socket_tcp_ip4()
+//---------------------------------------------------------------------------------------
+safe_fd wrap_sys_socket::socket_tcp_ip4()
 {
     return socket_tcp( AF_INET );
 }
-//=======================================================================================
-int wrap_sys_socket::socket_tcp_ip6()
+//---------------------------------------------------------------------------------------
+safe_fd wrap_sys_socket::socket_tcp_ip6()
 {
     return socket_tcp( AF_INET6 );
 }
-//=======================================================================================
-int wrap_sys_socket::socket_udp( int af_type )
+//---------------------------------------------------------------------------------------
+safe_fd wrap_sys_socket::socket_udp( int af_type )
 {
     return _socket( af_type, SOCK_DGRAM );
+}
+//---------------------------------------------------------------------------------------
+safe_fd wrap_sys_socket::socket_udp_ip4()
+{
+    return socket_udp( AF_INET );
+}
+//---------------------------------------------------------------------------------------
+safe_fd wrap_sys_socket::socket_udp_ip6()
+{
+    return socket_udp( AF_INET6 );
 }
 //=======================================================================================
 //  If the connection or binding succeeds, zero is returned.  On error,
 //  -1 is returned, and errno is set appropriately.
-bool wrap_sys_socket::connect( int fd, const void *sa, unsigned sa_size )
+bool wrap_sys_socket::connect_no_err( int fd, const void *sa, unsigned sa_size )
 {
     auto sa_ptr = static_cast<const sockaddr*>( sa );
 
     return 0 == linux_call::no_err( ::connect, fd, sa_ptr, sa_size );
 }
 //=======================================================================================
-bool wrap_sys_socket::connect_ip4(int fd, const sockaddr_in *sa4 )
+bool wrap_sys_socket::connect_ip4_no_err(int fd, const sockaddr_in *sa4 )
 {
-    return connect( fd, sa4, sizeof(sockaddr_in) );
+    return connect_no_err( fd, sa4, sizeof(sockaddr_in) );
 }
 //=======================================================================================
-bool wrap_sys_socket::connect_ip6(int fd, const sockaddr_in6 *sa6 )
+bool wrap_sys_socket::connect_ip6_no_err(int fd, const sockaddr_in6 *sa6 )
 {
-    return connect( fd, sa6, sizeof(sockaddr_in6) );
+    return connect_no_err( fd, sa6, sizeof(sockaddr_in6) );
 }
 //=======================================================================================
 
@@ -115,5 +125,10 @@ static int get_sock_opt_int( int fd, int level, int optname )
 ErrNo wrap_sys_socket::get_error( int fd )
 {
     return get_sock_opt_int( fd, SOL_SOCKET, SO_ERROR );
+}
+//=======================================================================================
+void wrap_sys_socket::listen( int fd )
+{
+
 }
 //=======================================================================================
