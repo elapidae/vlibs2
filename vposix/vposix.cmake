@@ -19,7 +19,8 @@ if ( NOT  VPOSIX_INCLUDED )
 
     message( "=== about include vposix... ===" )
 
-    include( "${VLIBS_DIR}/cmake/vcat.cmake" )
+    include( "${VLIBS_DIR}/cmake/vcat.cmake"  )
+    include( "${VLIBS_DIR}/cmake/vpoll.cmake" )
 
     include_directories( "${VLIBS_DIR}/vposix/" )
 
@@ -32,6 +33,9 @@ if ( NOT  VPOSIX_INCLUDED )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_errno.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_errno.cpp" )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_arpa_inet.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_arpa_inet.cpp" )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_fcntl.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_fcntl.cpp" )

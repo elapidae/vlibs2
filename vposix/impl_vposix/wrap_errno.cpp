@@ -5,7 +5,6 @@
 #include <cstring>
 
 #include "vcat.h"
-#include "vlog.h"
 #include "vcompiler_traits.h"
 
 using namespace impl_vposix;

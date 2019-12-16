@@ -79,7 +79,7 @@ TEST_F( VPosix_Test, 3 )
     {
         eventfd *efd;
         int *count;
-        void on_ready_read() override
+        void on_events( epoll_receiver::events ) override
         {
             while( efd->read() )
                 ++(*count);
@@ -88,7 +88,7 @@ TEST_F( VPosix_Test, 3 )
     r.efd = &efd;
     r.count = &count;
 
-    ep.add_read( efd.handle(), &r );
+    ep.add( efd.handle(), epoll::In, &r );
 
     efd.write();
     efd.write();
