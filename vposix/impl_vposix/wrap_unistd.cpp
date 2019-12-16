@@ -55,13 +55,12 @@ safe_fd::safe_fd() noexcept
 //---------------------------------------------------------------------------------------
 safe_fd::safe_fd( int fd_ ) noexcept
     : _fd( fd_ )
-{
-    assert( _fd >= 0 );
-}
+{}
 //---------------------------------------------------------------------------------------
 safe_fd::~safe_fd()
 {
-    close();
+    if ( !has() ) return;
+    wrap_unistd::close_safe( _fd );
 }
 //---------------------------------------------------------------------------------------
 void safe_fd::close()
@@ -71,6 +70,7 @@ void safe_fd::close()
     if (_in_poll) poll_del();
 
     wrap_unistd::close( _fd );
+    _fd = -1;
 }
 //---------------------------------------------------------------------------------------
 impl_vposix::safe_fd::operator int() const noexcept
@@ -91,11 +91,13 @@ bool safe_fd::in_poll() const noexcept
 safe_fd::safe_fd( safe_fd && other ) noexcept
 {
     std::swap( _fd, other._fd );
+    std::swap( _in_poll, other._in_poll );
 }
 //---------------------------------------------------------------------------------------
 safe_fd &safe_fd::operator =( safe_fd && other ) noexcept
 {
     std::swap( _fd, other._fd );
+    std::swap( _in_poll, other._in_poll );
     return *this;
 }
 //---------------------------------------------------------------------------------------
@@ -109,40 +111,40 @@ safe_fd& safe_fd::operator = ( int other )
 void safe_fd::poll_add_read( epoll_receiver *receiver )
 {
     assert( !_in_poll );
-    impl_vpoll::poll_context::current()->epoll.add_read( _fd, receiver );
+    impl_vpoll::poll_context::current()->epoll.add( _fd, epoll::In, receiver );
     _in_poll = true;
 }
 //---------------------------------------------------------------------------------------
 void safe_fd::poll_add_write( epoll_receiver *receiver )
 {
     assert( !_in_poll );
-    impl_vpoll::poll_context::current()->epoll.add_write( _fd, receiver );
+    impl_vpoll::poll_context::current()->epoll.add( _fd, epoll::Out, receiver );
     _in_poll = true;
 }
 //---------------------------------------------------------------------------------------
 void safe_fd::poll_add_rw( epoll_receiver *receiver )
 {
     assert( !_in_poll );
-    impl_vpoll::poll_context::current()->epoll.add_rw( _fd, receiver );
+    impl_vpoll::poll_context::current()->epoll.add( _fd, epoll::InOut, receiver );
     _in_poll = true;
 }
 //---------------------------------------------------------------------------------------
 void safe_fd::poll_mod_read( epoll_receiver *receiver )
 {
     assert( _in_poll );
-    impl_vpoll::poll_context::current()->epoll.mod_read( _fd, receiver );
+    impl_vpoll::poll_context::current()->epoll.mod( _fd, epoll::In, receiver );
 }
 //---------------------------------------------------------------------------------------
 void safe_fd::poll_mod_write( epoll_receiver *receiver )
 {
     assert( _in_poll );
-    impl_vpoll::poll_context::current()->epoll.mod_write( _fd, receiver );
+    impl_vpoll::poll_context::current()->epoll.mod( _fd, epoll::Out, receiver );
 }
 //---------------------------------------------------------------------------------------
 void safe_fd::poll_mod_rw( epoll_receiver *receiver )
 {
     assert( _in_poll );
-    impl_vpoll::poll_context::current()->epoll.mod_rw( _fd, receiver );
+    impl_vpoll::poll_context::current()->epoll.mod( _fd, epoll::InOut, receiver );
 }
 //---------------------------------------------------------------------------------------
 void safe_fd::poll_del()

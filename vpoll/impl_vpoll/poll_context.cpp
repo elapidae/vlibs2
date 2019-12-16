@@ -5,6 +5,7 @@
 #include "vlog.h"
 
 using namespace impl_vpoll;
+using namespace impl_vposix;
 
 //=======================================================================================
 poll_context *poll_context::current()
@@ -16,7 +17,7 @@ poll_context *poll_context::current()
 poll_context::poll_context()
 {
     my_id = std::this_thread::get_id();
-    epoll.add_read( semaphore.handle(), this );
+    epoll.add( semaphore.handle(), epoll::In, this );
 }
 //=======================================================================================
 poll_context::~poll_context()
@@ -24,8 +25,12 @@ poll_context::~poll_context()
     epoll.del( semaphore.handle() );
 }
 //=======================================================================================
-void poll_context::on_ready_read()
+void poll_context::on_events( impl_vposix::epoll_receiver::events e )
 {
+    bool r = e.take_read();     //  Для проверки, что нам прилетел
+    assert(r); (void)r;         //  один и только один
+    e.check_empty();            //  флаг на чтение.
+
     while ( semaphore.read() )
     {
         task_type task { nullptr };
@@ -42,9 +47,8 @@ void poll_context::on_ready_read()
         }
         else
         {
-            let_stop = true;
-            break;              //  Сразу прерываем обработку очереди задач.
-                                //  Не зря же нас попросили остановится.
+            let_stop = true;    //  Сразу прерываем обработку очереди задач.
+            break;              //  Не зря же нас попросили остановится.
         }
     } // while has task or null received.
 }

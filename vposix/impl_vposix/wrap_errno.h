@@ -14,6 +14,7 @@
 
 #include <string>
 #include <ostream>
+#include <stdexcept>
 
 //=======================================================================================
 namespace impl_vposix
@@ -31,6 +32,9 @@ namespace impl_vposix
         //  Бросает verror(text) если есть ошибка.
         void do_throw( const std::string& msg );
 
+        //  EPIPE --
+        bool broken_pipe() const;
+
         //  EINTR -- Interrupted system call, надо повторить последний вызов.
         bool need_repeat_last_call() const;
 
@@ -45,6 +49,13 @@ namespace impl_vposix
 
     private:
         int _err;
+    };
+    //===================================================================================
+    class posix_error : public std::runtime_error
+    {
+    public:
+        posix_error( int e, const std::string& msg );
+        ErrNo err;
     };
     //===================================================================================
 

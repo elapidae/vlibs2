@@ -4,6 +4,7 @@
 #include "impl_vposix/linux_call.h"
 #include "impl_vposix/wrap_unistd.h"
 #include "vlog.h"
+#include "vcat.h"
 
 using namespace impl_vposix;
 
@@ -34,29 +35,6 @@ using namespace impl_vposix;
 //=======================================================================================
 impl_vposix::epoll_receiver::~epoll_receiver()
 {}
-//---------------------------------------------------------------------------------------
-void epoll_receiver::on_many_flags( epoll_receiver::events )
-{
-    throw verror << "not implemented";
-}
-//---------------------------------------------------------------------------------------
-//  EPOLLIN
-void impl_vposix::epoll_receiver::on_ready_read()
-{
-    throw verror << "not implemented";
-}
-//---------------------------------------------------------------------------------------
-//  EPOLLOUT
-void impl_vposix::epoll_receiver::on_ready_write()
-{
-    throw verror << "not implemented";
-}
-//---------------------------------------------------------------------------------------
-//  EPOLLRDHUP
-void impl_vposix::epoll_receiver::on_peer_shut_down_writing()
-{
-    throw verror << "not implemented";
-}
 //=======================================================================================
 
 //=======================================================================================
@@ -72,40 +50,19 @@ epoll::~epoll()
     if ( _count != 0 )
         vfatal << "Bad counter for add/del handles in epoll:" << _count;
 
-    wrap_unistd::close( _efd );
+    wrap_unistd::close_safe( _efd );
 }
 //=======================================================================================
-void epoll::add_read( int fd, epoll_receiver *receiver )
+void epoll::add( int fd, epoll::Direction d, epoll_receiver *receiver )
 {
-    wrap_sys_epoll::add( _efd, fd, wrap_sys_epoll::In, receiver );
+//    vdeb["poll"] << "add to epoll\t" << receiver << "\n";
+    wrap_sys_epoll::add( _efd, fd, d, receiver );
     ++_count;
 }
 //=======================================================================================
-void epoll::add_write( int fd, epoll_receiver *receiver )
+void epoll::mod( int fd, epoll::Direction d, epoll_receiver *receiver )
 {
-    wrap_sys_epoll::add( _efd, fd, wrap_sys_epoll::Out, receiver );
-    ++_count;
-}
-//=======================================================================================
-void epoll::add_rw( int fd, epoll_receiver *receiver )
-{
-    wrap_sys_epoll::add( _efd, fd, wrap_sys_epoll::InOut, receiver );
-    ++_count;
-}
-//=======================================================================================
-void epoll::mod_read( int fd, epoll_receiver *receiver )
-{
-    wrap_sys_epoll::mod( _efd, fd, wrap_sys_epoll::In, receiver );
-}
-//=======================================================================================
-void epoll::mod_write( int fd, epoll_receiver *receiver )
-{
-    wrap_sys_epoll::mod( _efd, fd, wrap_sys_epoll::Out, receiver );
-}
-//=======================================================================================
-void epoll::mod_rw( int fd, epoll_receiver *receiver )
-{
-    wrap_sys_epoll::mod( _efd, fd, wrap_sys_epoll::InOut, receiver );
+    wrap_sys_epoll::mod( _efd, fd, d, receiver );
 }
 //=======================================================================================
 void epoll::del( int fd )
@@ -141,26 +98,24 @@ static void econtrol( int efd,
     linux_call::check( ::epoll_ctl, efd, operation, fd, &event );
 }
 //---------------------------------------------------------------------------------------
-static uint32_t direction( wrap_sys_epoll::Direction d )
+static uint32_t direction( epoll::Direction d )
 {
     switch (d)
     {
-    case wrap_sys_epoll::In:    return EPOLLIN;
-    case wrap_sys_epoll::Out:   return EPOLLOUT;
-    case wrap_sys_epoll::InOut: return EPOLLIN|EPOLLOUT;
+    case epoll::In:    return EPOLLIN;
+    case epoll::Out:   return EPOLLOUT;
+    case epoll::InOut: return EPOLLIN|EPOLLOUT;
     }
     throw verror( "Direction not delected" );
 }
 //=======================================================================================
-void wrap_sys_epoll::add( int efd, int fd, wrap_sys_epoll::Direction d,
-                          epoll_receiver *receiver )
+void wrap_sys_epoll::add( int efd, int fd, epoll::Direction d, epoll_receiver *receiver )
 {
     assert( receiver );
     econtrol( efd, fd, EPOLL_CTL_ADD, direction(d), receiver );
 }
 //=======================================================================================
-void wrap_sys_epoll::mod( int efd, int fd, wrap_sys_epoll::Direction d,
-                          epoll_receiver *receiver )
+void wrap_sys_epoll::mod( int efd, int fd, epoll::Direction d, epoll_receiver *receiver )
 {
     assert( receiver );
     econtrol( efd, fd, EPOLL_CTL_MOD, direction(d), receiver );
@@ -171,78 +126,80 @@ void wrap_sys_epoll::del( int efd, int fd )
     econtrol( efd, fd, EPOLL_CTL_DEL, 0, nullptr );
 }
 //=======================================================================================
+//  Надо для отладки, пока что не уверен в поллинге.
+//static std::string deb_flags( epoll_receiver::events f )
+//{
+//    vcat res;
+//    if ( f.take_read() )        res("|IN");
+//    if ( f.take_write() )       res("|OUT");
+//    if ( f.take_error() )       res("|ERR");
+//    if ( f.take_hang_up() )     res("|HANG");
+//    if ( f.take_read_hang_up()) res("|READ_HANG");
+//    return res;
+//}
+//---------------------------------------------------------------------------------------
 void wrap_sys_epoll::wait_once( int efd )
 {
-    enum { Waits_Count = 16 };
+    enum { waits_count = 16 };
 
-    struct epoll_event events[Waits_Count];
-    int count = linux_call::check( ::epoll_wait, efd, events, Waits_Count, -1 );
+    struct epoll_event events[waits_count];
+    int count = linux_call::check( ::epoll_wait, efd, events, waits_count, -1 );
 
     for ( int i = 0; i < count; ++i )
     {
         epoll_receiver *receiver = static_cast<epoll_receiver*>( events[i].data.ptr );
-        uint32_t event = events[i].events;
-
-        switch( event )
-        {
-        case EPOLLIN:       receiver->on_ready_read();              break;
-        case EPOLLOUT:      receiver->on_ready_write();             break;
-        case EPOLLRDHUP:    receiver->on_peer_shut_down_writing();  break;
-        default:
-            receiver->on_many_flags( epoll_receiver::events(event) );
-        }
-
+        //uint32_t evs = events[i].events;
+        //vdeb.hex() << "epolled" << receiver << evs << deb_flags(evs);
+        receiver->on_events( {events[i].events} );
     }
 }
 //=======================================================================================
 
 
 //=======================================================================================
+//      epoll_receiver::events
+//=======================================================================================
 epoll_receiver::events::events( uint32_t e )
-    : _events(e)
+    : _ev( e )
 {}
-//---------------------------------------------------------------------------------------
-//  NB! non const reference, здесь так удобнее.
-static bool get_clear_flag( uint32_t& ev, uint32_t flag )
+//=======================================================================================
+bool epoll_receiver::events::_take( uint32_t flag )
 {
-    bool res = ev & flag;
-    ev &= ~flag;
+    bool res = _ev & flag;
+    _ev &= ~flag;
     return res;
 }
-//---------------------------------------------------------------------------------------
+//=======================================================================================
 bool epoll_receiver::events::take_read()
 {
-    return get_clear_flag( _events, EPOLLIN );
-}
-//---------------------------------------------------------------------------------------
-bool epoll_receiver::events::take_write()
-{
-    return get_clear_flag( _events, EPOLLOUT );
-}
-//---------------------------------------------------------------------------------------
-bool epoll_receiver::events::take_read_hang_up()
-{
-    return get_clear_flag( _events, EPOLLRDHUP );
-}
-//---------------------------------------------------------------------------------------
-bool epoll_receiver::events::take_hang_up()
-{
-    return get_clear_flag( _events, EPOLLHUP );
-}
-//---------------------------------------------------------------------------------------
-bool epoll_receiver::events::take_error()
-{
-    return get_clear_flag( _events, EPOLLERR );
-}
-//---------------------------------------------------------------------------------------
-bool epoll_receiver::events::empty() const
-{
-    return _events == 0;
-}
-//---------------------------------------------------------------------------------------
-void epoll_receiver::events::throw_if_need( const std::string& src )
-{
-    if ( !empty() ) throw verror( src, ": not all events from EPOLL." );
+    return _take( EPOLLIN );
 }
 //=======================================================================================
-
+bool epoll_receiver::events::take_write()
+{
+    return _take( EPOLLOUT );
+}
+//=======================================================================================
+bool epoll_receiver::events::take_hang_up()
+{
+    return _take( EPOLLHUP );
+}
+//=======================================================================================
+bool epoll_receiver::events::take_read_hang_up()
+{
+    return _take( EPOLLRDHUP );
+}
+//=======================================================================================
+bool epoll_receiver::events::take_error()
+{
+    return _take( EPOLLERR );
+}
+//=======================================================================================
+void epoll_receiver::events::check_empty()
+{
+    if ( _ev != 0 )
+        throw verror.hex() << "Internal error, epoll flags not used at all: " << _ev;
+}
+//=======================================================================================
+//      epoll_receiver::events
+//=======================================================================================

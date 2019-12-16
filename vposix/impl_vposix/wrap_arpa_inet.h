@@ -16,6 +16,7 @@ namespace impl_vposix
     struct wrap_arpa_inet
     {
         //  dst is written in network byte order.
+        static bool inet_pton( int family, const std::string& src, void *dst );
         static bool inet_pton_ip4( const std::string& src, void *dst );
         static bool inet_pton_ip6( const std::string& src, void *dst );
 

@@ -11,6 +11,14 @@
 using namespace impl_vposix;
 
 //=======================================================================================
+posix_error::posix_error( int e, const std::string& msg )
+    : runtime_error( msg )
+    , err( e )
+{}
+//=======================================================================================
+
+
+//=======================================================================================
 ErrNo::ErrNo()
     : _err( errno )
 {}
@@ -26,14 +34,19 @@ std::string ErrNo::text() const
     constexpr auto buf_size = 1024;
     char buf[ buf_size ];
 
-    //  TS версия.
+    //  TS версия. Пусть strerror_r вызывается без оберток, должна работать из коробки.
     return vcat( '[', _err, "] ", ::strerror_r(_err, buf, buf_size) );
 }
 //=======================================================================================
 V_NORETURN
 void ErrNo::do_throw( const std::string& msg )
 {
-    throw verror( text(), '(', msg, ')' );
+    throw posix_error( _err, vcat(text(), '(', msg, ')') );
+}
+//=======================================================================================
+bool ErrNo::broken_pipe() const
+{
+    return _err == EPIPE;
 }
 //=======================================================================================
 bool ErrNo::has() const

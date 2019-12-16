@@ -8,9 +8,9 @@ using namespace impl_vposix;
 
 
 //=======================================================================================
-static bool _inet_pton( int af, const std::string& src, void *dst )
+bool wrap_arpa_inet::inet_pton( int family, const std::string &src, void *dst )
 {
-    auto res = linux_call::no_err( ::inet_pton, af, src.c_str(), dst );
+    auto res = linux_call::no_err( ::inet_pton, family, src.c_str(), dst );
 
     if (res == -1)
         ErrNo().do_throw( "wrap_arpa_inet::inet_pton_ip4" );
@@ -20,12 +20,12 @@ static bool _inet_pton( int af, const std::string& src, void *dst )
 //---------------------------------------------------------------------------------------
 bool wrap_arpa_inet::inet_pton_ip4( const std::string& src, void *dst )
 {
-    return _inet_pton( AF_INET, src, dst );
+    return inet_pton( AF_INET, src, dst );
 }
 //---------------------------------------------------------------------------------------
 bool wrap_arpa_inet::inet_pton_ip6( const std::string& src, void *dst )
 {
-    return _inet_pton( AF_INET6, src, dst );
+    return inet_pton( AF_INET6, src, dst );
 }
 //=======================================================================================
 
