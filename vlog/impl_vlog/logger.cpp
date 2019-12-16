@@ -7,8 +7,6 @@ using namespace impl_vlog;
 using namespace std;
 
 //=======================================================================================
-//      logger
-//=======================================================================================
 logger::logger( position_fix && pos,
                 entry::Level    level )
     : _pos   ( pos   )
@@ -19,7 +17,7 @@ logger::logger( position_fix && pos,
     space();
 }
 //=======================================================================================
-logger::~logger()
+logger::~logger() noexcept(false)
 {
     if ( !_is_on ) return;
 
@@ -39,19 +37,19 @@ logger& logger::operator[]( bool on )
     return *this;
 }
 //=======================================================================================
-logger& logger::operator[]( const string& domain )
+logger& logger::operator[]( std::string domain )
 {
     assert( _domain.empty() );
-    _domain = domain;
+    _domain = std::move( domain );
+
+    if ( vlog::_need_omit_domain(_domain) )
+        _is_on = false;
+
     return *this;
 }
 //=======================================================================================
 logger& logger::operator[]( const char* domain )
 {
-    assert( _domain.empty() );
-    _domain = domain;
-    return *this;
+    return operator[]( std::string(domain) );
 }
-//=======================================================================================
-//      logger
 //=======================================================================================

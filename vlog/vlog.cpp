@@ -35,7 +35,7 @@ static string for_std_cxxx( const entry& e )
 
     return res;
 }
-
+//---------------------------------------------------------------------------------------
 static void to_cout( const entry& e )
 {
     cout << for_std_cxxx(e);
@@ -75,7 +75,7 @@ void vlog::omit_domain( const string& domain )
     omit_domains.insert( domain );
 }
 //---------------------------------------------------------------------------------------
-void vlog::apply_domain(const string &domain)
+void vlog::apply_domain( const string& domain )
 {
     omit_domains.erase( domain );
 }
@@ -86,6 +86,11 @@ void vlog::_execute( const entry& ent )
 
     for ( auto& exe: executers )
         exe( ent );
+}
+//=======================================================================================
+bool vlog::_need_omit_domain( const string& domain )
+{
+    return omit_domains.count( domain );
 }
 //=======================================================================================
 void vlog::set_shared_log( const string& fname, uint bytes_in_one, uint rotates )

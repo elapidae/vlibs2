@@ -17,11 +17,11 @@ namespace impl_vlog
         logger( position_fix && pos,
                 entry::Level    level );
 
-        ~logger();
+        ~logger() noexcept(false);
 
         logger& operator[] ( bool on );                     // оператор для выключения.
 
-        logger& operator[] ( const std::string& domain );   // логирование по доменам
+        logger& operator[] ( std::string domain );          // логирование по доменам
         logger& operator[] ( const char* domain );          //
 
         //-------------------------------------------------------------------------------

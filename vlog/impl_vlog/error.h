@@ -28,9 +28,16 @@ namespace impl_vlog
         //  Работает так: когда объект создан, но не скопирован, то stream накапливает
         //  данные. Когда вызывается копирование, то сообщение "снимается" со stream-а
         //  и "запечатывается" (сохраняется в sealed_msg)
-        bool _sealed = false;
-        std::string _sealed_msg {};
+        //
+        //  Если перехватывается по catch(...) копирования не происходит и
+        //  "запечатывание" обламывается. Чтобы что-то с этим сделать, само запечатывание
+        //  пришлось сделать через mutable.
+        mutable bool _sealed = false;
+        mutable std::string _sealed_msg {};
+
         std::ostringstream _stream;
+
+        void _seal_msg( const std::string& msg, bool delimiter_added ) const;
 
         //-------------------------------------------------------------------------------
         friend class impl_vcat::vcat_iface<error>;
