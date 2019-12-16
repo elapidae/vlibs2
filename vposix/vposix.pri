@@ -26,8 +26,24 @@ isEmpty(qi_vposix) {
 
     #------------------------------------------------------------------------------------
 
-    HEADERS     += $$VLIBS_DIR/vposix/vposix.h
-    #SOURCES     += $$VLIBS_DIR/vposix/vposix.cpp
+    OTHER_FILES += $$VLIBS_DIR/vposix/vposix.cmake
+    OTHER_FILES += $$VLIBS_DIR/vposix/README
+
+    #------------------------------------------------------------------------------------
+
+    HEADERS     += $$VLIBS_DIR/vposix/vinvoke_iface.h
+    SOURCES     += $$VLIBS_DIR/vposix/vinvoke_iface.cpp
+
+    HEADERS     += $$VLIBS_DIR/vposix/vapplication.h
+    SOURCES     += $$VLIBS_DIR/vposix/vapplication.cpp
+
+    HEADERS     += $$VLIBS_DIR/vposix/vthread.h
+    SOURCES     += $$VLIBS_DIR/vposix/vthread.cpp
+
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/poll_context.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/poll_context.cpp
+
+    #------------------------------------------------------------------------------------
 
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/linux_call.h
 
@@ -65,9 +81,6 @@ isEmpty(qi_vposix) {
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_unistd.cpp
 
     #------------------------------------------------------------------------------------
-
-    OTHER_FILES += $$VLIBS_DIR/vposix/vposix.cmake
-    OTHER_FILES += $$VLIBS_DIR/vposix/README
 }
 # vposix.pri
 #========================================================================================
