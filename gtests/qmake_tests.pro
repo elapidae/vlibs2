@@ -31,3 +31,6 @@ SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
 PROJECT = vtimer
 SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
 
+PROJECT = vnetwork
+SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
+

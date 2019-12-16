@@ -17,22 +17,20 @@ if ( NOT  VNETWORK_INCLUDED )
 
     message( "=== include vnetwork... ===" )
 
-    include( "${VLIBS_DIR}/cmake/c++11.cmake"  )
-    include( "${VLIBS_DIR}/cmake/vposix.cmake" )
+    include( "${VLIBS_DIR}/cmake/vlog.cmake"    )
+    include( "${VLIBS_DIR}/cmake/vposix.cmake"  )
+    include( "${VLIBS_DIR}/cmake/vsignal.cmake" )
 
     include_directories( "${VLIBS_DIR}/vnetwork/" )
 
-#    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vinvoke_iface.h"   )
-#    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vinvoke_iface.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vsocket_address.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vsocket_address.cpp" )
 
-#    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vapplication.h"   )
-#    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vapplication.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vtcp_socket.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vtcp_socket.cpp" )
 
-#    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vthread.h"   )
-#    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vthread.cpp" )
-
-#    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/impl_vnetwork/poll_context.h"   )
-#    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/impl_vnetwork/poll_context.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vtcp_server.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vtcp_server.cpp" )
 
     message( "=== vnetwork included ===" )
 endif()

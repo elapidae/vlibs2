@@ -20,60 +20,101 @@ class VNetwork_Test: public testing::Test
 #pragma GCC diagnostic pop
 
 #include "vlog.h"
-
-//=======================================================================================
-#include "vinet_address.h"
-
-TEST_F( VNetwork_Test, inet_addr )
-{
-    vinet_address a4( "1.2.3.4" );
-    EXPECT_EQ( a4.str(), "1.2.3.4" );
-
-    vinet_address a6( "1:2:3::4:5:6" );
-    EXPECT_EQ( a6.str(), "1:2:3::4:5:6" );
-
-    EXPECT_ANY_THROW( vinet_address("bad") );
-
-    auto bad = vinet_address::from_string( "bad 2" );
-    EXPECT_TRUE( !bad.is_valid() );
-}
-//=======================================================================================
-
-//=======================================================================================
-#include <sys/socket.h>
-#include <arpa/inet.h>
-
-TEST_F( VNetwork_Test, sock )
-{
-    vdeb << sizeof(sockaddr);
-    vdeb << sizeof(sockaddr_in);
-    vdeb << sizeof(sockaddr_in6);
-    vdeb << sizeof(sockaddr_storage);
-}
-//=======================================================================================
-
-
 #include "vtcp_socket.h"
 #include "vapplication.h"
-#include <QTcpServer>
+#include "vtcp_server.h"
+#include "vcat.h"
+
+//=======================================================================================
+
+TEST_F( VNetwork_Test, addresses )
+{
+    EXPECT_ANY_THROW( vsocket_address("bad") );
+
+    EXPECT_EQ( vsocket_address::any_ip4().ip(), "0.0.0.0" );
+    EXPECT_EQ( vsocket_address::any_ip6().ip(), "::" );
+
+    EXPECT_EQ( vsocket_address::loopback_ip4().ip(), "127.0.0.1" );
+    EXPECT_EQ( vsocket_address::loopback_ip6().ip(), "::1" );
+
+    EXPECT_EQ( vsocket_address::any_ip4(1234).port(), 1234 );
+    EXPECT_EQ( vsocket_address::any_ip6(1235).port(), 1235 );
+
+    EXPECT_EQ( vsocket_address::loopback_ip4(1236).port(), 1236 );
+    EXPECT_EQ( vsocket_address::loopback_ip6(1237).port(), 1237 );
+
+    EXPECT_EQ( vsocket_address("127.128.129.130").ip(), "127.128.129.130" );
+    EXPECT_EQ( vsocket_address("1234:5678::9abc:0d0").ip(), "1234:5678::9abc:d0" );
+}
+
+//=======================================================================================
+
+TEST_F( VNetwork_Test, simple_tcp )
+{
+    std::string h, w;
+
+    vtcp_socket::unique_ptr ss;
+    vtcp_server serv;
+    serv.accepted += [&](vtcp_socket::accepted_peer peer)
+    {
+        ss = peer.as_unique();
+        ss->received += [&](std::string msg)
+        {
+            h = msg;
+            ss->send( "world" );
+        };
+    };
+    serv.listen_loopback_ip6(12345);
+
+    vtcp_socket sock;
+    sock.connect( vsocket_address::loopback_ip6(12345) );
+    sock.connected += [&]
+    {
+        sock.send( "hello" );
+    };
+    sock.received += [&](std::string msg)
+    {
+        w = msg;
+        vapplication::stop();
+    };
+
+    vapplication::poll();
+
+    EXPECT_EQ( h, "hello" );
+    EXPECT_EQ( w, "world" );
+}
+
+//=======================================================================================
+
+void sock_server()
+{
+    vtcp_server s;
+    s.listen_any_ip4( 1234 );
+
+    vtcp_socket::unique_ptr serv_sock;
+    int cnt = 0;
+    s.accepted += [&]( vtcp_socket::accepted_peer peer )
+    {
+        serv_sock = peer.as_unique();
+        serv_sock->disconnected     += []{ vdeb << "serv disconn"; };
+        serv_sock->err_broken_pipe  += []{ vdeb << "serv br pipe"; vapplication::stop(); };
+        serv_sock->err_conn_refused += []{ vdeb << "serv refused"; };
+        serv_sock->received += [&]( std::string data )
+        {
+            vdeb << "server received" << data;
+            serv_sock->send( vcat("world",cnt++) );
+        };
+    };
+
+    vapplication::poll();
+}
+
 
 //=======================================================================================
 //  Main, do not delete...
 //=======================================================================================
 int main(int argc, char *argv[])
 {
-    //QTcpServer serv;
-    //auto ok = serv.listen( QHostAddress::Any, 1234 );
-    //Q_ASSERT( ok );
-
-    vtcp_socket s;
-    s.connect( vsocket_address::any_ip4(1234) );
-    //s.connect( vsocket_address::loopback_ip4(1234) );
-    s.error_occured_text += [](std::string msg){ vdeb << msg; };
-
-    vapplication::poll();
-    return 1;
-
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

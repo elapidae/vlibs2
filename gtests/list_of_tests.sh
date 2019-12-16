@@ -37,18 +37,11 @@ PROJECT=vtimer
 vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
 
 echo ====================================================================================
+PROJECT=vnetwork
+vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
+
+echo ====================================================================================
 
 
-
-#vlibs/vgio/keyfile/test_keyfile/test_keyfile            || exit 1
-#echo ====================================================================================
-#vlibs/vcrc/test_vcrc/test_vcrc                          || exit 1
-#echo ====================================================================================
-#vlibs/vgeometry/test_vgeometry/test_vgeometry           || exit 1
-#echo ====================================================================================
-#vlibs/vapplication/test_vapplication/test_vapplication  || exit 1
-#echo ====================================================================================
-#vlibs/vhdlc/test_vhdlc/test_vhdlc                       || exit 1
-#echo ====================================================================================
 
 exit 0

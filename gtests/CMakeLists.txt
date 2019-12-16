@@ -32,8 +32,5 @@ add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
 set( PROJECT vtimer )
 add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
 
-
-#add_subdirectory( "${VLIBS_DIR}/vcrc/test_vcrc/" )
-#add_subdirectory( "${VLIBS_DIR}/vgeometry/test_vgeometry/" )
-#add_subdirectory( "${VLIBS_DIR}/vgio/keyfile/test_keyfile/" )
-#add_subdirectory( "${VLIBS_DIR}/vhdlc/test_vhdlc/" )
+set( PROJECT vnetwork )
+add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
