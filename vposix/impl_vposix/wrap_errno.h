@@ -13,6 +13,8 @@
 //=======================================================================================
 
 #include <string>
+#include <ostream>
+#include <stdexcept>
 
 //=======================================================================================
 namespace impl_vposix
@@ -22,6 +24,7 @@ namespace impl_vposix
     {
     public:
         ErrNo();
+        ErrNo( int code );
 
         bool has() const;
         std::string text() const;
@@ -29,16 +32,35 @@ namespace impl_vposix
         //  Бросает verror(text) если есть ошибка.
         void do_throw( const std::string& msg );
 
+        //  EPIPE --
+        bool broken_pipe() const;
+
         //  EINTR -- Interrupted system call, надо повторить последний вызов.
         bool need_repeat_last_call() const;
 
         //  EAGAIN || EWOULDBLOCK;
         bool resource_unavailable_try_again() const;
 
+        //  EINPROGRESS -- socket get it when non-block connection.
+        bool operation_in_progress() const;
+
+        //  ECONNREFUSED
+        bool connect_refused() const;
+
     private:
         int _err;
     };
     //===================================================================================
+    class posix_error : public std::runtime_error
+    {
+    public:
+        posix_error( int e, const std::string& msg );
+        ErrNo err;
+    };
+    //===================================================================================
+
+    std::ostream & operator << ( std::ostream &os, const ErrNo& err );
+
 } // namespace impl_vposix
 //=======================================================================================
 

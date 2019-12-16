@@ -12,7 +12,7 @@
 
 
 //=======================================================================================
-namespace impl_vpoll
+namespace impl_vposix
 {
     //===================================================================================
     class poll_context final : public impl_vposix::epoll_receiver
@@ -51,7 +51,7 @@ namespace impl_vpoll
         bool in_poll  { false };
         bool let_stop { false };
 
-        void on_ready_read() override;
+        void on_events( events e ) override;
     };
     //===================================================================================
 } // namespace impl_vpoll

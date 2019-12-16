@@ -25,24 +25,32 @@ error::error( const error& other )
     , _sealed     ( other._sealed     )
     , _sealed_msg ( other._sealed_msg )
 {
-    if ( _sealed ) return;
-    _sealed = true;
-
-    _sealed_msg = vcat( "VERROR AT ", _pos.place(),
-                        '[', _pos.function(), "] ==> ", other._stream.str() );
-
-    if ( other._delimiter_has_been_added() )
-        _sealed_msg.back() = '\n';
-    else
-        _sealed_msg.push_back( '\n' );
+    _seal_msg( other._stream.str(), other._delimiter_has_been_added() );
 
     auto ent = entry( _pos, entry::Level::Fatal, _sealed_msg, {} );
 
     vlog::_execute( ent );
 }
 //=======================================================================================
+//  NB! Если перехватывать исключение по catch(...), то не происходит запечатывание
+//  сообщения. См. комментарий в заголовке.
 const char* error::what() const noexcept
 {
+    _seal_msg( _stream.str(), _delimiter_has_been_added() );
     return _sealed_msg.c_str();
+}
+//=======================================================================================
+void error::_seal_msg( const std::string& msg, bool delimiter_added ) const
+{
+    if ( _sealed ) return;
+    _sealed = true;
+
+    _sealed_msg = vcat( "VERROR AT ", _pos.place(),
+                        '[', _pos.function(), "] ==> ", msg );
+
+    if ( delimiter_added )
+        _sealed_msg.back() = '\n';
+    else
+        _sealed_msg.push_back( '\n' );
 }
 //=======================================================================================

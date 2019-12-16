@@ -103,6 +103,7 @@ private:
     friend class impl_vlog::logger;
     friend class impl_vlog::error;
     static void _execute( const impl_vlog::entry& e );
+    static bool _need_omit_domain( const std::string& domain );
 
 }; // vlog class
 //=======================================================================================

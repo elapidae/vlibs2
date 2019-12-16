@@ -5,13 +5,25 @@
 #include <cstring>
 
 #include "vcat.h"
-#include "vlog.h"
+#include "vcompiler_traits.h"
 
 using namespace impl_vposix;
 
 //=======================================================================================
+posix_error::posix_error( int e, const std::string& msg )
+    : runtime_error( msg )
+    , err( e )
+{}
+//=======================================================================================
+
+
+//=======================================================================================
 ErrNo::ErrNo()
     : _err( errno )
+{}
+//=======================================================================================
+ErrNo::ErrNo( int code )
+    : _err( code )
 {}
 //=======================================================================================
 std::string ErrNo::text() const
@@ -21,17 +33,20 @@ std::string ErrNo::text() const
     constexpr auto buf_size = 1024;
     char buf[ buf_size ];
 
-    //  TS версия.
+    //  TS версия. Пусть strerror_r вызывается без оберток, должна работать из коробки.
     return vcat( '[', _err, "] ", ::strerror_r(_err, buf, buf_size) );
 }
 //=======================================================================================
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmissing-noreturn"
+V_NORETURN
 void ErrNo::do_throw( const std::string& msg )
 {
-    throw verror( text(), '(', msg, ')' );
+    throw posix_error( _err, vcat(text(), '(', msg, ')') );
 }
-#pragma GCC diagnostic pop
+//=======================================================================================
+bool ErrNo::broken_pipe() const
+{
+    return _err == EPIPE;
+}
 //=======================================================================================
 bool ErrNo::has() const
 {
@@ -46,6 +61,25 @@ bool ErrNo::need_repeat_last_call() const
 bool ErrNo::resource_unavailable_try_again() const
 {
     return _err == EAGAIN || _err == EWOULDBLOCK;
+}
+//=======================================================================================
+bool ErrNo::operation_in_progress() const
+{
+    return _err == EINPROGRESS;
+}
+//=======================================================================================
+bool ErrNo::connect_refused() const
+{
+    return _err == ECONNREFUSED;
+}
+//=======================================================================================
+namespace impl_vposix
+{
+    std::ostream &operator << ( std::ostream& os, const ErrNo& err )
+    {
+        os << err.text();
+        return os;
+    }
 }
 //=======================================================================================
 
@@ -352,3 +386,4 @@ List of error names
 
        EXFULL          Exchange full.
 ****************************************************************************************/
+

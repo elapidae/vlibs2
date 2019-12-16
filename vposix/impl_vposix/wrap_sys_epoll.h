@@ -11,6 +11,7 @@
 //=======================================================================================
 
 #include <stdint.h>
+#include <string>
 
 //=======================================================================================
 namespace impl_vposix
@@ -19,26 +20,41 @@ namespace impl_vposix
     class epoll_receiver
     {
     public:
+        class events;
+
         virtual ~epoll_receiver();
 
-        virtual void on_ready_read();
-        virtual void on_ready_write();
-        virtual void on_hang_up();
+        virtual void on_events( events ) = 0;
+    };
+    //===================================================================================
+    class epoll_receiver::events
+    {
+    public:
+        bool take_read();           //  EPOLLIN
+        bool take_write();          //  EPOLLOUT
+        bool take_hang_up();        //  EPOLLHUP
+        bool take_read_hang_up();   //  EPOLLRDHUP
+        bool take_error();          //  EPOLLERR
+
+        void check_empty();         //  throws verror if not all flags extarcted.
+
+    private:
+        bool _take( uint32_t flag );
+
+        friend class wrap_sys_epoll; events( uint32_t e );
+        uint32_t _ev;
     };
     //===================================================================================
     class epoll final
     {
     public:
+        enum Direction { In, Out, InOut };
+
         epoll();
         ~epoll();
 
-        void add_read   ( int fd, epoll_receiver * receiver );
-        void add_write  ( int fd, epoll_receiver * receiver );
-        void add_rw     ( int fd, epoll_receiver * receiver );
-
-        void mod_read   ( int fd, epoll_receiver * receiver );
-        void mod_write  ( int fd, epoll_receiver * receiver );
-        void mod_rw     ( int fd, epoll_receiver * receiver );
+        void add( int fd, epoll::Direction d, epoll_receiver *receiver );
+        void mod( int fd, epoll::Direction d, epoll_receiver *receiver );
 
         void del        ( int fd );
 
@@ -56,12 +72,10 @@ namespace impl_vposix
     //  fd  -- controlled file descriptor.
     struct wrap_sys_epoll final
     {
-        enum Direction { In, Out, InOut };
-
         static int create();
 
-        static void add( int efd, int fd, Direction d, epoll_receiver * receiver );
-        static void mod( int efd, int fd, Direction d, epoll_receiver * receiver );
+        static void add( int efd, int fd, epoll::Direction d, epoll_receiver *receiver );
+        static void mod( int efd, int fd, epoll::Direction d, epoll_receiver *receiver );
 
         static void del( int efd, int fd );
 

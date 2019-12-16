@@ -9,24 +9,30 @@
 ##  information to ensure the GNU Lesser General Public License version 3 requirements
 ##  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 #########################################################################################
-# vtimer.cmake
+# vnetwork.cmake
 
 #========================================================================================
-if ( NOT  VTIMER_INCLUDED )
-    set ( VTIMER_INCLUDED TRUE )
+if ( NOT  VNETWORK_INCLUDED )
+    set ( VNETWORK_INCLUDED TRUE )
 
-    message( "=== include vtimer... ===" )
+    message( "=== include vnetwork... ===" )
 
-    include( "${VLIBS_DIR}/cmake/c++11.cmake"   )
+    include( "${VLIBS_DIR}/cmake/vlog.cmake"    )
     include( "${VLIBS_DIR}/cmake/vposix.cmake"  )
     include( "${VLIBS_DIR}/cmake/vsignal.cmake" )
 
-    include_directories( "${VLIBS_DIR}/vtimer/" )
+    include_directories( "${VLIBS_DIR}/vnetwork/" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vtimer/vtimer.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vtimer/vtimer.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vsocket_address.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vsocket_address.cpp" )
 
-    message( "=== vtimer included ===" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vtcp_socket.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vtcp_socket.cpp" )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vtcp_server.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vtcp_server.cpp" )
+
+    message( "=== vnetwork included ===" )
 endif()
-# vtimer.cmake
+# vnetwork.cmake
 #========================================================================================

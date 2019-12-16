@@ -7,9 +7,9 @@
 #include <atomic>
 
 #include "vlog.h"
-#include "impl_vpoll/poll_context.h"
+#include "impl_vposix/poll_context.h"
 
-using namespace impl_vpoll;
+using namespace impl_vposix;
 
 
 //=======================================================================================

@@ -19,19 +19,35 @@ if ( NOT  VPOSIX_INCLUDED )
 
     message( "=== about include vposix... ===" )
 
-    include( "${VLIBS_DIR}/cmake/vcat.cmake" )
+    include( "${VLIBS_DIR}/cmake/vcat.cmake"  )
+    include( "${VLIBS_DIR}/cmake/vlog.cmake"  )
+    include( "${VLIBS_DIR}/cmake/vcompiler_traits.cmake" )
 
     include_directories( "${VLIBS_DIR}/vposix/" )
 
     #------------------------------------------------------------------------------------
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/vposix.h"   )
-    #set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vposix.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/vinvoke_iface.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vinvoke_iface.cpp" )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/vapplication.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vapplication.cpp" )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/vthread.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vthread.cpp" )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/poll_context.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/poll_context.cpp" )
+
+    #------------------------------------------------------------------------------------
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/linux_call.h"   )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_errno.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_errno.cpp" )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_arpa_inet.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_arpa_inet.cpp" )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_fcntl.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_fcntl.cpp" )
@@ -48,6 +64,9 @@ if ( NOT  VPOSIX_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_sys_file.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_sys_file.cpp" )
 
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_sys_socket.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_sys_socket.cpp" )
+
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_sys_stat.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_sys_stat.cpp" )
 
@@ -56,9 +75,6 @@ if ( NOT  VPOSIX_INCLUDED )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_unistd.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_unistd.cpp" )
-
-#    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_.h"   )
-#    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_.cpp" )
 
     #------------------------------------------------------------------------------------
 
