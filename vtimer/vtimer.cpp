@@ -2,10 +2,9 @@
 
 #include "impl_vposix/wrap_sys_timerfd.h"
 #include "impl_vposix/wrap_unistd.h"
-#include "impl_vpoll/poll_context.h"
+#include "impl_vposix/poll_context.h"
 
 using namespace impl_vposix;
-using namespace impl_vpoll;
 
 static constexpr auto ns_ratio = std::chrono::nanoseconds::period::den;
 
@@ -18,10 +17,10 @@ public:
     _pimpl( vtimer *owner_ );
     ~_pimpl() override;
 
-    void on_ready_read() override;
+    void on_events( epoll_receiver::events ) override;
 
     vtimer *owner;
-    int fd;
+    safe_fd fd;
 };
 #pragma GCC diagnostic pop
 //---------------------------------------------------------------------------------------
@@ -29,16 +28,13 @@ vtimer::_pimpl::_pimpl( vtimer * owner_ )
     : owner( owner_ )
     , fd( wrap_sys_timerfd::create() )
 {
-    poll_context::current()->epoll.add_read( fd, this );
+    fd.poll_add_read( this );
 }
 //---------------------------------------------------------------------------------------
 vtimer::_pimpl::~_pimpl()
-{
-    poll_context::current()->epoll.del( fd );
-    wrap_unistd::close( fd );
-}
+{}
 //---------------------------------------------------------------------------------------
-void vtimer::_pimpl::on_ready_read()
+void vtimer::_pimpl::on_events( epoll_receiver::events )
 {
     auto count  = wrap_sys_timerfd::read( fd );
     owner->timeout();

@@ -19,7 +19,6 @@ isEmpty(qi_vtimer) {
     isEmpty(VLIBS_DIR): error("vtimer: Need VLIBS_DIR correct path.")
 
     include( $$VLIBS_DIR/qmake/vposix.pri  )
-    include( $$VLIBS_DIR/qmake/vpoll.pri   )
     include( $$VLIBS_DIR/qmake/vsignal.pri )
 
     INCLUDEPATH += $$VLIBS_DIR/vtimer
