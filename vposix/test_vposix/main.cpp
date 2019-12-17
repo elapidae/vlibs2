@@ -24,6 +24,7 @@
 
 #include "vapplication.h"
 #include "vthread.h"
+#include "vprocess.h"
 
 
 #pragma GCC diagnostic push
@@ -37,6 +38,13 @@ class VPosix_Test: public testing::Test
 
 
 template<class> class TD;
+
+//=======================================================================================
+
+TEST_F( VPosix_Test, vprocess )
+{
+
+}
 
 //=======================================================================================
 
@@ -282,6 +290,17 @@ TEST_F( VPoll_Test, app_thread )
 //=======================================================================================
 int main(int argc, char *argv[])
 {
+    vprocess p;
+    p.cout += [](std::string s){ vdeb << s; };
+    p.cerr += [](std::string s){ vwarning << s; };
+    p.cout_closed += []{ vdeb << "out closed"; };
+    p.cerr_closed += []{ vwarning << "err closed"; };
+
+    p.exec( "ssh root@192.168.150.156" );
+    p.cin("pass\n");
+    vapplication::poll();
+    return 0;
+
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

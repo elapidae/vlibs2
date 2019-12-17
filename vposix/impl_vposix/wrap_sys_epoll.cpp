@@ -198,7 +198,19 @@ bool epoll_receiver::events::take_error()
 void epoll_receiver::events::check_empty()
 {
     if ( _ev != 0 )
-        throw verror.hex() << "Internal error, epoll flags not used at all: " << _ev;
+        throw verror.hex() << "Internal error, epoll flags not used at all: "
+                           << _leaved() << " [" << _ev << "]";
+}
+//---------------------------------------------------------------------------------------
+std::string epoll_receiver::events::_leaved() const
+{
+    vcat res;
+    if ( _ev & EPOLLIN    ) res("|IN");
+    if ( _ev & EPOLLOUT   ) res("|OUT");
+    if ( _ev & EPOLLERR   ) res("|ERR");
+    if ( _ev & EPOLLHUP   ) res("|HANG");
+    if ( _ev & EPOLLRDHUP ) res("|READ_HANG");
+    return res << "|";
 }
 //=======================================================================================
 //      epoll_receiver::events

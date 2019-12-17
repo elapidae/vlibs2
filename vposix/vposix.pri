@@ -21,6 +21,8 @@ isEmpty(qi_vposix) {
     include( $$VLIBS_DIR/qmake/vcat.pri )
     include( $$VLIBS_DIR/qmake/vlog.pri )
     include( $$VLIBS_DIR/qmake/vcompiler_traits.pri )
+    include( $$VLIBS_DIR/qmake/vsignal.pri )
+    include( $$VLIBS_DIR/qmake/vbyte_buffer.pri )
 
     INCLUDEPATH += $$VLIBS_DIR/vposix
 
@@ -40,12 +42,18 @@ isEmpty(qi_vposix) {
     HEADERS     += $$VLIBS_DIR/vposix/vthread.h
     SOURCES     += $$VLIBS_DIR/vposix/vthread.cpp
 
-    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/poll_context.h
-    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/poll_context.cpp
+    HEADERS     += $$VLIBS_DIR/vposix/vprocess.h
+    SOURCES     += $$VLIBS_DIR/vposix/vprocess.cpp
 
     #------------------------------------------------------------------------------------
 
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/linux_call.h
+
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/pipe.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/pipe.cpp
+
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/poll_context.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/poll_context.cpp
 
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_arpa_inet.h
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_arpa_inet.cpp

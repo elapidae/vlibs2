@@ -33,7 +33,7 @@ public:
 #pragma GCC diagnostic pop
 //---------------------------------------------------------------------------------------
 vthread::_pimpl::_pimpl( task_type&& alternate_func_ )
-    : alternate_func( alternate_func_ )
+    : alternate_func( std::move(alternate_func_) )
 {
     future = std::async( std::launch::async, _run, this );
 }

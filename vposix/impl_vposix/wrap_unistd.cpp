@@ -1,6 +1,8 @@
 #include "wrap_unistd.h"
 
 #include <unistd.h>
+#include <fcntl.h> // Obtain O_* constant definitions
+
 #include "impl_vposix/linux_call.h"
 #include "impl_vposix/poll_context.h"
 #include "vlog.h"
@@ -34,6 +36,26 @@ void wrap_unistd::write( int fd, const std::string& data )
     throw verror << "Not all data was written";
 }
 //=======================================================================================
+std::string wrap_unistd::read( int fd )
+{
+    char buf [ _read_buf_size ];
+
+    std::string res;
+    while (1)
+    {
+        auto sz = read( fd, buf, _read_buf_size );
+        if ( sz < 0 )
+        {
+            ErrNo err;
+            if ( err.resource_unavailable_try_again() ) break;
+            err.do_throw( "wrap_unistd::read" );
+        }
+        res.append( buf, size_t(sz) );
+        if ( size_t(sz) < _read_buf_size ) break;
+    }
+    return res;
+}
+//=======================================================================================
 ssize_t wrap_unistd::read( int fd, void *buf, size_t buf_size )
 {
     auto res = linux_call::no_err( ::read, fd, buf, buf_size );
@@ -44,6 +66,35 @@ ssize_t wrap_unistd::read( int fd, void *buf, size_t buf_size )
 ssize_t wrap_unistd::read_no_err( int fd, void *buf, size_t buf_size )
 {
     return linux_call::no_err( ::read, fd, buf, buf_size );
+}
+//=======================================================================================
+void wrap_unistd::pipe2( int fds[] )
+{
+    linux_call::check( ::pipe2, fds, O_NONBLOCK );
+}
+//=======================================================================================
+void wrap_unistd::dup2( int oldfd, int newfd )
+{
+    linux_call::check( ::dup2, oldfd, newfd );
+}
+//=======================================================================================
+int wrap_unistd::fork()
+{
+    return linux_call::check( ::fork );
+}
+//=======================================================================================
+//  http://man7.org/linux/man-pages/man2/execve.2.html
+void wrap_unistd::exec( const char *cmd, const char * const * argv )
+{
+    //  Надо убить котенка.
+    execvp( cmd, const_cast<char**>(argv) );
+
+    //  No return if OK.
+    vfatal.nospace() << "Bad execvp call '" << cmd << "'";
+    while( *argv )
+        vfatal.nospace() << '\t' << *argv++;
+
+    ErrNo().do_throw( "wrap_unistd::exec" );
 }
 //=======================================================================================
 
