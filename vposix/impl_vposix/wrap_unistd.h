@@ -23,47 +23,10 @@
 namespace impl_vposix
 {
     //===================================================================================
-    struct safe_fd final
-    {
-        safe_fd() noexcept;
-        safe_fd( int _fd ) noexcept;
-        ~safe_fd();
-
-        void close();
-
-        operator int() const noexcept;
-        bool has() const noexcept;
-
-        bool in_poll() const noexcept;
-
-        safe_fd( safe_fd&& ) noexcept;
-        safe_fd& operator = ( safe_fd&& ) noexcept;
-
-        safe_fd& operator = ( int other );
-
-        void poll_add_read   ( epoll_receiver * receiver );
-        void poll_add_write  ( epoll_receiver * receiver );
-        void poll_add_rw     ( epoll_receiver * receiver );
-
-        void poll_mod_read   ( epoll_receiver * receiver );
-        void poll_mod_write  ( epoll_receiver * receiver );
-        void poll_mod_rw     ( epoll_receiver * receiver );
-
-        void poll_del();
-
-    private:
-        bool _in_poll = false;
-        int  _fd = -1;
-
-        safe_fd( const safe_fd& ) = delete;
-        safe_fd& operator = ( const safe_fd& ) = delete;
-    };
-    //===================================================================================
     struct wrap_unistd final
     {
         //-------------------------------------------------------------------------------
         static void close( int fd );
-        static bool close_safe( int fd ); //     noexcept, but cancellation point.
 
         static void usleep( uint usec );
 
@@ -76,8 +39,11 @@ namespace impl_vposix
         static ssize_t read_no_err( int fd, void *buf, size_t buf_size );
 
         //-------------------------------------------------------------------------------
-        static void pipe2( int fds[2] ); // do non blocking
+        static void pipe_non_block( int fds[2] ); // do non blocking
+        static void pipe( int fds[2] ); // do as default
+
         static void dup2( int oldfd, int newfd );
+        static int  dup( int clone_fd );
         static int  fork();
         static void exec( const char *cmd, const char * const *argv );
         //-------------------------------------------------------------------------------

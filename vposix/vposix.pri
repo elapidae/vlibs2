@@ -55,6 +55,9 @@ isEmpty(qi_vposix) {
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/poll_context.h
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/poll_context.cpp
 
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/safe_fd.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/safe_fd.cpp
+
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_arpa_inet.h
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_arpa_inet.cpp
 

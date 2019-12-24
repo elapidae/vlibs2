@@ -11,4 +11,8 @@ include( $$VLIBS_DIR/qmake/vposix.pri )
 
 INCLUDEPATH += $$PWD
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    ../impl_vposix/safe_fd.cpp
+
+HEADERS += \
+    ../impl_vposix/safe_fd.h

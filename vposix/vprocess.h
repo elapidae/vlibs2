@@ -20,8 +20,11 @@ public:
 
     void cin( const std::string& in );
 
-    void exec( std::string cmd_with_args );             // режем по известным пробелам.
-    void exec( std::string cmd, args_list args );
+    //  Режет по пробелам.
+    //  NB! Не делает экранирование, просто режет. Метод для удобства простый команд.
+    void exec_simple( std::string cmd_with_args );
+
+    void exec( std::string cmd, args_list args = {} );
 
     bool is_processing() const;
     bool is_finished()   const;

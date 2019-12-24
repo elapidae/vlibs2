@@ -50,7 +50,7 @@ epoll::~epoll()
     if ( _count != 0 )
         vfatal << "Bad counter for add/del handles in epoll:" << _count;
 
-    wrap_unistd::close_safe( _efd );
+    wrap_unistd::close( _efd );
 }
 //=======================================================================================
 void epoll::add( int fd, epoll::Direction d, epoll_receiver *receiver )

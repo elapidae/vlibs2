@@ -1,12 +1,14 @@
 #include "pipe.h"
 
+#include "impl_vposix/wrap_unistd.h"
+
 using namespace impl_vposix;
 
 //=======================================================================================
 pipe::pipe()
 {
     int pp[2];
-    wrap_unistd::pipe2( pp );
+    wrap_unistd::pipe( pp );
 
     _read  = pp[ 0 ];
     _write = pp[ 1 ];
@@ -23,6 +25,12 @@ void pipe::close_read()
 void pipe::close_write()
 {
     _write.close();
+}
+//=======================================================================================
+void pipe::close_all()
+{
+    close_read();
+    close_write();
 }
 //=======================================================================================
 void pipe::dup_read( int h )
