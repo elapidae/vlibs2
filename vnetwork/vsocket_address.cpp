@@ -68,8 +68,6 @@ vsocket_address vsocket_address::_ip4( uint32_t ip, uint16_t prt )
     s4->sin_addr.s_addr = to_sys_addr( ip  );        //  Мерзкие функции...
     s4->sin_port        = to_sys_port( prt );        //
 
-    res._type = _ip_type::Ip4;
-
     return res;
 }
 //=======================================================================================
@@ -82,8 +80,6 @@ vsocket_address vsocket_address::_ip6( const void *ip6, uint16_t prt )
     s6->sin6_family = AF_INET6;
     s6->sin6_addr   = *cast_over_void<const in6_addr*>( ip6 );
     s6->sin6_port   = to_sys_port( prt );
-
-    res._type = _ip_type::Ip6;
 
     return res;
 }
@@ -108,6 +104,16 @@ vsocket_address vsocket_address::loopback_ip6( uint16_t port )
     return _ip6( &in6addr_loopback, port );
 }
 //=======================================================================================
+vsocket_address vsocket_address::create(const std::string &addr, uint16_t port, bool *ok)
+{
+    vsocket_address res;
+
+    auto m_ok = _init( addr, port, &res );
+    if (ok) *ok = m_ok;
+
+    return res;
+}
+//=======================================================================================
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wgnu-alignof-expression"
@@ -116,15 +122,13 @@ vsocket_address::vsocket_address()
     static_assert( sizeof(_raw_data)  == sizeof(sockaddr_in6),  "sockaddr_in6 size"  );
     static_assert( alignof(_raw_data) == alignof(sockaddr_in6), "sockaddr_in6 align" );
 
-    bzero( _raw_data, sizeof(_raw_data) );
+    _init();
 }
 #pragma GCC diagnostic pop
 //=======================================================================================
 vsocket_address::vsocket_address( const std::string& addr, uint16_t port )
 {
-    bzero( _raw_data, sizeof(_raw_data) );
     bool ok = _init( addr, port, this );
-
     if (!ok) throw verror << "Address '" << addr << "' is wrong.";
 }
 //=======================================================================================
@@ -157,29 +161,34 @@ std::string vsocket_address::str() const
 //=======================================================================================
 bool vsocket_address::is_valid() const
 {
-    return _type != _ip_type::Unknown;
+    return is_ip4() || is_ip6();
 }
 //=======================================================================================
 bool vsocket_address::is_ip4() const
 {
-    return _type == _ip_type::Ip4;
+    return _family() == AF_INET;
 }
 //=======================================================================================
 bool vsocket_address::is_ip6() const
 {
-    return _type == _ip_type::Ip6;
+    return _family() == AF_INET6;
 }
 //=======================================================================================
-bool vsocket_address::_init(const std::string& addr, uint16_t prt, vsocket_address *dst)
+void vsocket_address::_init()
 {
-//    void* vptr = static_cast<void*>( dst->_raw_data );
+    bzero( _raw_data, sizeof(_raw_data) );
+    auto addr = cast_over_void<sockaddr*>( _raw_data );
+    addr->sa_family = AF_UNSPEC;
+}
+//---------------------------------------------------------------------------------------
+bool vsocket_address::_init( const std::string& addr, uint16_t prt, vsocket_address *dst)
+{
+    dst->_init();
 
     sockaddr_in *s4 = cast_over_void<sockaddr_in*>( dst->_raw_data );
     bool ok = wrap_arpa_inet::inet_pton_ip4( addr, &s4->sin_addr );
     if (ok)
     {
-        dst->_type = _ip_type::Ip4;
-
         s4->sin_port   = to_sys_port( prt );
         s4->sin_family = AF_INET;
         return true;
@@ -189,8 +198,6 @@ bool vsocket_address::_init(const std::string& addr, uint16_t prt, vsocket_addre
     ok = wrap_arpa_inet::inet_pton_ip6( addr, &s6->sin6_addr );
     if (!ok) return false;
 
-    dst->_type = _ip_type::Ip6;
-
     s6->sin6_port   = to_sys_port( prt );
     s6->sin6_family = AF_INET6;
     return true;
@@ -198,14 +205,14 @@ bool vsocket_address::_init(const std::string& addr, uint16_t prt, vsocket_addre
 //=======================================================================================
 void *vsocket_address::_data()
 {
-//    if ( !is_valid() )
-//        throw verror << "Bad type of socket address.";
     return _raw_data;
 }
 //---------------------------------------------------------------------------------------
 const void *vsocket_address::_data() const
 {
-    if ( !is_valid() ) throw verror << "Bad type of socket address.";
+    if ( !is_valid() )
+        throw verror << "Bad type of socket address.";
+
     return _raw_data;
 }
 //---------------------------------------------------------------------------------------
@@ -216,9 +223,8 @@ unsigned vsocket_address::_data_size() const
 //---------------------------------------------------------------------------------------
 int vsocket_address::_family() const
 {
-    if ( is_ip4() ) return AF_INET;
-    if ( is_ip6() ) return AF_INET6;
-    throw verror << "Bad type of socket address.";
+    auto addr = cast_over_void<const sockaddr*>( _raw_data );
+    return addr->sa_family;
 }
 //=======================================================================================
 

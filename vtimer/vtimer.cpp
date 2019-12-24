@@ -3,6 +3,7 @@
 #include "impl_vposix/wrap_sys_timerfd.h"
 #include "impl_vposix/wrap_unistd.h"
 #include "impl_vposix/poll_context.h"
+#include "impl_vposix/safe_fd.h"
 
 using namespace impl_vposix;
 

@@ -32,6 +32,9 @@ if ( NOT  VNETWORK_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vtcp_server.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vtcp_server.cpp" )
 
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vudp_socket.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vudp_socket.cpp" )
+
     message( "=== vnetwork included ===" )
 endif()
 # vnetwork.cmake

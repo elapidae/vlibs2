@@ -22,6 +22,8 @@ if ( NOT  VPOSIX_INCLUDED )
     include( "${VLIBS_DIR}/cmake/vcat.cmake"  )
     include( "${VLIBS_DIR}/cmake/vlog.cmake"  )
     include( "${VLIBS_DIR}/cmake/vcompiler_traits.cmake" )
+    include( "${VLIBS_DIR}/cmake/vsignal.cmake" )
+    include( "${VLIBS_DIR}/cmake/vbyte_buffer.cmake" )
 
     include_directories( "${VLIBS_DIR}/vposix/" )
 
@@ -36,18 +38,27 @@ if ( NOT  VPOSIX_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/vthread.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vthread.cpp" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/poll_context.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/poll_context.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/vprocess.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vprocess.cpp" )
 
     #------------------------------------------------------------------------------------
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/linux_call.h"   )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_errno.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_errno.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/pipe.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/pipe.cpp" )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/poll_context.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/poll_context.cpp" )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/safe_fd.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/safe_fd.cpp" )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_arpa_inet.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_arpa_inet.cpp" )
+
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_errno.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_errno.cpp" )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_fcntl.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_fcntl.cpp" )

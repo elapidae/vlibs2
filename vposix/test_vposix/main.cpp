@@ -345,30 +345,30 @@ void piped(char *str){
 //=======================================================================================
 int main(int argc, char *argv[])
 {
-    int cnt = 0;
-    vprocess p;
-    p.cout += [&](std::string s)
-    {
-        std::cout << ">>>>> " << s << std::endl;
-        p.cin(vcat(cnt++));
-    };
-    p.cerr += [](std::string s)
-    {
-        std::cout << ">>>>> " << s << std::endl;
-    };
-    p.cout_closed += []{ vdeb << "out closed"; };
-    p.cerr_closed += []{ vdeb << "err closed"; };
+//    int cnt = 0;
+//    vprocess p;
+//    p.cout += [&](std::string s)
+//    {
+//        std::cout << ">>>>> " << s << std::endl;
+//        p.cin(vcat(cnt++));
+//    };
+//    p.cerr += [](std::string s)
+//    {
+//        std::cout << ">>>>> " << s << std::endl;
+//    };
+//    p.cout_closed += []{ vdeb << "out closed"; };
+//    p.cerr_closed += []{ vdeb << "err closed"; };
 
-    p.exec_simple( "sshpass ssh -T 192.168.150.156" );
-    //p.exec( "cat -" );
-    //p.exec( "make --help" );
-    //p.exec( "ssh -T 192.168.150.156" );
-    p.exec( "which ssh" );
+//    //p.exec_simple( "sshpass ssh -T 192.168.150.156" );
+//    //p.exec( "cat -" );
+//    //p.exec( "make --help" );
+//    //p.exec( "ssh -T 192.168.150.156" );
+//    //p.exec( "which ssh" );
 
-    p.cin("pass\n");
-    vapplication::poll();
-    vdeb << "after poll";
-    return 0;
+//    //p.cin("pass\n");
+//    vapplication::poll();
+//    vdeb << "after poll";
+//    return 0;
 
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
