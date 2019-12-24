@@ -180,16 +180,19 @@ TEST_F( VByteBuffer_Test, splitters )
     vec  = vbyte_buffer("").split_by_spaces();
     EXPECT_EQ( vec, must );
     //------------------------------------------------------------------
-    must = vbyte_buffer::vector{ vbyte_buffer("") };
+    must = vbyte_buffer::vector{ vbyte_buffer() };
     vec  = vbyte_buffer("|").split('|');
-    EXPECT_EQ( vec, must );
-    vec  = vbyte_buffer(" ").split_by_spaces();
     EXPECT_EQ( vec, must );
 
     must = vbyte_buffer::vector{ vbyte_buffer(""),vbyte_buffer("") };
     vec  = vbyte_buffer("||").split('|');
     EXPECT_EQ( vec, must );
-    vec  = vbyte_buffer("  ").split_by_spaces();
+
+    must.clear();
+    vec  = vbyte_buffer(" ").split_by_spaces();
+    EXPECT_EQ( vec, vbyte_buffer::vector{} );
+
+    vec  = vbyte_buffer("   \t  \r  \n  \f  ").split_by_spaces();
     EXPECT_EQ( vec, must );
     //------------------------------------------------------------------
     vec  = vbyte_buffer("|1|2||345|").split('|');
@@ -218,9 +221,6 @@ TEST_F( VByteBuffer_Test, splitters )
     must = vbyte_buffer::vector
         {
             vbyte_buffer("123"),
-            vbyte_buffer(""),
-            vbyte_buffer(""),
-            // not three, first splitter omitted.
             vbyte_buffer("456"),
         };
     EXPECT_EQ( vec, must );

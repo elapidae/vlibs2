@@ -9,11 +9,11 @@
 ##  information to ensure the GNU Lesser General Public License version 3 requirements
 ##  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 #########################################################################################
-# vcat.cmake
+# vbyte_buffer.cmake
 
 #========================================================================================
-if ( NOT  VCAT_INCLUDED )
-    set ( VCAT_INCLUDED TRUE )
+if ( NOT  VBYTE_BUFFER_INCLUDED )
+    set ( VBYTE_BUFFER_INCLUDED TRUE )
 
     message( "=== include vbyte_buffer... ===" )
 
@@ -32,5 +32,5 @@ if ( NOT  VCAT_INCLUDED )
 
     message( "=== vbyte_buffer included ===" )
 endif()
-# vcat.cmake
+# vbyte_buffer.cmake
 #========================================================================================
