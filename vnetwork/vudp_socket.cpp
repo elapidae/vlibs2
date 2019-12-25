@@ -75,6 +75,10 @@ void vudp_socket::_pimpl::send_to( const vsocket_address& addr, const std::strin
 vsocket_address vudp_socket::_pimpl::address() const
 {
     vsocket_address res;
+
+    if ( !is_binded() )
+        return res;
+
     wrap_sys_socket::get_sockaddr( fd, res._data(), res._data_size() );
     return res;
 }

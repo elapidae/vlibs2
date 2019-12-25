@@ -124,6 +124,14 @@ void wrap_sys_socket::get_sockaddr( int fd, void *buf, unsigned buf_size )
     assert( m_len <= buf_size );
 }
 //=======================================================================================
+void wrap_sys_socket::get_peeraddr( int fd, void *buf, unsigned buf_size )
+{
+    auto sa_ptr = static_cast<sockaddr*>( buf );
+    socklen_t m_len = buf_size;
+    linux_call::check( ::getpeername, fd, sa_ptr, &m_len );
+    assert( m_len <= buf_size );
+}
+//=======================================================================================
 void wrap_sys_socket::bind( int fd, const void *sa, unsigned size )
 {
     auto sa_ptr = static_cast<const sockaddr*>( sa );

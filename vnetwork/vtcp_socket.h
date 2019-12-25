@@ -40,6 +40,8 @@ public:
 
     void keep_alive( int idle, int intvl, int cnt );
 
+    vsocket_address address() const;
+    vsocket_address peer_address() const;
 
 private:
     class _pimpl; std::unique_ptr<_pimpl> _p;
