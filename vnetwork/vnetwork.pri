@@ -19,7 +19,6 @@ isEmpty(qi_vnetwork) {
     isEmpty(VLIBS_DIR): error("vnetwork: Need VLIBS_DIR correct path.")
 
     include( $$VLIBS_DIR/qmake/vlog.pri    )
-    include( $$VLIBS_DIR/qmake/vpoll.pri   )
     include( $$VLIBS_DIR/qmake/vposix.pri  )
     include( $$VLIBS_DIR/qmake/vsignal.pri )
 
@@ -33,6 +32,9 @@ isEmpty(qi_vnetwork) {
 
     HEADERS     += $$VLIBS_DIR/vnetwork/vtcp_server.h
     SOURCES     += $$VLIBS_DIR/vnetwork/vtcp_server.cpp
+
+    HEADERS     += $$VLIBS_DIR/vnetwork/vudp_socket.h
+    SOURCES     += $$VLIBS_DIR/vnetwork/vudp_socket.cpp
 
     OTHER_FILES += $$VLIBS_DIR/vnetwork/vnetwork.cmake
     OTHER_FILES += $$VLIBS_DIR/vnetwork/README

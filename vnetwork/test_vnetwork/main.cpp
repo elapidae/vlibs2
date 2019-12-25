@@ -24,6 +24,7 @@ class VNetwork_Test: public testing::Test
 #include "vapplication.h"
 #include "vtcp_server.h"
 #include "vcat.h"
+#include "vudp_socket.h"
 
 //=======================================================================================
 
@@ -97,7 +98,11 @@ void sock_server()
     {
         serv_sock = peer.as_unique();
         serv_sock->disconnected     += []{ vdeb << "serv disconn"; };
-        serv_sock->err_broken_pipe  += []{ vdeb << "serv br pipe"; vapplication::stop(); };
+        serv_sock->err_broken_pipe  +=
+        []{
+            vdeb << "serv br pipe";
+            vapplication::stop();
+        };
         serv_sock->err_conn_refused += []{ vdeb << "serv refused"; };
         serv_sock->received += [&]( std::string data )
         {
@@ -108,6 +113,28 @@ void sock_server()
 
     vapplication::poll();
 }
+
+//=======================================================================================
+TEST_F( VNetwork_Test, simple_udp )
+{
+    std::string s1_msg;
+
+    vudp_socket s1, s2;
+    s1.bind_loopback_ip6();
+
+    s1.received += [&]( vudp_socket::packet pkt )
+    {
+        s1_msg = pkt.data;
+        vdeb << pkt.peer;
+        vapplication::stop();
+    };
+
+    s2.send_to( s1.address(), "Hello world!" );
+
+    vapplication::poll();
+    EXPECT_EQ( s1_msg, "Hello world!" );
+}
+//=======================================================================================
 
 
 //=======================================================================================

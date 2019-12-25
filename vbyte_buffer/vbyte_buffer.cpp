@@ -267,7 +267,9 @@ vbyte_buffer::vector vbyte_buffer::split_by_spaces() const
     while ( cur != _buf.end() )
     {
         auto next = std::find_if( cur, _buf.end(), is_space );
-        res.push_back( vbyte_buffer({cur,next}) );
+
+        if ( cur != next )                                  //  omit empties
+            res.push_back( vbyte_buffer({cur,next}) );      //
 
         if ( next == _buf.end() ) break;
         cur = next + 1;

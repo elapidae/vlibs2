@@ -2,6 +2,7 @@
 
 #include <atomic>
 
+#include "impl_vposix/safe_fd.h"
 #include "impl_vposix/wrap_errno.h"
 #include "impl_vposix/wrap_unistd.h"
 #include "impl_vposix/wrap_sys_socket.h"
@@ -52,7 +53,7 @@ public:
 
     void connect( const vsocket_address& addr );
 
-    bool send( const std::string *data );
+    bool send( const std::string& data );
 
     void shutdown();
 
@@ -101,7 +102,7 @@ void vtcp_socket::_pimpl::connect( const vsocket_address& addr )
     stage = WaitConnection;
 }
 //---------------------------------------------------------------------------------------
-bool vtcp_socket::_pimpl::send( const std::string *data )
+bool vtcp_socket::_pimpl::send( const std::string& data )
 {
     if ( !is_connected() )
     {
@@ -192,9 +193,10 @@ void vtcp_socket::_pimpl::when_error( epoll_receiver::events e )
         return;
     } // WaitConnection
 
-    vdeb << "R" << e.take_read();
-    vdeb << "W" << e.take_write();
-    vdeb << "HU" << e.take_hang_up();
+    //  For debugging...
+    vdeb << "R"   << e.take_read();
+    vdeb << "W"   << e.take_write();
+    vdeb << "HU"  << e.take_hang_up();
     vdeb << "RHU" << e.take_read_hang_up();
     vdeb << "err" << err;
     e.check_empty();
@@ -287,7 +289,7 @@ bool vtcp_socket::is_connected() const
 //---------------------------------------------------------------------------------------
 void vtcp_socket::send( const std::string& data )
 {
-    _p->send( &data );
+    _p->send( data );
 }
 //---------------------------------------------------------------------------------------
 void vtcp_socket::keep_alive( int idle, int intvl, int cnt )

@@ -24,6 +24,7 @@
 
 #include "vapplication.h"
 #include "vthread.h"
+#include "vprocess.h"
 
 
 #pragma GCC diagnostic push
@@ -37,6 +38,13 @@ class VPosix_Test: public testing::Test
 
 
 template<class> class TD;
+
+//=======================================================================================
+
+TEST_F( VPosix_Test, vprocess )
+{
+
+}
 
 //=======================================================================================
 
@@ -276,12 +284,92 @@ TEST_F( VPoll_Test, app_thread )
 //=======================================================================================
 
 
+void piped(char *str){
+    int wpipefd[2];
+    int rpipefd[2];
+    int defout, defin;
+    defout = dup(STDOUT_FILENO);
+    defin = dup (STDIN_FILENO);
+    if(pipe(wpipefd) < 0){
+            perror("Pipe");
+            exit(EXIT_FAILURE);
+    }
+    if(pipe(rpipefd) < 0){
+            perror("Pipe");
+            exit(EXIT_FAILURE);
+    }
+    if(dup2(wpipefd[0], 0) == -1){
+            perror("dup2");
+            exit(EXIT_FAILURE);
+    }
+    if(dup2(rpipefd[1], 1) == -1){
+            perror("dup2");
+            exit(EXIT_FAILURE);
+    }
+    if(fork() == 0){
+            close(defout);
+            close(defin);
+            close(wpipefd[0]);
+            close(wpipefd[1]);
+            close(rpipefd[0]);
+            close(rpipefd[1]);
+            execlp("ssh", "ssh", "-T", "192.168.150.156", nullptr);
+            //Call exec here. Use the exec* family of functions according to your need
+    }
+    else{
+            if(dup2(defin, 0) == -1){
+                    perror("dup2");
+                    exit(EXIT_FAILURE);
+            }
+            if(dup2(defout, 1) == -1){
+                    perror("dup2");
+                    exit(EXIT_FAILURE);
+            }
+            close(defout);
+            close(defin);
+            close(wpipefd[1]);
+            close(rpipefd[0]);
+            //Include error check here
+            write(wpipefd[1], str, strlen(str));
+            //Just a char by char read here, you can change it accordingly
+            char ch;
+            while(read(rpipefd[0], &ch, 1) != -1){
+                    ::write(STDOUT_FILENO, &ch, 1);
+            }
+    }
+
+}
 
 //=======================================================================================
 //  Main, do not delete...
 //=======================================================================================
 int main(int argc, char *argv[])
 {
+//    int cnt = 0;
+//    vprocess p;
+//    p.cout += [&](std::string s)
+//    {
+//        std::cout << ">>>>> " << s << std::endl;
+//        p.cin(vcat(cnt++));
+//    };
+//    p.cerr += [](std::string s)
+//    {
+//        std::cout << ">>>>> " << s << std::endl;
+//    };
+//    p.cout_closed += []{ vdeb << "out closed"; };
+//    p.cerr_closed += []{ vdeb << "err closed"; };
+
+//    //p.exec_simple( "sshpass ssh -T 192.168.150.156" );
+//    //p.exec( "cat -" );
+//    //p.exec( "make --help" );
+//    //p.exec( "ssh -T 192.168.150.156" );
+//    //p.exec( "which ssh" );
+
+//    //p.cin("pass\n");
+//    vapplication::poll();
+//    vdeb << "after poll";
+//    return 0;
+
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

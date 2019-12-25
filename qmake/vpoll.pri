@@ -1,1 +1,0 @@
-../vpoll/vpoll.pri

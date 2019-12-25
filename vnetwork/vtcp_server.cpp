@@ -1,5 +1,6 @@
 #include "vtcp_server.h"
 
+#include "impl_vposix/safe_fd.h"
 #include "impl_vposix/wrap_sys_epoll.h"
 #include "impl_vposix/wrap_unistd.h"
 #include "impl_vposix/wrap_sys_socket.h"
