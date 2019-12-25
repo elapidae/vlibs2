@@ -17,10 +17,12 @@ public:
     ~vtcp_server();
 
     void listen( const vsocket_address& addr );
-    void listen_any_ip4      ( uint16_t port );
-    void listen_any_ip6      ( uint16_t port );
-    void listen_loopback_ip4 ( uint16_t port );
-    void listen_loopback_ip6 ( uint16_t port );
+    void listen_any_ip4      ( uint16_t port = 0 );
+    void listen_any_ip6      ( uint16_t port = 0 );
+    void listen_loopback_ip4 ( uint16_t port = 0 );
+    void listen_loopback_ip6 ( uint16_t port = 0 );
+
+    vsocket_address address() const;
 
 private:
     class _pimpl; std::unique_ptr<_pimpl> _p;

@@ -61,14 +61,20 @@ TEST_F( VNetwork_Test, simple_tcp )
         ss = peer.as_unique();
         ss->received += [&](std::string msg)
         {
+            vdeb << ss->address();
+            vdeb << ss->peer_address();
             h = msg;
             ss->send( "world" );
         };
     };
-    serv.listen_loopback_ip6(12345);
+    serv.listen_loopback_ip6();
 
     vtcp_socket sock;
-    sock.connect( vsocket_address::loopback_ip6(12345) );
+
+    // will bad connection
+    //sock.connect( vsocket_address::loopback_ip6(12345) );
+    sock.connect( vsocket_address::loopback_ip6(serv.address().port()) );
+
     sock.connected += [&]
     {
         sock.send( "hello" );
@@ -76,6 +82,11 @@ TEST_F( VNetwork_Test, simple_tcp )
     sock.received += [&](std::string msg)
     {
         w = msg;
+        vapplication::stop();
+    };
+    sock.disconnected += [&]
+    {
+        vfatal << "Bad connection.";
         vapplication::stop();
     };
 

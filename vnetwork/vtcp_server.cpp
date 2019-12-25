@@ -19,6 +19,8 @@ public:
 
     void on_events( events e) override;
 
+    vsocket_address address();
+
 private:
     vtcp_server *owner;
     safe_fd fd;
@@ -64,6 +66,17 @@ void vtcp_server::_pimpl::on_events( epoll_receiver::events e )
     }
 }
 //=======================================================================================
+vsocket_address vtcp_server::_pimpl::address()
+{
+    vsocket_address res;
+
+    if ( !fd.has() )
+        return res;
+
+    wrap_sys_socket::get_sockaddr( fd, res._data(), res._data_size() );
+    return res;
+}
+//=======================================================================================
 
 
 //=======================================================================================
@@ -97,5 +110,10 @@ void vtcp_server::listen_loopback_ip4( uint16_t port )
 void vtcp_server::listen_loopback_ip6( uint16_t port )
 {
     _p->listen( vsocket_address::loopback_ip6(port) );
+}
+//=======================================================================================
+vsocket_address vtcp_server::address() const
+{
+    return _p->address();
 }
 //=======================================================================================
