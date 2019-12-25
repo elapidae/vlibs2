@@ -61,6 +61,9 @@ public:
 
     void keep_alive( int idle, int intvl, int cnt );
 
+    vsocket_address address() const;
+    vsocket_address peer_address() const;
+
 private:
     vtcp_socket *owner;
     safe_fd fd;
@@ -79,6 +82,28 @@ bool vtcp_socket::_pimpl::is_connected() const
 void vtcp_socket::_pimpl::keep_alive( int idle, int intvl, int cnt )
 {
     wrap_sys_socket::keep_alive( fd, idle, intvl, cnt );
+}
+//---------------------------------------------------------------------------------------
+vsocket_address vtcp_socket::_pimpl::address() const
+{
+    vsocket_address res;
+
+    if ( !fd.has() )
+        return res;
+
+    wrap_sys_socket::get_sockaddr( fd, res._data(), res._data_size() );
+    return res;
+}
+//---------------------------------------------------------------------------------------
+vsocket_address vtcp_socket::_pimpl::peer_address() const
+{
+    vsocket_address res;
+
+    if ( !is_connected() )
+        return res;
+
+    wrap_sys_socket::get_peeraddr( fd, res._data(), res._data_size() );
+    return res;
 }
 //---------------------------------------------------------------------------------------
 void vtcp_socket::_pimpl::connect( const vsocket_address& addr )
@@ -270,7 +295,7 @@ vtcp_socket::vtcp_socket()
     : _p( new _pimpl(this) )
 {}
 //---------------------------------------------------------------------------------------
-vtcp_socket::vtcp_socket(accepted_peer *peer )
+vtcp_socket::vtcp_socket( accepted_peer *peer )
     : _p( new _pimpl(this, std::move(peer)) )
 {}
 //---------------------------------------------------------------------------------------
@@ -297,6 +322,16 @@ void vtcp_socket::keep_alive( int idle, int intvl, int cnt )
     _p->keep_alive( idle, intvl, cnt );
 }
 //---------------------------------------------------------------------------------------
+vsocket_address vtcp_socket::address() const
+{
+    return _p->address();
+}
+//---------------------------------------------------------------------------------------
+vsocket_address vtcp_socket::peer_address() const
+{
+    return _p->peer_address();
+}
+//---------------------------------------------------------------------------------------
 void vtcp_socket::close()
 {
     _p->close();
@@ -309,9 +344,9 @@ void vtcp_socket::close()
 //=======================================================================================
 //      vtcp_socket::accepted_socket
 //=======================================================================================
-vtcp_socket::accepted_peer::accepted_peer( int fd , vsocket_address && peer_addr )
-    : _fd( std::make_shared<int>(fd) )
-    , _peer( std::move(peer_addr) )
+vtcp_socket::accepted_peer::accepted_peer( int fd, vsocket_address && peer_addr )
+    : _fd  ( std::make_shared<int>(fd) )
+    , _peer( std::move(peer_addr)      )
 {}
 //---------------------------------------------------------------------------------------
 vtcp_socket::unique_ptr vtcp_socket::accepted_peer::as_unique()

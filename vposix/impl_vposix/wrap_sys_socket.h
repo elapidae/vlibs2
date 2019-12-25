@@ -38,6 +38,7 @@ namespace impl_vposix
         static bool  get_out_of_band_data( int fd );
         static size_t pending_datagram_size( int fd );
         static void get_sockaddr( int fd, void* buf, unsigned buf_size );
+        static void get_peeraddr( int fd, void* buf, unsigned buf_size );
 
         static void bind( int fd, const void *sa, unsigned size );
         static void listen( int fd, int backlog );
