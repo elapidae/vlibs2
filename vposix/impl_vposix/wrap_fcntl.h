@@ -3,8 +3,7 @@
 
 //=======================================================================================
 /*
- * http://man7.org/linux/man-pages/man0/fcntl.h.0p.html
- *
+ *  http://man7.org/linux/man-pages/man0/fcntl.h.0p.html
  *
  * The following shall be declared as functions and may also be defined as macros.
  * Function prototypes shall be provided.
@@ -30,14 +29,21 @@ namespace impl_vposix
 
         //  returns file descriptor
         static int open( const std::string& fname, int flags, mode_t mode );
+        static int open( const std::string& fname, int flags );
 
         //  flags = O_WRONLY|O_CREAT|O_APPEND|O_CLOEXEC, mode = 0664;
         static int open_append( const std::string& fname );
 
         //-------------------------------------------------------------------------------
 
-        static int  file_control_get( int fd );
-        static void file_control_set( int fd, int flags );
+        static int  get_file_control( int fd );
+        static void set_file_control( int fd, int flags );
+
+        static int  get_status_control( int fd );
+        static void set_status_control( int fd, int flags );
+
+        static bool get_nonblock( int fd );
+        static void set_nonblock( int fd, bool nonblock );
 
         //-------------------------------------------------------------------------------
 

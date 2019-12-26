@@ -32,7 +32,7 @@ namespace impl_vposix
 
         static void write( int fd, const std::string& data );
 
-        static constexpr size_t _read_buf_size = 1024;
+        static constexpr size_t _read_buf_size = 32768; // changed same as Qt sources...
         static std::string read( int fd );
 
         static ssize_t read( int fd, void *buf, size_t buf_size );

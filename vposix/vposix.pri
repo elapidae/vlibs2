@@ -90,6 +90,9 @@ isEmpty(qi_vposix) {
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_timerfd.h
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_sys_timerfd.cpp
 
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_termios.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_termios.cpp
+
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_unistd.h
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_unistd.cpp
 
