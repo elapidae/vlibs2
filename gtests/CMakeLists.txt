@@ -34,3 +34,7 @@ add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
 
 set( PROJECT vnetwork )
 add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
+
+set( PROJECT vserial_port )
+add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
+
