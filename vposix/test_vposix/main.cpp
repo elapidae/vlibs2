@@ -21,6 +21,7 @@
 #include "impl_vposix/wrap_sys_epoll.h"
 #include "impl_vposix/wrap_sys_eventfd.h"
 #include "impl_vposix/wrap_arpa_inet.h"
+#include "impl_vposix/wrap_termios.h"
 
 #include "vapplication.h"
 #include "vthread.h"
@@ -279,6 +280,13 @@ TEST_F( VPoll_Test, app_thread )
     thread.invoke( l );
 
     app.poll();
+}
+
+//=======================================================================================
+TEST_F( VPoll_Test, wrap_termios )
+{
+    impl_vposix::wrap_termios tmio; // просто можем создать.
+    (void) tmio;
 }
 
 //=======================================================================================

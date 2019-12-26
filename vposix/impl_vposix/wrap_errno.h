@@ -32,6 +32,9 @@ namespace impl_vposix
         //  Бросает verror(text) если есть ошибка.
         void do_throw( const std::string& msg );
 
+        //  EIO
+        bool io() const;
+
         //  EPIPE --
         bool broken_pipe() const;
 

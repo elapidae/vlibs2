@@ -43,6 +43,11 @@ void ErrNo::do_throw( const std::string& msg )
     throw posix_error( _err, vcat(text(), '(', msg, ')') );
 }
 //=======================================================================================
+bool ErrNo::io() const
+{
+    return _err == EIO;
+}
+//=======================================================================================
 bool ErrNo::broken_pipe() const
 {
     return _err == EPIPE;
