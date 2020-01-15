@@ -25,6 +25,16 @@ std::string vbyte_buffer_view::show_string( size_t sz ) const
     return std::string( _buffer, sz );
 }
 //=======================================================================================
+vbyte_buffer vbyte_buffer_view::show_buffer( size_t sz ) const
+{
+    return vbyte_buffer{ show_string( sz ) };
+}
+//=======================================================================================
+vbyte_buffer vbyte_buffer_view::show_tail() const
+{
+    return show_buffer( remained() );
+}
+//=======================================================================================
 std::string vbyte_buffer_view::string( size_t sz )
 {
     auto res = show_string( sz );
@@ -33,5 +43,15 @@ std::string vbyte_buffer_view::string( size_t sz )
     _remained -= sz;
 
     return res;
+}
+//=======================================================================================
+vbyte_buffer vbyte_buffer_view::buffer( size_t sz )
+{
+    return vbyte_buffer{ string(sz) };
+}
+//=======================================================================================
+vbyte_buffer vbyte_buffer_view::tail()
+{
+    return buffer( remained() );
 }
 //=======================================================================================

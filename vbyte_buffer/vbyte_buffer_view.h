@@ -23,7 +23,11 @@ public:
     template<typename T> T show_LE()  const;
     template<typename T> T show_BE()  const;
 
-    std::string show_string( size_t sz ) const;
+    std::string  show_string ( size_t sz ) const;
+    vbyte_buffer show_buffer ( size_t sz ) const;
+
+    //  просмотр оставшейся части.
+    vbyte_buffer show_tail() const;
 
     //-----------------------------------------------------------------------------------
 
@@ -31,6 +35,10 @@ public:
     template<typename T> T BE();
 
     std::string  string ( size_t sz );
+    vbyte_buffer buffer ( size_t sz );
+
+    //  выборка оставшейся части.
+    vbyte_buffer tail();
 
     //-----------------------------------------------------------------------------------
 
