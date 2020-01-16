@@ -16,6 +16,13 @@ bool vbyte_buffer_view::finished() const
     return _remained == 0;
 }
 //=======================================================================================
+void vbyte_buffer_view::omit( size_t count )
+{
+    auto sz = std::min( count, remained() );
+    _buffer   += sz;
+    _remained -= sz;
+}
+//=======================================================================================
 std::string vbyte_buffer_view::show_string( size_t sz ) const
 {
     if ( _remained < sz )
