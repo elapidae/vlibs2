@@ -14,6 +14,7 @@
 
 #include "vbyte_buffer.h"
 #include "vbyte_buffer_view.h"
+#include "vlog.h"
 
 template<class> class TD;
 
@@ -337,10 +338,18 @@ TEST_F( VByteBuffer_Test, simple_view_1 )
 TEST_F( VByteBuffer_Test, simple_view_omit )
 {
     auto str = "1234";
-    vbyte_buffer_view b( str, 4 );
-    b.omit( 2 );
-    EXPECT_EQ( b.remained(), 2 );
-    EXPECT_EQ( b.show_tail().str(), "34" );
+    {
+        vbyte_buffer_view b( str, 4 );
+        b.omit( 2 );
+        EXPECT_EQ( b.remained(), 2 );
+        EXPECT_EQ( b.show_tail().str(), "34" );
+    }
+    {
+        vbyte_buffer_view b( str, 4 );
+        b.omit( 200000 ); // не должно сломаться.
+        EXPECT_EQ( b.remained(), 0 );
+        EXPECT_EQ( b.show_tail().str(), "" );
+    }
 }
 //=======================================================================================
 

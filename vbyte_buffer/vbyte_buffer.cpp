@@ -242,6 +242,7 @@ vbyte_buffer::vector vbyte_buffer::split( const std::string& data, char splitter
     {
         auto next = std::find( cur, data.end(), splitter );
         res.push_back( vbyte_buffer{{cur, next}} );
+
         if ( next == data.end() ) break;
         cur = next + 1;
     }

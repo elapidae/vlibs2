@@ -7,5 +7,6 @@ CONFIG -= console
 VLIBS_DIR = $$PWD/../..
 include( $$VLIBS_DIR/qmake/gtest.pri )
 include( $$VLIBS_DIR/qmake/vbyte_buffer.pri )
+include( $$VLIBS_DIR/qmake/vlog.pri )
 
 SOURCES += main.cpp
