@@ -36,7 +36,10 @@ public:
     explicit vbyte_buffer();
     explicit vbyte_buffer( std::string seed );
 
+    // Возврат буфера в виде строки
     const std::string& str() const;
+
+    // Неявное преобразование vbyte_buffer к std::string
     operator const std::string&() const;
 
     size_t size() const;
@@ -44,6 +47,7 @@ public:
     //  NB! Ни в коем случае не изменяйте буффер пока пользуетесь view!
     vbyte_buffer_view view() const;
 
+    // Очистка буфера
     void clear();
 
     bool operator == ( const vbyte_buffer& rhs ) const;
@@ -52,10 +56,12 @@ public:
     //-----------------------------------------------------------------------------------
 
     //  Группа основных методов: append
+    //  Append Little Endian
     template<typename T>
     typename std::enable_if<std::is_arithmetic<T>::value, void>::type
     append_LE( T val );
 
+    //  Append Big Endian
     template<typename T>
     typename std::enable_if<std::is_arithmetic<T>::value, void>::type
     append_BE( T val );
@@ -64,7 +70,7 @@ public:
     void append( signed char   val ); //
     void append( char          val ); //
 
-    void append( const std::string& val );  //  строки и тх аналоги
+    void append( const std::string& val );  //  строки и их аналоги
     void append( const char* val );         //
 
     //-----------------------------------------------------------------------------------
@@ -75,47 +81,57 @@ public:
     void chop_back  ( size_t count );
 
     //  NB! Если count будет больше текущего размера, бросится
-    //  исключение std::length_error, потому-что нечем заполнять.
+    //  исключение std::length_error, потому что нечем заполнять.
     void resize( size_t count );
 
+    // Возвратить count байт слева
     vbyte_buffer left   ( size_t count ) const;
+
+    // Возвратить count байт слева
     vbyte_buffer right  ( size_t count ) const;
-    vbyte_buffer middle ( size_t pos, size_t len = std::string::npos ) const;
+
+    // Возвратить count байт, начиная с позиции буфера pos
+    vbyte_buffer middle ( size_t pos, size_t count = std::string::npos ) const;
 
     //-----------------------------------------------------------------------------------
 
+    // Проверка, начинается ли буфер данной строкой
     bool starts_with ( const std::string& what ) const;
+
+    // Проверка, оканчивается ли буфер данной строкой
     bool ends_with   ( const std::string& what ) const;
 
     //-----------------------------------------------------------------------------------
 
-    template <typename T> T text_to_any() const;
+    template <typename T> T buf_to_any() const;
 
-    int         text_to_int()       const   { return text_to_any<int>();        }
-    uint        text_to_uint()      const   { return text_to_any<uint>();       }
-    long        text_to_long()      const   { return text_to_any<long>();       }
-    ulong       text_to_ulong()     const   { return text_to_any<ulong>();      }
-    float       text_to_float()     const   { return text_to_any<float>();      }
-    double      text_to_double()    const   { return text_to_any<double>();     }
+    // Набор методов, преобразующих строку буфера в необходимый формат
 
-    int8_t      text_to_i8()        const   { return text_to_any<int8_t>();     }
-    uint8_t     text_to_u8()        const   { return text_to_any<uint8_t>();    }
+    int         buf_to_int()       const   { return buf_to_any<int>();        }
+    uint        buf_to_uint()      const   { return buf_to_any<uint>();       }
+    long        buf_to_long()      const   { return buf_to_any<long>();       }
+    ulong       buf_to_ulong()     const   { return buf_to_any<ulong>();      }
+    float       buf_to_float()     const   { return buf_to_any<float>();      }
+    double      buf_to_double()    const   { return buf_to_any<double>();     }
 
-    int16_t     text_to_i16()       const   { return text_to_any<int16_t>();    }
-    uint16_t    text_to_u16()       const   { return text_to_any<uint16_t>();   }
+    int8_t      buf_to_i8()        const   { return buf_to_any<int8_t>();     }
+    uint8_t     buf_to_u8()        const   { return buf_to_any<uint8_t>();    }
 
-    int32_t     text_to_i32()       const   { return text_to_any<int32_t>();    }
-    uint32_t    text_to_u32()       const   { return text_to_any<uint32_t>();   }
+    int16_t     buf_to_i16()       const   { return buf_to_any<int16_t>();    }
+    uint16_t    buf_to_u16()       const   { return buf_to_any<uint16_t>();   }
 
-    int64_t     text_to_i64()       const   { return text_to_any<int64_t>();    }
-    uint64_t    text_to_u64()       const   { return text_to_any<uint64_t>();   }
+    int32_t     buf_to_i32()       const   { return buf_to_any<int32_t>();    }
+    uint32_t    buf_to_u32()       const   { return buf_to_any<uint32_t>();   }
+
+    int64_t     buf_to_i64()       const   { return buf_to_any<int64_t>();    }
+    uint64_t    buf_to_u64()       const   { return buf_to_any<uint64_t>();   }
 
     //-----------------------------------------------------------------------------------
 
     // Нечувствительна к регистру, все символы, кроме набора hex игнорируются.
     // NB! При нечетном количестве годных символов, считается, что первый -- ноль.
-    static vbyte_buffer from_hex( const std::string& src );
-    vbyte_buffer from_hex() const;
+    static  vbyte_buffer from_hex(  const std::string& src );
+            vbyte_buffer from_hex() const;
 
     vbyte_buffer tohex () const;                         // сплошным текстом, строчными.
     vbyte_buffer toHex () const;                         // сплошным текстом, Заглавными.
@@ -167,7 +183,7 @@ std::ostream& operator << ( std::ostream& os, const vbyte_buffer& buf );
 //  NB! Этот метод скопипащен из vcat::from_text.
 //  Пока что, волевым усилием принято держать этот код и там и там.
 template <typename T>
-T vbyte_buffer::text_to_any() const
+T vbyte_buffer::buf_to_any() const
 {
     std::istringstream ss( _buf );
     T res;

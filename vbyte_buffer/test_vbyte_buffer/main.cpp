@@ -14,7 +14,6 @@
 
 #include "vbyte_buffer.h"
 #include "vbyte_buffer_view.h"
-#include "vlog.h"
 
 template<class> class TD;
 
@@ -160,14 +159,14 @@ TEST_F( VByteBuffer_Test, starts_ends_with )
 
 TEST_F( VByteBuffer_Test, text )
 {
-    EXPECT_EQ( vbyte_buffer("12345").text_to_int(), 12345 );
-    EXPECT_EQ( vbyte_buffer("123456").text_to_uint(), 123456 );
+    EXPECT_EQ( vbyte_buffer("12345").buf_to_int(), 12345 );
+    EXPECT_EQ( vbyte_buffer("123456").buf_to_uint(), 123456 );
 
-    EXPECT_DOUBLE_EQ( vbyte_buffer("123.45").text_to_double(), 123.45 );
-    EXPECT_FLOAT_EQ( vbyte_buffer("123.456").text_to_double(), 123.456f );
+    EXPECT_DOUBLE_EQ( vbyte_buffer("123.45").buf_to_double(), 123.45 );
+    EXPECT_FLOAT_EQ( vbyte_buffer("123.456").buf_to_double(), 123.456f );
 
-    EXPECT_EQ( vbyte_buffer("0123456789012345").text_to_long(), 123456789012345l );
-    EXPECT_EQ( vbyte_buffer("012345678901234567 ").text_to_ulong(), 12345678901234567ul);
+    EXPECT_EQ( vbyte_buffer("0123456789012345").buf_to_long(), 123456789012345l );
+    EXPECT_EQ( vbyte_buffer("012345678901234567 ").buf_to_ulong(), 12345678901234567ul);
 }
 
 //=======================================================================================
@@ -304,11 +303,11 @@ TEST_F( VByteBuffer_Test, simple_view_1 )
     buf.append_BE( d );
 
     auto view = buf.view();
-    auto es = view.string(5);   EXPECT_EQ( es, s );
-    auto ei32 = view.i32_BE();  EXPECT_EQ( ei32, i32 );
-    auto eu16 = view.u16_BE();  EXPECT_EQ( eu16, u16 );
-    auto ef = view.float_BE();  EXPECT_EQ( ef, f );
-    auto ed = view.double_BE(); EXPECT_EQ( ed, d );
+    auto es = view.take_string(5);   EXPECT_EQ( es, s );
+    auto ei32 = view.take_i32_BE();  EXPECT_EQ( ei32, i32 );
+    auto eu16 = view.take_u16_BE();  EXPECT_EQ( eu16, u16 );
+    auto ef = view.take_float_BE();  EXPECT_EQ( ef, f );
+    auto ed = view.take_double_BE(); EXPECT_EQ( ed, d );
     EXPECT_TRUE( view.finished() );
     EXPECT_TRUE( view.remained() == 0 );
     EXPECT_TRUE( buf.starts_with("Hello") );
@@ -323,11 +322,11 @@ TEST_F( VByteBuffer_Test, simple_view_1 )
     buf.append_LE( d );
 
     view = buf.view();
-    es = view.string(5);   EXPECT_EQ( es, s );
-    ei32 = view.i32_LE();  EXPECT_EQ( ei32, i32 );
-    eu16 = view.u16_LE();  EXPECT_EQ( eu16, u16 );
-    ef = view.float_LE();  EXPECT_EQ( ef, f );
-    ed = view.double_LE(); EXPECT_EQ( ed, d );
+    es = view.take_string(5);   EXPECT_EQ( es, s );
+    ei32 = view.take_i32_LE();  EXPECT_EQ( ei32, i32 );
+    eu16 = view.take_u16_LE();  EXPECT_EQ( eu16, u16 );
+    ef = view.take_float_LE();  EXPECT_EQ( ef, f );
+    ed = view.take_double_LE(); EXPECT_EQ( ed, d );
     EXPECT_TRUE( view.finished() );
     EXPECT_TRUE( view.remained() == 0 );
     EXPECT_TRUE( buf.starts_with("Hello") );

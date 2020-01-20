@@ -26,7 +26,7 @@ void vbyte_buffer_view::omit( size_t count )
 std::string vbyte_buffer_view::show_string( size_t sz ) const
 {
     if ( _remained < sz )
-        throw std::out_of_range( "vbyte_buffer_view::show_string: not enouth data" );
+        throw std::out_of_range( "vbyte_buffer_view::show_string: not enough data" );
 
 
     return std::string( _buffer, sz );
@@ -42,7 +42,7 @@ vbyte_buffer vbyte_buffer_view::show_tail() const
     return show_buffer( remained() );
 }
 //=======================================================================================
-std::string vbyte_buffer_view::string( size_t sz )
+std::string vbyte_buffer_view::take_string( size_t sz )
 {
     auto res = show_string( sz );
 
@@ -52,13 +52,13 @@ std::string vbyte_buffer_view::string( size_t sz )
     return res;
 }
 //=======================================================================================
-vbyte_buffer vbyte_buffer_view::buffer( size_t sz )
+vbyte_buffer vbyte_buffer_view::take_buffer( size_t sz )
 {
-    return vbyte_buffer{ string(sz) };
+    return vbyte_buffer{ take_string(sz) };
 }
 //=======================================================================================
-vbyte_buffer vbyte_buffer_view::tail()
+vbyte_buffer vbyte_buffer_view::take_tail()
 {
-    return buffer( remained() );
+    return take_buffer( remained() );
 }
 //=======================================================================================
