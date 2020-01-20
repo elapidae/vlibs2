@@ -74,9 +74,13 @@ public:
     //-----------------------------------------------------------------------------------
     //  Кухня настройки логгирования.
 
+    // Исполнитель - метод, вызываемый при каждом вызове команды логгирования
     using Executer = std::function< void(const impl_vlog::entry&) >;
 
+    // Очистка всех исполнителей
     static void clear_executers();
+
+    // Вставка определенного исполнителя
     static void add_executer( Executer e );
 
     //  Добавляет в выполнители канал по cout, cerr.
@@ -84,26 +88,45 @@ public:
     static void add_log_to_cout();
     static void add_log_to_cerr();
 
+    // Shared log - все уровни логгирования записываются в один файл. rotates определяет
+    // максимальное количество создаваемых файлов логгирования. При превышении размера
+    // файла filesize, дальнейшие логи записываются в следующий файл. При превышении
+    // размера filesize последнего файла логгирования происходит очистка первого файла
+    // и дальнейшая запись в него и т.д.
     static void set_shared_log( const std::string& fname,
-                                uint bytes_in_one,
+                                uint filesize,
                                 uint rotates );
 
+    // Leveled log - каждый уровень логгирования записывается в свой собственный файл.
+    // Принцип работы логгера идентичен Shared Log, только параметр rotates определяет
+    // максимальное количество файлов КАЖДОГО уровня логгирования, а не всех вместе.
+    // Т.е. список файлов логов представляет собой warn_log.0 ... warn_log.n,
+    // debug_log.0 ... debug_log.n и т.д., где n определяется через rotates.
     static void set_leveled_log( const std::string& path,
-                                 uint bytes_in_one,
+                                 uint filesize,
                                  uint rotates );
 
     //-----------------------------------------------------------------------------------
-    //  Кухня работы с доменами логов.
-    static void omit_domain ( const std::string& domain );  // перестаем логировать.
-    static void apply_domain( const std::string& domain );  // будем логировать.
+    // Кухня работы с доменами логов.
+    // Домен логгирования представляет собой группу логов, связанных под определенным
+    // именем (именем домена). Это позволяет при необходимости включать и отключать
+    // логгирование любого желаемого куска кода.
+
+    // Отключает логгирование всех логов, собранных в группу domain
+    static void omit_domain ( const std::string& domain );
+
+    // Включает логгирование всех логов, собранных в группу domain
+    static void apply_domain( const std::string& domain );
 
     //-----------------------------------------------------------------------------------
 private:
+
     //  Вызывается только из logger, error.
     friend class impl_vlog::logger;
     friend class impl_vlog::error;
-    static void _execute( const impl_vlog::entry& e );
-    static bool _need_omit_domain( const std::string& domain );
+
+    static void _execute            ( const impl_vlog::entry& e );
+    static bool _need_omit_domain   ( const std::string& domain );
 
 }; // vlog class
 //=======================================================================================

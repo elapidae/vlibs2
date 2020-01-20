@@ -95,7 +95,7 @@ TEST_F( VLog_Test, _1 )
     double dd = 3.1415;
     float  ff = 2.718f;
     int    ii = 42;
-    std::chrono::milliseconds ms(12345); // и такое выводим`c...
+    std::chrono::microseconds ms(12345); // и такое выводим`c...
 
     vdeb; // пустая строка
     vdeb << "------- same syntax example.";

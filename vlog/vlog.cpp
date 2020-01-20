@@ -93,18 +93,18 @@ bool vlog::_need_omit_domain( const string& domain )
     return omit_domains.count( domain );
 }
 //=======================================================================================
-void vlog::set_shared_log( const string& fname, uint bytes_in_one, uint rotates )
+void vlog::set_shared_log( const string& fname, uint filesize, uint rotates )
 {
     assert( !shared_log );
-    shared_log.reset(new pre_posix::file::shared_log( fname, bytes_in_one, rotates) );
+    shared_log.reset(new pre_posix::file::shared_log( fname, filesize, rotates) );
 
     add_executer( [](const entry& e){ shared_log->write(e); } );
 }
 //=======================================================================================
-void vlog::set_leveled_log( const string& path, uint bytes_in_one, uint rotates )
+void vlog::set_leveled_log( const string& path, uint filesize, uint rotates )
 {
     assert( !leveled_log );
-    leveled_log.reset( new pre_posix::file::leveled_log(path,bytes_in_one,rotates) );
+    leveled_log.reset( new pre_posix::file::leveled_log(path,filesize,rotates) );
 
     add_executer( [](const entry& e){ leveled_log->write(e); } );
 }
