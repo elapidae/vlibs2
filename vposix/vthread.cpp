@@ -112,7 +112,6 @@ void vthread::tasks_clear()
 void vthread::_invoke( vthread::task_type && func )
 {
     assert( !_p->joined );
-
     _p->my_ctx->push( std::move(func) );
 }
 //=======================================================================================

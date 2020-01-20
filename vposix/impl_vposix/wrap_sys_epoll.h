@@ -42,7 +42,7 @@ namespace impl_vposix
         std::string _leaved() const;
         bool _take( uint32_t flag );
 
-        friend class wrap_sys_epoll; events( uint32_t e );
+        friend struct wrap_sys_epoll; events( uint32_t e );
         uint32_t _ev;
     };
     //===================================================================================

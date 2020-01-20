@@ -38,6 +38,9 @@ if ( NOT  VPOSIX_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/vthread.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vthread.cpp" )
 
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/vthread_context.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vthread_context.cpp" )
+
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/vprocess.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vprocess.cpp" )
 

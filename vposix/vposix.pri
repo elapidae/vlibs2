@@ -42,6 +42,9 @@ isEmpty(qi_vposix) {
     HEADERS     += $$VLIBS_DIR/vposix/vthread.h
     SOURCES     += $$VLIBS_DIR/vposix/vthread.cpp
 
+    HEADERS     += $$VLIBS_DIR/vposix/vthread_context.h
+    SOURCES     += $$VLIBS_DIR/vposix/vthread_context.cpp
+
     HEADERS     += $$VLIBS_DIR/vposix/vprocess.h
     SOURCES     += $$VLIBS_DIR/vposix/vprocess.cpp
 
