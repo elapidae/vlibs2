@@ -87,7 +87,7 @@ public:
     // Возвратить count байт слева
     vbyte_buffer left   ( size_t count ) const;
 
-    // Возвратить count байт слева
+    // Возвратить count байт справа
     vbyte_buffer right  ( size_t count ) const;
 
     // Возвратить count байт, начиная с позиции буфера pos
