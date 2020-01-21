@@ -103,28 +103,28 @@ public:
 
     //-----------------------------------------------------------------------------------
 
-    template <typename T> T buf_to_any() const;
+    template <typename T> T to_any() const;
 
     // Набор методов, преобразующих строку буфера в необходимый формат
 
-    int         buf_to_int()       const   { return buf_to_any<int>();        }
-    uint        buf_to_uint()      const   { return buf_to_any<uint>();       }
-    long        buf_to_long()      const   { return buf_to_any<long>();       }
-    ulong       buf_to_ulong()     const   { return buf_to_any<ulong>();      }
-    float       buf_to_float()     const   { return buf_to_any<float>();      }
-    double      buf_to_double()    const   { return buf_to_any<double>();     }
+    int         to_int()       const   { return to_any<int>();        }
+    uint        to_uint()      const   { return to_any<uint>();       }
+    long        to_long()      const   { return to_any<long>();       }
+    ulong       to_ulong()     const   { return to_any<ulong>();      }
+    float       to_float()     const   { return to_any<float>();      }
+    double      to_double()    const   { return to_any<double>();     }
 
-    int8_t      buf_to_i8()        const   { return buf_to_any<int8_t>();     }
-    uint8_t     buf_to_u8()        const   { return buf_to_any<uint8_t>();    }
+    int8_t      to_i8()        const   { return to_any<int8_t>();     }
+    uint8_t     to_u8()        const   { return to_any<uint8_t>();    }
 
-    int16_t     buf_to_i16()       const   { return buf_to_any<int16_t>();    }
-    uint16_t    buf_to_u16()       const   { return buf_to_any<uint16_t>();   }
+    int16_t     to_i16()       const   { return to_any<int16_t>();    }
+    uint16_t    to_u16()       const   { return to_any<uint16_t>();   }
 
-    int32_t     buf_to_i32()       const   { return buf_to_any<int32_t>();    }
-    uint32_t    buf_to_u32()       const   { return buf_to_any<uint32_t>();   }
+    int32_t     to_i32()       const   { return to_any<int32_t>();    }
+    uint32_t    to_u32()       const   { return to_any<uint32_t>();   }
 
-    int64_t     buf_to_i64()       const   { return buf_to_any<int64_t>();    }
-    uint64_t    buf_to_u64()       const   { return buf_to_any<uint64_t>();   }
+    int64_t     to_i64()       const   { return to_any<int64_t>();    }
+    uint64_t    to_u64()       const   { return to_any<uint64_t>();   }
 
     //-----------------------------------------------------------------------------------
 
@@ -183,7 +183,7 @@ std::ostream& operator << ( std::ostream& os, const vbyte_buffer& buf );
 //  NB! Этот метод скопипащен из vcat::from_text.
 //  Пока что, волевым усилием принято держать этот код и там и там.
 template <typename T>
-T vbyte_buffer::buf_to_any() const
+T vbyte_buffer::to_any() const
 {
     std::istringstream ss( _buf );
     T res;

@@ -43,19 +43,19 @@ public:
     //-----------------------------------------------------------------------------------
 
     // Извлечь из буфера следующий элемент в формате Little Endian
-    template<typename T> T take_LE();
+    template<typename T> T LE();
 
     // Извлечь из буфера следующий элемент в формате Big Endian
-    template<typename T> T take_BE();
+    template<typename T> T BE();
 
     // Извлечь из буфера строку размера sz
-    std::string  take_string ( size_t sz );
+    std::string  string ( size_t sz );
 
     // Извлечь из буфера буфер размера sz
-    vbyte_buffer take_buffer ( size_t sz );
+    vbyte_buffer buffer ( size_t sz );
 
     // Извлечь оставшуюся часть
-    vbyte_buffer take_tail();
+    vbyte_buffer tail();
 
     //-----------------------------------------------------------------------------------
 
@@ -87,30 +87,30 @@ public:
 
     //-----------------------------------------------------------------------------------
 
-    char     take_ch()                           { return take_LE<char>();            }
-    int8_t   take_i8()                           { return take_LE<int8_t>();          }
-    uint8_t  take_u8()                           { return take_LE<uint8_t>();         }
+    char     ch()                           { return LE<char>();            }
+    int8_t   i8()                           { return LE<int8_t>();          }
+    uint8_t  u8()                           { return LE<uint8_t>();         }
 
-    int16_t  take_i16_LE()                       { return take_LE<int16_t>();         }
-    int16_t  take_i16_BE()                       { return take_BE<int16_t>();         }
-    uint16_t take_u16_LE()                       { return take_LE<uint16_t>();        }
-    uint16_t take_u16_BE()                       { return take_BE<uint16_t>();        }
+    int16_t  i16_LE()                       { return LE<int16_t>();         }
+    int16_t  i16_BE()                       { return BE<int16_t>();         }
+    uint16_t u16_LE()                       { return LE<uint16_t>();        }
+    uint16_t u16_BE()                       { return BE<uint16_t>();        }
 
-    int32_t  take_i32_LE()                       { return take_LE<int32_t>();         }
-    int32_t  take_i32_BE()                       { return take_BE<int32_t>();         }
-    uint32_t take_u32_LE()                       { return take_LE<uint32_t>();        }
-    uint32_t take_u32_BE()                       { return take_BE<uint32_t>();        }
+    int32_t  i32_LE()                       { return LE<int32_t>();         }
+    int32_t  i32_BE()                       { return BE<int32_t>();         }
+    uint32_t u32_LE()                       { return LE<uint32_t>();        }
+    uint32_t u32_BE()                       { return BE<uint32_t>();        }
 
-    int64_t  take_i64_LE()                       { return take_LE<int64_t>();         }
-    int64_t  take_i64_BE()                       { return take_BE<int64_t>();         }
-    uint64_t take_u64_LE()                       { return take_LE<uint64_t>();        }
-    uint64_t take_u64_BE()                       { return take_BE<uint64_t>();        }
+    int64_t  i64_LE()                       { return LE<int64_t>();         }
+    int64_t  i64_BE()                       { return BE<int64_t>();         }
+    uint64_t u64_LE()                       { return LE<uint64_t>();        }
+    uint64_t u64_BE()                       { return BE<uint64_t>();        }
 
-    float    take_float_LE()                     { return take_LE<float>();           }
-    float    take_float_BE()                     { return take_BE<float>();           }
+    float    float_LE()                     { return LE<float>();           }
+    float    float_BE()                     { return BE<float>();           }
 
-    double   take_double_LE()                    { return take_LE<double>();          }
-    double   take_double_BE()                    { return take_BE<double>();          }
+    double   double_LE()                    { return LE<double>();          }
+    double   double_BE()                    { return BE<double>();          }
 
     //-----------------------------------------------------------------------------------
 
