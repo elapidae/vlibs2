@@ -176,7 +176,7 @@ T vbyte_buffer_view::show_BE() const
 }
 //=======================================================================================
 template<typename T>
-T vbyte_buffer_view::take_LE()
+T vbyte_buffer_view::LE()
 {
     auto res = _extract<T>();
 
@@ -188,7 +188,7 @@ T vbyte_buffer_view::take_LE()
 }
 //=======================================================================================
 template<typename T>
-T vbyte_buffer_view::take_BE()
+T vbyte_buffer_view::BE()
 {
     auto res = _extract<T>();
 
