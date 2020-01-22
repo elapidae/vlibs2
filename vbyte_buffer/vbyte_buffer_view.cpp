@@ -1,8 +1,26 @@
 #include "vbyte_buffer_view.h"
 
 //=======================================================================================
+template<typename T>
+const char* char_cast( const T* p )
+{
+    return static_cast<const char*>( static_cast<const void*>(p) );
+}
+//=======================================================================================
+
+//=======================================================================================
 vbyte_buffer_view::vbyte_buffer_view( const char* buf, size_t len )
     : _buffer   ( buf )
+    , _remained ( len )
+{}
+//=======================================================================================
+vbyte_buffer_view::vbyte_buffer_view(const signed char *buf, size_t len)
+    : _buffer   ( char_cast(buf) )
+    , _remained ( len )
+{}
+//=======================================================================================
+vbyte_buffer_view::vbyte_buffer_view(const unsigned char *buf, size_t len)
+    : _buffer   ( char_cast(buf) )
     , _remained ( len )
 {}
 //=======================================================================================

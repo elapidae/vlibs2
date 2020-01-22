@@ -11,6 +11,8 @@ public:
 
     // Конструктор view, который смотрит на буфер buf длиной len
     vbyte_buffer_view( const char* buf, size_t len );
+    vbyte_buffer_view( const signed char* buf, size_t len );
+    vbyte_buffer_view( const unsigned char* buf, size_t len );
 
     //-----------------------------------------------------------------------------------
 
