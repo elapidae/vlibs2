@@ -14,7 +14,6 @@
 
 #include "vbyte_buffer.h"
 #include "vbyte_buffer_view.h"
-#include "vlog.h"
 
 template<class> class TD;
 
@@ -160,14 +159,14 @@ TEST_F( VByteBuffer_Test, starts_ends_with )
 
 TEST_F( VByteBuffer_Test, text )
 {
-    EXPECT_EQ( vbyte_buffer("12345").text_to_int(), 12345 );
-    EXPECT_EQ( vbyte_buffer("123456").text_to_uint(), 123456 );
+    EXPECT_EQ( vbyte_buffer("12345").to_int(), 12345 );
+    EXPECT_EQ( vbyte_buffer("123456").to_uint(), 123456 );
 
-    EXPECT_DOUBLE_EQ( vbyte_buffer("123.45").text_to_double(), 123.45 );
-    EXPECT_FLOAT_EQ( vbyte_buffer("123.456").text_to_double(), 123.456f );
+    EXPECT_DOUBLE_EQ( vbyte_buffer("123.45").to_double(), 123.45 );
+    EXPECT_FLOAT_EQ( vbyte_buffer("123.456").to_double(), 123.456f );
 
-    EXPECT_EQ( vbyte_buffer("0123456789012345").text_to_long(), 123456789012345l );
-    EXPECT_EQ( vbyte_buffer("012345678901234567 ").text_to_ulong(), 12345678901234567ul);
+    EXPECT_EQ( vbyte_buffer("0123456789012345").to_long(), 123456789012345l );
+    EXPECT_EQ( vbyte_buffer("012345678901234567 ").to_ulong(), 12345678901234567ul);
 }
 
 //=======================================================================================

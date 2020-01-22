@@ -9,35 +9,52 @@ class vbyte_buffer_view
 public:
     //-----------------------------------------------------------------------------------
 
+    // Конструктор view, который смотрит на буфер buf длиной len
     vbyte_buffer_view( const char* buf, size_t len );
 
     //-----------------------------------------------------------------------------------
 
+    // Сколько элементов буффера осталось впереди
     size_t remained() const;
+
+    // Закончился ли просматриваемый буфер
     bool   finished() const;
 
-    void omit( size_t count ); // пропустить некоторое количество.
+    // Пропустить некоторое количество
+    void omit( size_t count );
 
     //-----------------------------------------------------------------------------------
 
+    // Отобразить следующий элемент в формате Little Endian
     template<typename T> T show_LE()  const;
+
+    // Отобразить следующий элемент в формате Big Endian
     template<typename T> T show_BE()  const;
 
+    // Отобразить sz следующих элементов буффера в виде строки
     std::string  show_string ( size_t sz ) const;
+
+    // Отобразить sz следующих элементов буффера
     vbyte_buffer show_buffer ( size_t sz ) const;
 
-    //  просмотр оставшейся части.
+    // Просмотр оставшейся части
     vbyte_buffer show_tail() const;
 
     //-----------------------------------------------------------------------------------
 
+    // Извлечь из буфера следующий элемент в формате Little Endian
     template<typename T> T LE();
+
+    // Извлечь из буфера следующий элемент в формате Big Endian
     template<typename T> T BE();
 
+    // Извлечь из буфера строку размера sz
     std::string  string ( size_t sz );
+
+    // Извлечь из буфера буфер размера sz
     vbyte_buffer buffer ( size_t sz );
 
-    //  выборка оставшейся части.
+    // Извлечь оставшуюся часть
     vbyte_buffer tail();
 
     //-----------------------------------------------------------------------------------
@@ -114,7 +131,7 @@ template<typename T>
 T vbyte_buffer_view::_show() const
 {
     if ( _remained < sizeof(T) )
-        throw std::out_of_range( "vbyte_buffer_view: not enouth data" );
+        throw std::out_of_range( "vbyte_buffer_view: not enough data" );
 
     T res;
     auto ptr = static_cast<char*>( static_cast<void*>(&res) );

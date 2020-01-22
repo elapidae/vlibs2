@@ -28,9 +28,6 @@ isEmpty(qi_vbyte_buffer) {
     HEADERS     += $$VLIBS_DIR/vbyte_buffer/vbyte_buffer_view.h
     SOURCES     += $$VLIBS_DIR/vbyte_buffer/vbyte_buffer_view.cpp
 
-    HEADERS     += $$VLIBS_DIR/vbyte_buffer/VByteBuffer
-    HEADERS     += $$VLIBS_DIR/vbyte_buffer/VByteBufferView
-
     OTHER_FILES += $$VLIBS_DIR/vbyte_buffer/vbyte_buffer.cmake
 }
 # vbyte_buffer.pri
