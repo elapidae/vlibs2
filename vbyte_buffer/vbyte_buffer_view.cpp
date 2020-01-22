@@ -26,7 +26,7 @@ void vbyte_buffer_view::omit( size_t count )
 std::string vbyte_buffer_view::show_string( size_t sz ) const
 {
     if ( _remained < sz )
-        throw std::out_of_range( "vbyte_buffer_view::show_string: not enouth data" );
+        throw std::out_of_range( "vbyte_buffer_view::show_string: not enough data" );
 
 
     return std::string( _buffer, sz );

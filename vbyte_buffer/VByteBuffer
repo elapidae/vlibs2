@@ -1,5 +1,0 @@
-#pragma once
-
-#include "vbyte_buffer.h"
-
-using VByteBuffer = vbyte_buffer;
