@@ -1,10 +1,10 @@
 #include "vbyte_buffer_view.h"
 
 //=======================================================================================
-template<typename T>
-const char* char_cast( const T* p )
+template<typename Res, typename T>
+const Res* any_cast( const T* p )
 {
-    return static_cast<const char*>( static_cast<const void*>(p) );
+    return static_cast<const Res*>( static_cast<const void*>(p) );
 }
 //=======================================================================================
 
@@ -14,15 +14,30 @@ vbyte_buffer_view::vbyte_buffer_view( const char* buf, size_t len )
     , _remained ( len )
 {}
 //=======================================================================================
-vbyte_buffer_view::vbyte_buffer_view(const signed char *buf, size_t len)
-    : _buffer   ( char_cast(buf) )
+vbyte_buffer_view::vbyte_buffer_view( const signed char *buf, size_t len )
+    : _buffer   ( any_cast<char>(buf) )
     , _remained ( len )
 {}
 //=======================================================================================
-vbyte_buffer_view::vbyte_buffer_view(const unsigned char *buf, size_t len)
-    : _buffer   ( char_cast(buf) )
+vbyte_buffer_view::vbyte_buffer_view( const unsigned char *buf, size_t len )
+    : _buffer   ( any_cast<char>(buf) )
     , _remained ( len )
 {}
+//=======================================================================================
+const char *vbyte_buffer_view::data() const
+{
+    return _buffer;
+}
+//=======================================================================================
+const int8_t *vbyte_buffer_view::sdata() const
+{
+    return any_cast<int8_t>( _buffer );
+}
+//=======================================================================================
+const uint8_t *vbyte_buffer_view::udata() const
+{
+    return any_cast<uint8_t>( _buffer );
+}
 //=======================================================================================
 size_t vbyte_buffer_view::remained() const
 {

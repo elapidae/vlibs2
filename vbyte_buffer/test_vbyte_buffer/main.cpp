@@ -352,6 +352,26 @@ TEST_F( VByteBuffer_Test, simple_view_omit )
 }
 //=======================================================================================
 
+TEST_F( VByteBuffer_Test, datas )
+{
+    vbyte_buffer buf;
+    buf.append_LE(42);
+
+    auto c1 = buf.data();
+    auto u1 = buf.udata();
+    auto s1 = buf.sdata();
+
+    auto view = buf.view();
+    auto c2 = view.data();
+    auto u2 = view.udata();
+    auto s2 = view.sdata();
+
+    EXPECT_EQ( c1, c2 );
+    EXPECT_EQ( u1, u2 );
+    EXPECT_EQ( s1, s2 );
+}
+//=======================================================================================
+
 
 //=======================================================================================
 //  Main, do not delete...

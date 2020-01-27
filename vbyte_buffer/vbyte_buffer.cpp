@@ -25,6 +25,21 @@ size_t vbyte_buffer::size() const
     return _buf.size();
 }
 //=======================================================================================
+const char *vbyte_buffer::data() const
+{
+    return _buf.data();
+}
+//=======================================================================================
+const int8_t *vbyte_buffer::sdata() const
+{
+    return static_cast<const int8_t*>( static_cast<const void*>(data()) );
+}
+//=======================================================================================
+const uint8_t *vbyte_buffer::udata() const
+{
+    return static_cast<const uint8_t*>( static_cast<const void*>(data()) );
+}
+//=======================================================================================
 vbyte_buffer_view vbyte_buffer::view() const
 {
     return { _buf.data(), _buf.size() };

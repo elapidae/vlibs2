@@ -44,6 +44,11 @@ public:
 
     size_t size() const;
 
+    //  Прямой доступ к памяти буффера, для удобства, но будьте осторожны.
+    const char*    data()  const;
+    const int8_t*  sdata() const;
+    const uint8_t* udata() const;
+
     //  NB! Ни в коем случае не изменяйте буффер пока пользуетесь view!
     vbyte_buffer_view view() const;
 
