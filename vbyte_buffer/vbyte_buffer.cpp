@@ -15,6 +15,10 @@ vbyte_buffer::vbyte_buffer( std::string seed )
     : _buf( std::move(seed) )
 {}
 //=======================================================================================
+vbyte_buffer::vbyte_buffer( const char* seed )
+    : _buf( seed )
+{}
+//=======================================================================================
 const std::string& vbyte_buffer::str() const
 {
     return _buf;
@@ -58,6 +62,12 @@ bool vbyte_buffer::operator ==( const vbyte_buffer& rhs ) const
 bool vbyte_buffer::operator !=( const vbyte_buffer& rhs ) const
 {
     return _buf != rhs._buf;
+}
+//=======================================================================================
+vbyte_buffer& vbyte_buffer::operator += ( const vbyte_buffer& rhs )
+{
+    _buf += rhs._buf;
+    return *this;
 }
 //=======================================================================================
 vbyte_buffer::operator const std::string&() const
@@ -314,7 +324,14 @@ vbyte_buffer& vbyte_buffer::trim_spaces()
 //=======================================================================================
 ostream& operator <<( ostream& os, const vbyte_buffer& buf )
 {
-    os << "vbyte_buffer(" << buf.str() << ')';
+    os << buf.str();
     return os;
+}
+//=======================================================================================
+vbyte_buffer operator +( const vbyte_buffer& lhs, const vbyte_buffer& rhs )
+{
+    auto res = lhs;
+    res += rhs;
+    return res;
 }
 //=======================================================================================
