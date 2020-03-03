@@ -33,8 +33,9 @@ public:
 
     //-----------------------------------------------------------------------------------
 
-    explicit vbyte_buffer();
-    explicit vbyte_buffer( std::string seed );
+    vbyte_buffer();
+    vbyte_buffer( std::string seed );
+    vbyte_buffer( const char* seed );
 
     // Возврат буфера в виде строки
     const std::string& str() const;
@@ -57,6 +58,8 @@ public:
 
     bool operator == ( const vbyte_buffer& rhs ) const;
     bool operator != ( const vbyte_buffer& rhs ) const;
+
+    vbyte_buffer& operator += ( const vbyte_buffer& rhs );
 
     //-----------------------------------------------------------------------------------
 
@@ -179,6 +182,8 @@ private:
 }; // vbyte_buffer
 //=======================================================================================
 std::ostream& operator << ( std::ostream& os, const vbyte_buffer& buf );
+
+vbyte_buffer operator + ( const vbyte_buffer& lhs, const vbyte_buffer& rhs );
 //=======================================================================================
 
 
