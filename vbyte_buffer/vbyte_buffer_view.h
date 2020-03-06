@@ -10,22 +10,22 @@ public:
     //-----------------------------------------------------------------------------------
 
     // Конструктор view, который смотрит на буфер buf длиной len
-    vbyte_buffer_view( const char* buf, size_t len );
-    vbyte_buffer_view( const signed char* buf, size_t len );
-    vbyte_buffer_view( const unsigned char* buf, size_t len );
+    vbyte_buffer_view( const char* buf,          size_t len )   noexcept;
+    vbyte_buffer_view( const signed char* buf,   size_t len )   noexcept;
+    vbyte_buffer_view( const unsigned char* buf, size_t len )   noexcept;
 
     //-----------------------------------------------------------------------------------
 
     //  Прямой доступ к памяти буффера, для удобства, но будьте осторожны.
-    const char*    data()  const;
-    const int8_t*  sdata() const;
-    const uint8_t* udata() const;
+    const char*    data()  const noexcept;
+    const int8_t*  sdata() const noexcept;
+    const uint8_t* udata() const noexcept;
 
     // Сколько элементов буффера осталось впереди
-    size_t remained() const;
+    size_t remained() const noexcept;
 
     // Закончился ли просматриваемый буфер
-    bool   finished() const;
+    bool   finished() const noexcept;
 
     // Пропустить некоторое количество
     void omit( size_t count );

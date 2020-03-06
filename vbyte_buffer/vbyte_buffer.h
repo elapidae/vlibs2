@@ -38,17 +38,18 @@ public:
     vbyte_buffer( const char* seed );
 
     // Возврат буфера в виде строки
-    const std::string& str() const;
+    const std::string& str() const noexcept;
 
     // Неявное преобразование vbyte_buffer к std::string
-    operator const std::string&() const;
+    operator const std::string&() const noexcept;
 
-    size_t size() const;
+    size_t  size()  const noexcept;
+    bool    empty() const noexcept;
 
     //  Прямой доступ к памяти буффера, для удобства, но будьте осторожны.
-    const char*    data()  const;
-    const int8_t*  sdata() const;
-    const uint8_t* udata() const;
+    const char*    data()  const noexcept;
+    const int8_t*  sdata() const noexcept;
+    const uint8_t* udata() const noexcept;
 
     //  NB! Ни в коем случае не изменяйте буффер пока пользуетесь view!
     vbyte_buffer_view view() const;
@@ -56,8 +57,8 @@ public:
     // Очистка буфера
     void clear();
 
-    bool operator == ( const vbyte_buffer& rhs ) const;
-    bool operator != ( const vbyte_buffer& rhs ) const;
+    bool operator == ( const vbyte_buffer& rhs ) const noexcept;
+    bool operator != ( const vbyte_buffer& rhs ) const noexcept;
 
     vbyte_buffer& operator += ( const vbyte_buffer& rhs );
 
@@ -146,7 +147,7 @@ public:
     vbyte_buffer to_hex( char separator = ' ' ) const;   // с разделителями, строчными.
     vbyte_buffer to_Hex( char separator = ' ' ) const;   // с разделителями, Заглавными.
 
-    static bool is_hex_symbol( char ch );
+    static bool is_hex_symbol( char ch ) noexcept;
 
     //-----------------------------------------------------------------------------------
     //  NB! Методы split не добавляют в конец пустое значение, если разделитель был
@@ -171,7 +172,7 @@ public:
     // Выворачивает байты наизнанку, т.е. <LE> <-> <BE>.
     template<typename T>
     static typename std::enable_if<std::is_arithmetic<T>::value, T>::type
-    reverse_T( T src );
+    reverse_T( T src ) noexcept;
 
     //-----------------------------------------------------------------------------------
 
@@ -210,7 +211,7 @@ T vbyte_buffer::to_any() const
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 template<typename T>
 typename std::enable_if< std::is_arithmetic<T>::value, T>::type
-vbyte_buffer::reverse_T( T val )
+vbyte_buffer::reverse_T( T val ) noexcept
 {
     static_assert ( sizeof(T) <= 8, "Cannot reverse values more than 8 bytes." );
 

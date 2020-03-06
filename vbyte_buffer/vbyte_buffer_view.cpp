@@ -9,42 +9,42 @@ const Res* any_cast( const T* p )
 //=======================================================================================
 
 //=======================================================================================
-vbyte_buffer_view::vbyte_buffer_view( const char* buf, size_t len )
+vbyte_buffer_view::vbyte_buffer_view( const char* buf, size_t len ) noexcept
     : _buffer   ( buf )
     , _remained ( len )
 {}
 //=======================================================================================
-vbyte_buffer_view::vbyte_buffer_view( const signed char *buf, size_t len )
+vbyte_buffer_view::vbyte_buffer_view( const signed char *buf, size_t len ) noexcept
     : _buffer   ( any_cast<char>(buf) )
     , _remained ( len )
 {}
 //=======================================================================================
-vbyte_buffer_view::vbyte_buffer_view( const unsigned char *buf, size_t len )
+vbyte_buffer_view::vbyte_buffer_view( const unsigned char *buf, size_t len ) noexcept
     : _buffer   ( any_cast<char>(buf) )
     , _remained ( len )
 {}
 //=======================================================================================
-const char *vbyte_buffer_view::data() const
+const char *vbyte_buffer_view::data() const noexcept
 {
     return _buffer;
 }
 //=======================================================================================
-const int8_t *vbyte_buffer_view::sdata() const
+const int8_t *vbyte_buffer_view::sdata() const noexcept
 {
     return any_cast<int8_t>( _buffer );
 }
 //=======================================================================================
-const uint8_t *vbyte_buffer_view::udata() const
+const uint8_t *vbyte_buffer_view::udata() const noexcept
 {
     return any_cast<uint8_t>( _buffer );
 }
 //=======================================================================================
-size_t vbyte_buffer_view::remained() const
+size_t vbyte_buffer_view::remained() const noexcept
 {
     return _remained;
 }
 //=======================================================================================
-bool vbyte_buffer_view::finished() const
+bool vbyte_buffer_view::finished() const noexcept
 {
     return _remained == 0;
 }
