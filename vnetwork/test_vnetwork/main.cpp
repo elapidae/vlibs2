@@ -25,6 +25,7 @@ class VNetwork_Test: public testing::Test
 #include "vtcp_server.h"
 #include "vcat.h"
 #include "vudp_socket.h"
+#include "vbyte_buffer.h"
 
 //=======================================================================================
 
@@ -145,6 +146,26 @@ TEST_F( VNetwork_Test, simple_udp )
     vapplication::poll();
     EXPECT_EQ( s1_msg, "Hello world!" );
 }
+
+//=======================================================================================
+TEST_F( VNetwork_Test, raw_conversions )
+{
+    auto addr = vsocket_address::from_raw_ip4( 0xc0a80019, 123 );
+    EXPECT_EQ( addr.ip(), "192.168.0.25" );
+    EXPECT_EQ( addr.port(), 123 );
+
+    vbyte_buffer b;
+    b.append('\0');     // first octave == 0010
+    b.append('\20');    // 020 == 0x10
+    for (int i = 2; i < 15; ++i ) b.append('\0');
+    b.append('\21');    // 021 == 0x11
+    EXPECT_EQ( b.size(), 16 );
+
+    addr = vsocket_address::from_raw_ip6( b.data(), 234 );
+    EXPECT_EQ( addr.ip(), "10::11" );
+    EXPECT_EQ( addr.port(), 234 );
+}
+
 //=======================================================================================
 
 
