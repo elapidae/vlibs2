@@ -26,6 +26,7 @@ Res cast_over_void( From *f ) noexcept
     void *v = static_cast<void*>( f );
     return static_cast<Res>( v );
 }
+//---------------------------------------------------------------------------------------
 template<typename Res, typename From>
 Res cast_over_void( const From *f ) noexcept
 {

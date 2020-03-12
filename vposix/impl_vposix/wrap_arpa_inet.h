@@ -20,6 +20,7 @@ namespace impl_vposix
         static bool inet_pton_ip4( const std::string& src, void *dst );
         static bool inet_pton_ip6( const std::string& src, void *dst );
 
+        //  Do not noexcept spec, because of copy buffers in strings.
         static std::string inet_ntop_ip4( const void *src );
         static std::string inet_ntop_ip6( const void *src );
     };
