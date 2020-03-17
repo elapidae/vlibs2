@@ -68,8 +68,72 @@ string escape_value( vsettings::cstring val )
             add_escaped( &res, ch );
             continue;
         }
+        if ( ch == '\\' )
+        {
+            res.push_back( '\\' );
+            res.push_back( '\\' );
+            continue;
+        }
         res.push_back( ch );
     }
+    return res;
+}
+//=======================================================================================
+static char from_ascii( char ch, int line_num )
+{
+    if ( !std::isxdigit(ch) )
+        throw verror << "Bad escape sequence in line " << line_num;
+
+    ch = char( std::toupper(ch) );
+
+    if ( ch >= 'A' && ch <= 'F' ) return ch - 'A';
+    if ( ch >= '0' && ch <= '9' ) return ch - '0';
+
+    throw verror << "Bad hex symbol in line " << line_num;
+}
+//---------------------------------------------------------------------------------------
+string unescape_value( const string& val, int line_num )
+{
+    string res;
+
+    for ( uint i = 0; i < val.size(); ++i )
+    {
+        char ch = val.at(i);
+
+        if ( ch != '\\' )
+        {
+            res.push_back( ch );
+            continue;
+        }
+
+        if ( ++i >= val.size() )
+            throw verror << "Escape symbol at end of string in line " << line_num;
+
+        ch = val.at( i );
+        if ( ch == '\\' )
+        {
+            res.push_back( '\\' );
+            continue;
+        }
+
+        if ( ch != 'x' )
+            throw verror << "Cannot determine escape sequence in line " << line_num;
+
+        if ( i + 2 >= val.size() )
+            throw verror << "Bad escape sequence in line " << line_num;
+
+        auto hi = val.at( ++i );
+        auto lo = val.at(   i );
+
+        if ( !std::isxdigit(hi) || std::isxdigit(lo) )
+            throw verror << "Bad escape sequence in line " << line_num;
+
+        hi = from_ascii( hi, line_num );
+        lo = from_ascii( lo, line_num );
+
+        res.push_back( char((hi << 4)|(lo)) );
+    } // for each char
+
     return res;
 }
 //=======================================================================================
@@ -267,8 +331,6 @@ vsettings::string vsettings::str() const
     return res;
 }
 //=======================================================================================
-//static void load_group( vsettings* res, )
-
 void vsettings::load( cstring data )
 {
     int line_num = 0;
@@ -309,6 +371,7 @@ void vsettings::load( cstring data )
 
         auto val = line.substr(eq_pos + 1);
         val = vbyte_buffer(val).trim_spaces();
+        val = unescape_value( val, line_num );
 
         //  Find subgroup in deep.
         auto subgroups = key.split( '/' );
@@ -332,6 +395,9 @@ ostream& operator <<( ostream& os, const vsettings& sett )
 
 //=======================================================================================
 //      vsettings::shema
+//=======================================================================================
+vsettings::schema::_node_iface::~_node_iface()
+{}
 //=======================================================================================
 void vsettings::schema::capture( const vsettings& settings )
 {
@@ -377,14 +443,19 @@ void vsettings::schema::unsubgroup()
 //=======================================================================================
 void vsettings::schema::_add_node( _node_ptr && ptr )
 {
+    ptr->groups = _groups;
+
     for ( auto& node: _nodes )
     {
-        if ( node->same(ptr.get()) )
+        if ( node->same(ptr->mine()) )
             throw verror << "Pointer for key '" << ptr->key
-                         << "' is same as in key '" << node->key;
+                         << "' is same as in key '" << node->key << "'.";
+
+        if ( node->key    == ptr->key &&
+             node->groups == ptr->groups )
+            throw verror << "Key '" << ptr->key << "' already in the same group.";
     }
 
-    ptr->groups = _groups;
     _nodes.push_back( std::move(ptr) );
 }
 //=======================================================================================

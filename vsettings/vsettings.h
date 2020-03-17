@@ -21,7 +21,7 @@ public:
     string get( cstring key ) const;
 
     template<typename T>
-    T get_as( cstring key ) const;
+    T get( cstring key ) const;
 
     template<typename T>
     void set( cstring key, const T& val );
@@ -87,7 +87,7 @@ private:
 std::ostream& operator << (std::ostream& os, const vsettings& sett );
 //=======================================================================================
 template<typename T>
-T vsettings::get_as( cstring key ) const
+T vsettings::get( cstring key ) const
 {
     return vcat::from_text<T>( get(key) );
 }
@@ -110,10 +110,13 @@ struct vsettings::schema::_node_iface
         : key( k )
     {}
 
-    virtual bool same( void *check_ptr ) = 0;
-    virtual void load( const vsettings& settings ) = 0;
-    virtual void save( vsettings* settings ) = 0;
-    virtual ~_node_iface() = default;
+    virtual void* mine() const                      = 0;
+    virtual bool  same( void *check_ptr ) const     = 0;
+
+    virtual void load( const vsettings& settings )  = 0;
+    virtual void save( vsettings* settings ) const  = 0;
+
+    virtual ~_node_iface();
 };
 //=======================================================================================
 template <typename T>
@@ -127,7 +130,12 @@ struct vsettings::schema::_node : vsettings::schema::_node_iface
         , ptr( p )
     {}
     //-----------------------------------------------------------------------------------
-    bool same( void *check_ptr ) override
+    virtual void* mine() const override
+    {
+        return ptr;
+    }
+    //-----------------------------------------------------------------------------------
+    bool same( void *check_ptr ) const override
     {
         return ptr == check_ptr;
     }
@@ -139,10 +147,10 @@ struct vsettings::schema::_node : vsettings::schema::_node_iface
         for ( auto& g: groups )
             sett_ptr = &sett_ptr->subgroup( g );
 
-        *ptr = sett_ptr->get_as<T>( key );
+        *ptr = sett_ptr->get<T>( key );
     }
     //-----------------------------------------------------------------------------------
-    void save( vsettings* settings ) override
+    void save( vsettings* settings ) const override
     {
         for ( auto& g: groups )
             settings = &settings->subgroup( g );
