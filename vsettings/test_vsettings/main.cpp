@@ -44,6 +44,28 @@ TEST_F( TEST_VSETTINGS, 1 )
 //=======================================================================================
 int main(int argc, char *argv[])
 {
+    vsettings::schema sh;
+    int i = 42;
+    sh.add( "i", &i );
+
+    string str = "ololo";
+    sh.add( "s", &str );
+
+    sh.subgroup( "GROUP1" );
+    uint u1 = 1, u2 = 2, u3 = 3, u4 = 4;
+    sh.add( "u1", &u1 );
+    sh.subgroup( "S1" );
+    sh.add( "u2", &u2 );
+    sh.subgroup( "SS2" );
+    sh.add( "u3", &u3 );
+    sh.unsubgroup();
+    sh.add( "u4", &u4 );
+
+    vdeb << sh.build().str();
+
+
+    return 0;
+
     vsettings s;
     s.set( "123", "456" );
     s.set( "hello", "world" );
@@ -61,10 +83,10 @@ int main(int argc, char *argv[])
     sg.set( "098", "world" );
     }
 
-    vdeb << s.save();
+    vdeb << s.str();
 
     vsettings s2;
-    s2.load( s.save() );
+    s2.load( s.str() );
 
     vdeb << "=============\n" << s2;
 

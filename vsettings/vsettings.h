@@ -4,46 +4,49 @@
 #include <memory>
 #include <vector>
 #include <ostream>
-#include "vbyte_buffer.h"
+#include "vcat.h"
 
 //=======================================================================================
 class vsettings final
 {
 public:
-    using str       = std::string;
-    using cstr      = const std::string&;
-    using str_list  = std::vector<str>;
+    using string    = std::string;
+    using cstring   = const std::string&;
+    using str_list  = std::vector<string>;
 
     class schema;
 
-    void set( cstr key, cstr val );
+    void set( cstring key, cstring val );
 
-    str  get( cstr key ) const;
+    string get( cstring key ) const;
 
     template<typename T>
-    T get_as( cstr key ) const;
+    T get_as( cstring key ) const;
 
-    vsettings& subgroup( cstr name );
-    const vsettings& subgroup( cstr name ) const;
+    template<typename T>
+    void set( cstring key, const T& val );
 
-    bool has( cstr key ) const;
-    bool has_subgroup(cstr name ) const;
+    vsettings& subgroup( cstring name );
+    const vsettings& subgroup( cstring name ) const;
+
+    bool has( cstring key ) const;
+    bool has_subgroup(cstring name ) const;
 
     str_list keys() const;
     str_list subgroup_names() const;
 
-    str  save() const;
-    void load( cstr data );
+    string str() const;
+    void load( cstring data );
 
-    void load_from_ini( cstr fname );
-    void save_to_ini  ( cstr fname ) const;
+    void from_ini_file( cstring fname );
+    void to_ini_file  ( cstring fname ) const;
 
     vsettings();
     ~vsettings();
 
 
-    static bool is_valid_key      ( cstr key );
-    static bool is_valid_subgroup ( cstr key );
+    static bool is_valid_key      ( cstring key );
+    static bool is_valid_subgroup ( cstring key );
 
     vsettings(const vsettings&) = default;
     vsettings& operator =(const vsettings&) = default;
@@ -55,16 +58,27 @@ private:
 class vsettings::schema
 {
 public:
-    void add( cstr key, str* val );
-
     template<typename T>
-    void add( cstr key, T* val );
+    void add( cstring key, T *val );
 
-    void capture( vsettings settings );
-    void capture_from_ini( cstr fname );
+    void capture( const vsettings& settings );
+    void capture_from_ini( cstring fname );
 
     vsettings build() const;
-    void save_to_ini( cstr fname ) const;
+    void save_to_ini( cstring fname ) const;
+
+    void subgroup( cstring name );
+    void unsubgroup();
+
+private:
+    struct _node_iface;
+    using  _node_ptr = std::shared_ptr<_node_iface>;
+    template <typename T> struct _node;
+
+    void _add_node( _node_ptr && );
+
+    std::vector<_node_ptr> _nodes;
+    str_list _groups;
 };
 //=======================================================================================
 
@@ -73,9 +87,76 @@ public:
 std::ostream& operator << (std::ostream& os, const vsettings& sett );
 //=======================================================================================
 template<typename T>
-T vsettings::get_as( cstr key ) const
+T vsettings::get_as( cstring key ) const
 {
-    return vbyte_buffer( get(key) ).to_any<T>();
+    return vcat::from_text<T>( get(key) );
+}
+//=======================================================================================
+template<typename T>
+void vsettings::set( cstring key, const T& val )
+{
+    set( key, vcat(val).str() );
+}
+//=======================================================================================
+
+
+//=======================================================================================
+struct vsettings::schema::_node_iface
+{
+    std::string key;
+    str_list groups;
+
+    _node_iface( cstring k )
+        : key( k )
+    {}
+
+    virtual bool same( void *check_ptr ) = 0;
+    virtual void load( const vsettings& settings ) = 0;
+    virtual void save( vsettings* settings ) = 0;
+    virtual ~_node_iface() = default;
+};
+//=======================================================================================
+template <typename T>
+struct vsettings::schema::_node : vsettings::schema::_node_iface
+{
+    //-----------------------------------------------------------------------------------
+    T* ptr;
+    //-----------------------------------------------------------------------------------
+    _node( cstring k, T *p )
+        : _node_iface( k )
+        , ptr( p )
+    {}
+    //-----------------------------------------------------------------------------------
+    bool same( void *check_ptr ) override
+    {
+        return ptr == check_ptr;
+    }
+    //-----------------------------------------------------------------------------------
+    void load( const vsettings& settings ) override
+    {
+        const vsettings *sett_ptr = &settings;
+
+        for ( auto& g: groups )
+            sett_ptr = &sett_ptr->subgroup( g );
+
+        *ptr = sett_ptr->get_as<T>( key );
+    }
+    //-----------------------------------------------------------------------------------
+    void save( vsettings* settings ) override
+    {
+        for ( auto& g: groups )
+            settings = &settings->subgroup( g );
+
+        settings->set(key, *ptr);
+    }
+    //-----------------------------------------------------------------------------------
+};
+//=======================================================================================
+template<typename T>
+void vsettings::schema::add( cstring key, T *val )
+{
+    auto ptr = std::make_shared<_node<T>>(key,val);
+    _add_node( ptr );
 }
 //=======================================================================================
 
