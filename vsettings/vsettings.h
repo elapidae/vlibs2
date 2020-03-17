@@ -4,56 +4,78 @@
 #include <memory>
 #include <vector>
 
+
+//=======================================================================================
 class vsettings final
 {
 public:
-    using str = std::string;
+    using str       = std::string;
+    using cstr      = const std::string&;
+    using str_list  = std::vector<str>;
 
-    class record
-    {
-    public:
-        using list = std::vector<record>;
-        str key, value, comment;
-    };
+    class schema;
 
-    class tree
-    {
-    public:
-        tree();
-        virtual ~tree();
+    void set( cstr key, cstr val );
 
-        using list = std::vector<tree>;
+    str  get( cstr key, cstr def_val = {} ) const;
 
-        str group;
-        record::list records;
+    template<typename T>
+    T get_as( cstr key, const T& def_val = {} ) const;
 
-        list subtrees;
+    const vsettings& subgroup( cstr name );
+    const vsettings& subgroup( cstr name ) const;
 
-        tree * parent = nullptr;
+    bool has( cstr key ) const;
+    bool has_subgroup(cstr name ) const;
 
-    protected:
-        void changed()
-        {
-            if (parent)
-                parent->changed();
-            else
-                save();
-        }
-        virtual void save() {}
-    };
+    str_list keys() const;
+    str_list subgroup_names() const;
 
-    class ini_file : tree
-    {
-    public:
-        vsettings::tree& tree();
-    };
+    str  save() const;
+    void load( cstr data );
 
+    void load_from_ini( cstr fname );
+    void save_to_ini  ( cstr fname ) const;
+
+    vsettings();
     ~vsettings();
+
+
+    static bool is_valid_key      ( cstr key );
+    static bool is_valid_subgroup ( cstr key );
+
+    vsettings(const vsettings&) = default;
+    vsettings& operator =(const vsettings&) = default;
 
 private:
     class _pimpl; std::shared_ptr<_pimpl> _p;
 };
+//=======================================================================================
+class vsettings::schema
+{
+public:
+    void add( cstr key, str* val );
 
+    template<typename T>
+    void add( cstr key, T* val );
+
+    void capture( vsettings settings );
+    void capture_from_ini( cstr fname );
+
+    vsettings build() const;
+    void save_to_ini( cstr fname ) const;
+};
+//=======================================================================================
+
+
+
+//=======================================================================================
+template<typename T>
+T vsettings::get_as( cstr key, const T& def_val ) const
+{
+
+}
+//=======================================================================================
 
 
 #endif // VSETTINGS_H
