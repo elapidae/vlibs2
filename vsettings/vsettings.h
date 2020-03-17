@@ -3,7 +3,8 @@
 
 #include <memory>
 #include <vector>
-
+#include <ostream>
+#include "vbyte_buffer.h"
 
 //=======================================================================================
 class vsettings final
@@ -17,12 +18,12 @@ public:
 
     void set( cstr key, cstr val );
 
-    str  get( cstr key, cstr def_val = {} ) const;
+    str  get( cstr key ) const;
 
     template<typename T>
-    T get_as( cstr key, const T& def_val = {} ) const;
+    T get_as( cstr key ) const;
 
-    const vsettings& subgroup( cstr name );
+    vsettings& subgroup( cstr name );
     const vsettings& subgroup( cstr name ) const;
 
     bool has( cstr key ) const;
@@ -68,12 +69,13 @@ public:
 //=======================================================================================
 
 
-
+//=======================================================================================
+std::ostream& operator << (std::ostream& os, const vsettings& sett );
 //=======================================================================================
 template<typename T>
-T vsettings::get_as( cstr key, const T& def_val ) const
+T vsettings::get_as( cstr key ) const
 {
-
+    return vbyte_buffer( get(key) ).to_any<T>();
 }
 //=======================================================================================
 

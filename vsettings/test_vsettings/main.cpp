@@ -63,6 +63,15 @@ int main(int argc, char *argv[])
 
     vdeb << s.save();
 
+    vsettings s2;
+    s2.load( s.save() );
+
+    vdeb << "=============\n" << s2;
+
+
+    s.load( "[Ololo]\n  key = val" );
+
+
     return 0;
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

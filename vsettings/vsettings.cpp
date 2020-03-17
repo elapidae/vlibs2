@@ -31,6 +31,8 @@ static void add_escaped( string* res, char ch )
 //=======================================================================================
 bool vsettings::is_valid_key( cstr key )
 {
+    if ( key.empty() ) return false;
+
     for ( char ch: key )
     {
         if ( std::iscntrl(ch) ) return false;
@@ -119,18 +121,17 @@ void vsettings::set( cstr key, cstr val )
     _p->records.push_back( {key, val} );
 }
 //=======================================================================================
-vsettings::str vsettings::get( cstr key, cstr def_val ) const
+vsettings::str vsettings::get(cstr key) const
 {
     for ( auto & rec: _p->records )
     {
         if ( rec.key == key )
             return rec.val;
     }
-
-    return def_val;
+    throw verror << "Value with key '" << key << "' don't found in settings.";
 }
 //=======================================================================================
-const vsettings &vsettings::subgroup( cstr name )
+vsettings &vsettings::subgroup( cstr name )
 {
     if ( !is_valid_subgroup(name) )
         throw verror << "Subgroup name '" << name << "' is incorrect";
@@ -198,7 +199,23 @@ vsettings::str_list vsettings::subgroup_names() const
 //=======================================================================================
 void vsettings::load_from_ini( cstr fname )
 {
+    ifstream f( fname, ios_base::in|ios_base::binary );
+    if ( !f.good() )
+        throw verror << "Cannot open file '" << fname << "' for load ini.";
 
+    f.seekg (0, std::ios::end);
+    auto fsize = f.tellg();
+    if (fsize < 0)
+        verror << "Cannot get size of file '" << fname << "'.";
+
+    f.seekg (0, std::ios::beg);
+
+    size_t sz = size_t(fsize);
+    std::vector<char> buffer( sz );
+
+    f.read( buffer.data(), fsize );
+
+    load( buffer.data() );
 }
 //=======================================================================================
 void vsettings::save_to_ini( cstr fname ) const
@@ -254,27 +271,58 @@ vsettings::str vsettings::save() const
 
 void vsettings::load( cstr data )
 {
+    int line_num = 0;
     auto lines = vbyte_buffer::split( data, '\n' );
 
     auto cur_settings = this;
-    for ( auto& line: lines )
+    for ( auto& buf_line: lines )
     {
-        line.trim_spaces();
+        ++line_num;
+        buf_line.trim_spaces();
 
-        str l = line.str();
-        if (l.empty()) continue;
+        auto line = buf_line.str();
+        if (line.empty()) continue;
 
-        // It is the comment.
-        if ( l.at(0) == '#' )
+        //  It is the comment.
+        if ( line.at(0) == '#' )
             continue;
 
         //  It is the 0 group name.
-        if ( l.at(0) == '[' )
+        if ( line.at(0) == '[' )
         {
-            cur_settings = this;
+            auto end_pos = line.find( ']' );
+            if ( end_pos == str::npos )
+                throw verror << "Group not closed by ']' at line " << line_num;
 
+            auto group_name = line.substr( 1, end_pos - 1 );
+            cur_settings = &subgroup( group_name );
+            continue;
         }
 
+        //  Must be key = value pair.
+        auto eq_pos = line.find( '=' );
+        if ( eq_pos == str::npos )
+            throw verror << "In line " << line_num << " '=' not found.";
+
+        vbyte_buffer key = line.substr( 0, eq_pos );
+        key = vbyte_buffer(key).trim_spaces();
+
+        auto val = line.substr(eq_pos + 1);
+        val = vbyte_buffer(val).trim_spaces();
+
+        //  Find subgroup in deep.
+        auto subgroups = key.split( '/' );
+        auto sub_sett = cur_settings;
+        for ( int i = 0; i < int(subgroups.size()) - 1; ++i )
+            sub_sett = &sub_sett->subgroup( subgroups.at(uint(i)) );
+
+        sub_sett->set( subgroups.back(), val );
     } // for each line
+}
+//=======================================================================================
+ostream& operator <<( ostream& os, const vsettings& sett )
+{
+    os << sett.save();
+    return os;
 }
 //=======================================================================================
