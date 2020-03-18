@@ -68,7 +68,7 @@ public:
     void save_to_ini( cstring fname ) const;
 
     void subgroup( cstring name );
-    void unsubgroup();
+    void end_subgroup();
 
 private:
     struct _node_iface;

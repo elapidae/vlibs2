@@ -433,7 +433,7 @@ void vsettings::schema::subgroup( cstring name )
     _groups.push_back( name );
 }
 //=======================================================================================
-void vsettings::schema::unsubgroup()
+void vsettings::schema::end_subgroup()
 {
     if ( _groups.empty() )
         throw verror << "Called schema::unsubgroup() with empty groups.";
@@ -448,13 +448,17 @@ void vsettings::schema::_add_node( _node_ptr && ptr )
     for ( auto& node: _nodes )
     {
         if ( node->same(ptr->mine()) )
+        {
             throw verror << "Pointer for key '" << ptr->key
                          << "' is same as in key '" << node->key << "'.";
+        }
 
         if ( node->key    == ptr->key &&
              node->groups == ptr->groups )
+        {
             throw verror << "Key '" << ptr->key << "' already in the same group.";
-    }
+        }
+    } // Checking the same key and pointer for all nodes.
 
     _nodes.push_back( std::move(ptr) );
 }

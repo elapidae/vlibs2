@@ -24,8 +24,34 @@ class TEST_VSETTINGS: public testing::Test
 #pragma GCC diagnostic pop
 
 //=======================================================================================
-TEST_F( TEST_VSETTINGS, 1 )
+TEST_F( TEST_VSETTINGS, same_key )
 {
+    vsettings::schema s;
+
+    int i1, i2, i3;
+
+    s.add( "1", &i1 );
+
+    s.subgroup( "G" );
+    s.add( "1", &i2 ); // It is OK.
+
+    s.end_subgroup();
+    EXPECT_ANY_THROW( s.add("1", &i3) );
+}
+//=======================================================================================
+TEST_F( TEST_VSETTINGS, same_ptr )
+{
+    vsettings::schema s;
+
+    int i1;
+
+    s.add( "1", &i1 );
+
+    s.subgroup( "G" );
+    EXPECT_ANY_THROW( s.add("2", &i1) );
+
+    s.end_subgroup();
+    EXPECT_ANY_THROW( s.add("3", &i1) );
 }
 //=======================================================================================
 //  EXPECT_TRUE
@@ -44,6 +70,9 @@ TEST_F( TEST_VSETTINGS, 1 )
 //=======================================================================================
 int main(int argc, char *argv[])
 {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+
     vsettings::schema sh;
 
     int i1, i2;
@@ -65,12 +94,11 @@ int main(int argc, char *argv[])
     sh.add( "u2", &u2 );
     sh.subgroup( "SS2" );
     sh.add( "u3", &u3 );
-    sh.unsubgroup();
+    sh.end_subgroup();
     sh.add( "u4", &u4 );
 
 
     vdeb << sh.build().str();
-
 
     return 0;
 
@@ -103,8 +131,6 @@ int main(int argc, char *argv[])
 
 
     return 0;
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }
 //=======================================================================================
 //  Main, do not delete...
