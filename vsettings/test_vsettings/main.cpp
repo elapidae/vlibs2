@@ -70,6 +70,8 @@ TEST_F( TEST_VSETTINGS, same_ptr )
 //=======================================================================================
 int main(int argc, char *argv[])
 {
+    vdeb << '\n';
+
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 
@@ -98,7 +100,7 @@ int main(int argc, char *argv[])
     sh.add( "u4", &u4 );
 
 
-    vdeb << sh.build().str();
+    vdeb << sh.build().to_ini();
 
     return 0;
 
@@ -119,15 +121,15 @@ int main(int argc, char *argv[])
     sg.set( "098", "world" );
     }
 
-    vdeb << s.str();
+    vdeb << s.to_ini();
 
     vsettings s2;
-    s2.load( s.str() );
+    s2.from_ini( s.to_ini() );
 
     vdeb << "=============\n" << s2;
 
 
-    s.load( "[Ololo]\n  key = val" );
+    s.from_ini( "[Ololo]\n  key = val" );
 
 
     return 0;

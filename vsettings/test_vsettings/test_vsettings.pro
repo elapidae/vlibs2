@@ -11,3 +11,5 @@ include( $$VLIBS_DIR/qmake/vsettings.pri )
 include( $$VLIBS_DIR/qmake/vbyte_buffer.pri )
 
 SOURCES += main.cpp
+
+OTHER_FILES += ../vsettings.cmake

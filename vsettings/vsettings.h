@@ -10,9 +10,9 @@
 class vsettings final
 {
 public:
-    using string    = std::string;
-    using cstring   = const std::string&;
-    using str_list  = std::vector<string>;
+    using string     = std::string;
+    using cstring    = const std::string&;
+    using str_vector = std::vector<string>;
 
     class schema;
 
@@ -29,14 +29,14 @@ public:
     vsettings& subgroup( cstring name );
     const vsettings& subgroup( cstring name ) const;
 
-    bool has( cstring key ) const;
-    bool has_subgroup(cstring name ) const;
+    bool has_key      ( cstring key )  const;
+    bool has_subgroup ( cstring name ) const;
 
-    str_list keys() const;
-    str_list subgroup_names() const;
+    str_vector keys()      const;
+    str_vector subgroups() const;
 
-    string str() const;
-    void load( cstring data );
+    string to_ini() const;
+    void from_ini( cstring ini );
 
     void from_ini_file( cstring fname );
     void to_ini_file  ( cstring fname ) const;
@@ -78,7 +78,7 @@ private:
     void _add_node( _node_ptr && );
 
     std::vector<_node_ptr> _nodes;
-    str_list _groups;
+    str_vector _groups;
 };
 //=======================================================================================
 
@@ -104,14 +104,13 @@ void vsettings::set( cstring key, const T& val )
 struct vsettings::schema::_node_iface
 {
     std::string key;
-    str_list groups;
+    str_vector groups;
 
     _node_iface( cstring k )
         : key( k )
     {}
 
-    virtual void* mine() const                      = 0;
-    virtual bool  same( void *check_ptr ) const     = 0;
+    virtual void* stored_ptr() const                = 0;
 
     virtual void load( const vsettings& settings )  = 0;
     virtual void save( vsettings* settings ) const  = 0;
@@ -130,14 +129,9 @@ struct vsettings::schema::_node : vsettings::schema::_node_iface
         , ptr( p )
     {}
     //-----------------------------------------------------------------------------------
-    virtual void* mine() const override
+    virtual void* stored_ptr() const override
     {
         return ptr;
-    }
-    //-----------------------------------------------------------------------------------
-    bool same( void *check_ptr ) const override
-    {
-        return ptr == check_ptr;
     }
     //-----------------------------------------------------------------------------------
     void load( const vsettings& settings ) override

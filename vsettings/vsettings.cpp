@@ -185,7 +185,7 @@ void vsettings::set( cstring key, cstring val )
     _p->records.push_back( {key, val} );
 }
 //=======================================================================================
-vsettings::string vsettings::get(cstring key) const
+vsettings::string vsettings::get( cstring key ) const
 {
     for ( auto & rec: _p->records )
     {
@@ -221,7 +221,7 @@ const vsettings &vsettings::subgroup( cstring name ) const
     throw verror << "Subgroup with name '" << name << "' is absent.";
 }
 //=======================================================================================
-bool vsettings::has( cstring key ) const
+bool vsettings::has_key( cstring key ) const
 {
     for ( auto & rec: _p->records )
     {
@@ -243,18 +243,18 @@ bool vsettings::has_subgroup( cstring name ) const
     return false;
 }
 //=======================================================================================
-vsettings::str_list vsettings::keys() const
+vsettings::str_vector vsettings::keys() const
 {
-    str_list res;
+    str_vector res;
     for ( auto & rec: _p->records )
         res.push_back( rec.key );
 
     return res;
 }
 //=======================================================================================
-vsettings::str_list vsettings::subgroup_names() const
+vsettings::str_vector vsettings::subgroups() const
 {
-    str_list res;
+    str_vector res;
     for ( auto & sg: _p->subs )
         res.push_back( sg.name );
 
@@ -279,7 +279,7 @@ void vsettings::from_ini_file( cstring fname )
 
     f.read( buffer.data(), fsize );
 
-    load( buffer.data() );
+    from_ini( buffer.data() );
 }
 //=======================================================================================
 void vsettings::to_ini_file( cstring fname ) const
@@ -288,7 +288,7 @@ void vsettings::to_ini_file( cstring fname ) const
     if ( !f.good() )
         throw verror << "Cannot open file '" << fname << "' for save ini.";
 
-    f << str();
+    f << to_ini();
 }
 //=======================================================================================
 static void save_keys( vcat* res, string prefix, const vsettings& sett )
@@ -305,7 +305,7 @@ static void save_with_subs( vcat* res, string prefix, const vsettings& sett )
 {
     save_keys( res, prefix, sett );
 
-    auto subs = sett.subgroup_names();
+    auto subs = sett.subgroups();
     for ( auto sname: subs )
     {
         auto sub_prefix = prefix + sname + '/';
@@ -314,14 +314,14 @@ static void save_with_subs( vcat* res, string prefix, const vsettings& sett )
     }
 }
 //---------------------------------------------------------------------------------------
-vsettings::string vsettings::str() const
+vsettings::string vsettings::to_ini() const
 {
     vcat res("##\n#\n\n");
 
     save_keys( &res, "", *this );
 
     res << "\n";
-    auto subs = subgroup_names();
+    auto subs = subgroups();
     for ( auto sname: subs )
     {
         res << '[' << sname << "]\n";
@@ -331,10 +331,10 @@ vsettings::string vsettings::str() const
     return res;
 }
 //=======================================================================================
-void vsettings::load( cstring data )
+void vsettings::from_ini( cstring ini )
 {
     int line_num = 0;
-    auto lines = vbyte_buffer::split( data, '\n' );
+    auto lines = vbyte_buffer::split( ini, '\n' );
 
     auto cur_settings = this;
     for ( auto& buf_line: lines )
@@ -385,7 +385,7 @@ void vsettings::load( cstring data )
 //=======================================================================================
 ostream& operator <<( ostream& os, const vsettings& sett )
 {
-    os << sett.str();
+    os << sett.to_ini();
     return os;
 }
 //=======================================================================================
@@ -441,26 +441,26 @@ void vsettings::schema::end_subgroup()
     _groups.pop_back();
 }
 //=======================================================================================
-void vsettings::schema::_add_node( _node_ptr && ptr )
+void vsettings::schema::_add_node( _node_ptr && new_node )
 {
-    ptr->groups = _groups;
+    new_node->groups = _groups;
 
     for ( auto& node: _nodes )
     {
-        if ( node->same(ptr->mine()) )
+        if ( node->stored_ptr() == new_node->stored_ptr() )
         {
-            throw verror << "Pointer for key '" << ptr->key
+            throw verror << "Pointer for key '" << new_node->key
                          << "' is same as in key '" << node->key << "'.";
         }
 
-        if ( node->key    == ptr->key &&
-             node->groups == ptr->groups )
+        if ( node->key    == new_node->key &&
+             node->groups == new_node->groups )
         {
-            throw verror << "Key '" << ptr->key << "' already in the same group.";
+            throw verror << "Key '" << new_node->key << "' already in the same group.";
         }
     } // Checking the same key and pointer for all nodes.
 
-    _nodes.push_back( std::move(ptr) );
+    _nodes.push_back( std::move(new_node) );
 }
 //=======================================================================================
 //      vsettings::shema
