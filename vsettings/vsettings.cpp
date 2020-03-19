@@ -17,8 +17,8 @@ static void add_escaped( string* res, char ch )
 {
     static const char hexs[] = "0123456789ABCDEF";
 
-    int i1 = ch >> 4;
-    int i2 = ch & 0x0F;
+    uint8_t i1 = uint8_t(ch) >> 4;
+    uint8_t i2 = uint8_t(ch) & 0x0F;
 
     res->push_back( '\\' );
     res->push_back( 'x' );
@@ -74,6 +74,11 @@ string escape_value( vsettings::cstring val )
             res.push_back( '\\' );
             continue;
         }
+        if ( !isprint(ch) )
+        {
+            add_escaped( &res, ch );
+            continue;
+        }
         res.push_back( ch );
     }
     return res;
@@ -86,7 +91,7 @@ static char from_ascii( char ch, int line_num )
 
     ch = char( std::toupper(ch) );
 
-    if ( ch >= 'A' && ch <= 'F' ) return ch - 'A';
+    if ( ch >= 'A' && ch <= 'F' ) return ch - 'A' + 10;
     if ( ch >= '0' && ch <= '9' ) return ch - '0';
 
     throw verror << "Bad hex symbol in line " << line_num;
@@ -123,9 +128,9 @@ string unescape_value( const string& val, int line_num )
             throw verror << "Bad escape sequence in line " << line_num;
 
         auto hi = val.at( ++i );
-        auto lo = val.at(   i );
+        auto lo = val.at( ++i );
 
-        if ( !std::isxdigit(hi) || std::isxdigit(lo) )
+        if ( !std::isxdigit(hi) || !std::isxdigit(lo) )
             throw verror << "Bad escape sequence in line " << line_num;
 
         hi = from_ascii( hi, line_num );
@@ -144,14 +149,14 @@ struct record
 {
     using list = std::vector<record>;
 
-    string key, val;
+    string key, val, comment;
 };
 //---------------------------------------------------------------------------------------
 struct sub_settings
 {
     using list = std::vector<sub_settings>;
 
-    string    name;
+    string    name, comment;
     vsettings settings;
 };
 //---------------------------------------------------------------------------------------
@@ -170,7 +175,27 @@ vsettings::vsettings()
 vsettings::~vsettings()
 {}
 //=======================================================================================
-void vsettings::set( cstring key, cstring val )
+vsettings::cstring vsettings::comment_of_key( cstring key ) const
+{
+    for ( auto & rec: _p->records )
+    {
+        if ( rec.key == key )
+            return rec.comment;
+    }
+    throw verror << "Cannot find key '" << key << "'.";
+}
+//=======================================================================================
+vsettings::cstring vsettings::comment_of_subgroup( cstring name ) const
+{
+    for ( auto & sub: _p->subs )
+    {
+        if ( sub.name == name )
+            return sub.comment;
+    }
+    throw verror << "Cannot find subgrop '" << name << "'.";
+}
+//=======================================================================================
+void vsettings::set( cstring key, cstring val, cstring comment )
 {
     if ( !is_valid_key(key) )
         throw verror << "Key '" << key << "' is incorrect";
@@ -178,14 +203,18 @@ void vsettings::set( cstring key, cstring val )
     for ( auto & rec: _p->records )
     {
         if ( rec.key != key ) continue;
+
         rec.val = val;
+        if ( !comment.empty() )
+            rec.comment = comment;
+
         return;
     }
 
-    _p->records.push_back( {key, val} );
+    _p->records.push_back( {key, val, comment} );
 }
 //=======================================================================================
-vsettings::string vsettings::get( cstring key ) const
+string vsettings::get( cstring key ) const
 {
     for ( auto & rec: _p->records )
     {
@@ -195,7 +224,7 @@ vsettings::string vsettings::get( cstring key ) const
     throw verror << "Value with key '" << key << "' don't found in settings.";
 }
 //=======================================================================================
-vsettings &vsettings::subgroup( cstring name )
+vsettings& vsettings::subgroup( cstring name, cstring comment )
 {
     if ( !is_valid_subgroup(name) )
         throw verror << "Subgroup name '" << name << "' is incorrect";
@@ -205,7 +234,7 @@ vsettings &vsettings::subgroup( cstring name )
         if ( sg.name == name )
             return sg.settings;
     }
-    _p->subs.push_back( {name,{}} );
+    _p->subs.push_back( {name,comment,{}} );
 
     return _p->subs.back().settings;
 }
@@ -297,6 +326,10 @@ static void save_keys( vcat* res, string prefix, const vsettings& sett )
 
     for ( auto key: keys )
     {
+        auto comment = sett.comment_of_key( key );
+        if ( !comment.empty() )
+            *res << "# " << escape_value(comment) << "\n"; // People can shut to legs.
+
         *res << prefix << key << " = " << escape_value(sett.get(key)) << '\n';
     }
 }
@@ -308,6 +341,10 @@ static void save_with_subs( vcat* res, string prefix, const vsettings& sett )
     auto subs = sett.subgroups();
     for ( auto sname: subs )
     {
+        auto comment = sett.comment_of_subgroup( sname );
+        if ( !comment.empty() )
+            *res << "# " << escape_value(comment) << '\n';
+
         auto sub_prefix = prefix + sname + '/';
         save_with_subs( res, sub_prefix, sett.subgroup(sname) );
         *res << "\n";
@@ -316,7 +353,7 @@ static void save_with_subs( vcat* res, string prefix, const vsettings& sett )
 //---------------------------------------------------------------------------------------
 vsettings::string vsettings::to_ini() const
 {
-    vcat res("##\n#\n\n");
+    vcat res("## INI for NIIAS, with love\n#\n\n");
 
     save_keys( &res, "", *this );
 
@@ -324,6 +361,10 @@ vsettings::string vsettings::to_ini() const
     auto subs = subgroups();
     for ( auto sname: subs )
     {
+        auto comment = comment_of_subgroup( sname );
+        if ( !comment.empty() )
+            res << "# " << escape_value(comment) << '\n';
+
         res << '[' << sname << "]\n";
         save_with_subs( &res, "", subgroup(sname) );
     }
@@ -346,7 +387,7 @@ void vsettings::from_ini( cstring ini )
         if (line.empty()) continue;
 
         //  It is the comment.
-        if ( line.at(0) == '#' )
+        if ( line.at(0) == '#' || line.at(0) == ';' )
             continue;
 
         //  It is the 0 group name.

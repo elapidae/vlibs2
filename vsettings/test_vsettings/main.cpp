@@ -54,6 +54,25 @@ TEST_F( TEST_VSETTINGS, same_ptr )
     EXPECT_ANY_THROW( s.add("3", &i1) );
 }
 //=======================================================================================
+TEST_F( TEST_VSETTINGS, escape_vals )
+{
+    vsettings s;
+
+    string val;
+    for ( int i = numeric_limits<char>::min(); i <= numeric_limits<char>::max(); ++i )
+        val.push_back( i );
+    s.set( "1", val );
+
+    auto ini = s.to_ini();
+    //vdeb << ini;
+
+    vsettings r;
+    r.from_ini( ini );
+    auto ck = r.get( "1" );
+
+    EXPECT_EQ( val, ck );
+}
+//=======================================================================================
 //  EXPECT_TRUE
 //
 //  EXPECT_EQ
@@ -70,8 +89,6 @@ TEST_F( TEST_VSETTINGS, same_ptr )
 //=======================================================================================
 int main(int argc, char *argv[])
 {
-    vdeb << '\n';
-
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 
@@ -85,9 +102,6 @@ int main(int argc, char *argv[])
 
     string str = "ololo\12";
     sh.add( "s", &str );
-    sh.add( "ss", &str );
-
-    return 0;
 
     sh.subgroup( "GROUP1" );
     uint u1 = 1, u2 = 2, u3 = 3, u4 = 4;
@@ -99,38 +113,7 @@ int main(int argc, char *argv[])
     sh.end_subgroup();
     sh.add( "u4", &u4 );
 
-
     vdeb << sh.build().to_ini();
-
-    return 0;
-
-    vsettings s;
-    s.set( "123", "456" );
-    s.set( "hello", "world" );
-
-    {
-    auto sg = s.subgroup("SUB");
-    sg.set( "321", "456" );
-    sg.set( "098", "world" );
-    auto sg2 = sg.subgroup("SSG");
-    sg2.set( "sskey", "ssval" );
-    }
-    {
-    auto sg = s.subgroup("SUB-2");
-    sg.set( "321", "456" );
-    sg.set( "098", "world" );
-    }
-
-    vdeb << s.to_ini();
-
-    vsettings s2;
-    s2.from_ini( s.to_ini() );
-
-    vdeb << "=============\n" << s2;
-
-
-    s.from_ini( "[Ololo]\n  key = val" );
-
 
     return 0;
 }

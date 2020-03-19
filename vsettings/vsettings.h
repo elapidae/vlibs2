@@ -16,7 +16,7 @@ public:
 
     class schema;
 
-    void set( cstring key, cstring val );
+    void set( cstring key, cstring val, cstring comment = {} );
 
     string get( cstring key ) const;
 
@@ -26,7 +26,7 @@ public:
     template<typename T>
     void set( cstring key, const T& val );
 
-    vsettings& subgroup( cstring name );
+    vsettings& subgroup( cstring name, cstring comment = {} );
     const vsettings& subgroup( cstring name ) const;
 
     bool has_key      ( cstring key )  const;
@@ -44,9 +44,11 @@ public:
     vsettings();
     ~vsettings();
 
+    cstring comment_of_key      ( cstring key  ) const;
+    cstring comment_of_subgroup ( cstring name ) const;
 
-    static bool is_valid_key      ( cstring key );
-    static bool is_valid_subgroup ( cstring key );
+    static bool is_valid_key      ( cstring key  );
+    static bool is_valid_subgroup ( cstring name );
 
     vsettings(const vsettings&) = default;
     vsettings& operator =(const vsettings&) = default;
