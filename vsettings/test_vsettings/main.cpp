@@ -89,21 +89,21 @@ TEST_F( TEST_VSETTINGS, escape_vals )
 //=======================================================================================
 int main(int argc, char *argv[])
 {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+//    ::testing::InitGoogleTest(&argc, argv);
+//    return RUN_ALL_TESTS();
 
     vsettings::schema sh;
 
     int i1, i2;
     sh.add( "i", &i1 );
 
-    sh.subgroup("0");
+    sh.subgroup("0", "comment 0");
     sh.add( "i", &i2 );
 
     string str = "ololo\12";
     sh.add( "s", &str );
 
-    sh.subgroup( "GROUP1" );
+    sh.subgroup( "GROUP1", "Comment 1" );
     uint u1 = 1, u2 = 2, u3 = 3, u4 = 4;
     sh.add( "u1", &u1 );
     sh.subgroup( "S1" );

@@ -469,9 +469,9 @@ void vsettings::schema::save_to_ini( cstring fname ) const
     s.to_ini_file( fname );
 }
 //=======================================================================================
-void vsettings::schema::subgroup( cstring name )
+void vsettings::schema::subgroup( cstring name, cstring comment )
 {
-    _groups.push_back( name );
+    _groups.push_back( {name, comment} );
 }
 //=======================================================================================
 void vsettings::schema::end_subgroup()
@@ -502,6 +502,18 @@ void vsettings::schema::_add_node( _node_ptr && new_node )
     } // Checking the same key and pointer for all nodes.
 
     _nodes.push_back( std::move(new_node) );
+}
+//=======================================================================================
+bool operator ==( const vsettings::schema::_group_t::vector &lhs,
+                  const vsettings::schema::_group_t::vector &rhs )
+{
+    if ( lhs.size() != rhs.size() ) return false;
+
+    for ( uint i = 0; i < lhs.size(); ++i )
+    {
+        if ( lhs.at(i).name != rhs.at(i).name ) return false;
+    }
+    return true;
 }
 //=======================================================================================
 //      vsettings::shema

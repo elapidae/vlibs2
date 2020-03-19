@@ -57,11 +57,11 @@ private:
     class _pimpl; std::shared_ptr<_pimpl> _p;
 };
 //=======================================================================================
-class vsettings::schema
+class vsettings::schema final
 {
 public:
     template<typename T>
-    void add( cstring key, T *val );
+    void add( cstring key, T *val, cstring comment = {} );
 
     void capture( const vsettings& settings );
     void capture_from_ini( cstring fname );
@@ -69,22 +69,31 @@ public:
     vsettings build() const;
     void save_to_ini( cstring fname ) const;
 
-    void subgroup( cstring name );
+    void subgroup( cstring name, cstring comment = {} );
     void end_subgroup();
 
 private:
+    //  Развязка для аккуратного хранения типизированных указателей на данные.
     struct _node_iface;
     using  _node_ptr = std::shared_ptr<_node_iface>;
     template <typename T> struct _node;
-
     void _add_node( _node_ptr && );
 
     std::vector<_node_ptr> _nodes;
-    str_vector _groups;
+
+    struct _group_t
+    {
+        using vector = std::vector<_group_t>;
+        string name, comment;
+    };
+    _group_t::vector _groups;
+    friend bool operator == ( const _group_t::vector& lhs, const _group_t::vector& rhs );
 };
 //=======================================================================================
 
 
+//=======================================================================================
+//      Implementation
 //=======================================================================================
 std::ostream& operator << (std::ostream& os, const vsettings& sett );
 //=======================================================================================
@@ -105,11 +114,12 @@ void vsettings::set( cstring key, const T& val )
 //=======================================================================================
 struct vsettings::schema::_node_iface
 {
-    std::string key;
-    str_vector groups;
+    string key, comment;
+    _group_t::vector groups;
 
-    _node_iface( cstring k )
-        : key( k )
+    _node_iface( cstring k, cstring c )
+        : key     ( k )
+        , comment ( c )
     {}
 
     virtual void* stored_ptr() const                = 0;
@@ -126,8 +136,8 @@ struct vsettings::schema::_node : vsettings::schema::_node_iface
     //-----------------------------------------------------------------------------------
     T* ptr;
     //-----------------------------------------------------------------------------------
-    _node( cstring k, T *p )
-        : _node_iface( k )
+    _node( cstring k, cstring c, T *p )
+        : _node_iface( k, c )
         , ptr( p )
     {}
     //-----------------------------------------------------------------------------------
@@ -140,8 +150,8 @@ struct vsettings::schema::_node : vsettings::schema::_node_iface
     {
         const vsettings *sett_ptr = &settings;
 
-        for ( auto& g: groups )
-            sett_ptr = &sett_ptr->subgroup( g );
+        for ( auto & g: groups )
+            sett_ptr = &sett_ptr->subgroup( g.name );
 
         *ptr = sett_ptr->get<T>( key );
     }
@@ -149,7 +159,7 @@ struct vsettings::schema::_node : vsettings::schema::_node_iface
     void save( vsettings* settings ) const override
     {
         for ( auto& g: groups )
-            settings = &settings->subgroup( g );
+            settings = &settings->subgroup( g.name, g.comment );
 
         settings->set(key, *ptr);
     }
@@ -157,9 +167,9 @@ struct vsettings::schema::_node : vsettings::schema::_node_iface
 };
 //=======================================================================================
 template<typename T>
-void vsettings::schema::add( cstring key, T *val )
+void vsettings::schema::add( cstring key, T *val, cstring comment )
 {
-    auto ptr = std::make_shared<_node<T>>(key,val);
+    auto ptr = std::make_shared<_node<T>>(key,comment,val);
     _add_node( ptr );
 }
 //=======================================================================================
