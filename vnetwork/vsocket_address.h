@@ -18,44 +18,49 @@
 class vsocket_address
 {
 public:
-    static vsocket_address any_ip4( uint16_t port = 0 );
-    static vsocket_address any_ip6( uint16_t port = 0 );
-    static vsocket_address loopback_ip4( uint16_t port = 0 );
-    static vsocket_address loopback_ip6( uint16_t port = 0 );
+    static vsocket_address any_ip4( uint16_t port = 0 )         noexcept;
+    static vsocket_address any_ip6( uint16_t port = 0 )         noexcept;
+    static vsocket_address loopback_ip4( uint16_t port = 0 )    noexcept;
+    static vsocket_address loopback_ip6( uint16_t port = 0 )    noexcept;
 
     static vsocket_address create( const std::string& addr,
                                    uint16_t port = 0,
                                    bool *ok = nullptr );
 
-    vsocket_address();
+    //  About to use with ::getaddrinfo.
+    static vsocket_address from_raw_sockaddr( const void* sockaddr, uint sockaddr_len,
+                                              int type );
+
+    static vsocket_address from_raw_ip4( uint32_t ip,       uint16_t port = 0 ) noexcept;
+    static vsocket_address from_raw_ip6( const void* store, uint16_t port = 0 ) noexcept;
+
+    vsocket_address() noexcept;
     vsocket_address( const std::string& addr, uint16_t port = 0 );
 
     std::string ip()    const;
-    uint16_t    port()  const;
+    uint16_t    port()  const noexcept;
     std::string str()   const;
 
-    bool is_valid() const;
-    bool is_ip4()   const;
-    bool is_ip6()   const;
+    bool is_valid() const noexcept;
+    bool is_ip4()   const noexcept;
+    bool is_ip6()   const noexcept;
 
     //-----------------------------------------------------------------------------------
 private:
-    static vsocket_address _ip4( uint32_t ip,     uint16_t port );
-    static vsocket_address _ip6( const void *ip6, uint16_t port );
-
-    void _init();
+    void _init() noexcept;
     static bool _init( const std::string& addr, uint16_t port, vsocket_address *dst );
 
-    uint32_t _raw_data[28/4]; // 28 is sizeof(sockaddr_in6)
+    static constexpr auto _raw_data_size = 28;
+    uint32_t _raw_data[_raw_data_size/4]; // 28 is sizeof(sockaddr_in6)
 
     friend class vtcp_socket;
     friend class vtcp_server;
     friend class vudp_socket;
-    void* _data();
-    const void* _data() const;
-    unsigned _data_size() const;
+    void*       _data()                 noexcept;
+    const void* _data()         const   noexcept;
+    unsigned    _data_size()    const   noexcept;
 
-    int _family() const;
+    int _family() const noexcept;
 };
 //=======================================================================================
 std::ostream& operator << ( std::ostream& os, const vsocket_address& addr );

@@ -393,6 +393,16 @@ TEST_F( VByteBuffer_Test, implicit_ctor )
 }
 //=======================================================================================
 
+TEST_F( VByteBuffer_Test, empty )
+{
+    vbyte_buffer empty;
+    vbyte_buffer not_empty( "Hello" );
+
+    EXPECT_TRUE  ( empty.empty()     );
+    EXPECT_FALSE ( not_empty.empty() );
+}
+//=======================================================================================
+
 
 //=======================================================================================
 //  Main, do not delete...

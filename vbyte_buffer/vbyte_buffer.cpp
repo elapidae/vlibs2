@@ -19,27 +19,32 @@ vbyte_buffer::vbyte_buffer( const char* seed )
     : _buf( seed )
 {}
 //=======================================================================================
-const std::string& vbyte_buffer::str() const
+const std::string& vbyte_buffer::str() const noexcept
 {
     return _buf;
 }
 //=======================================================================================
-size_t vbyte_buffer::size() const
+size_t vbyte_buffer::size() const noexcept
 {
     return _buf.size();
 }
 //=======================================================================================
-const char *vbyte_buffer::data() const
+bool vbyte_buffer::empty() const noexcept
+{
+    return _buf.empty();
+}
+//=======================================================================================
+const char *vbyte_buffer::data() const noexcept
 {
     return _buf.data();
 }
 //=======================================================================================
-const int8_t *vbyte_buffer::sdata() const
+const int8_t *vbyte_buffer::sdata() const noexcept
 {
     return static_cast<const int8_t*>( static_cast<const void*>(data()) );
 }
 //=======================================================================================
-const uint8_t *vbyte_buffer::udata() const
+const uint8_t *vbyte_buffer::udata() const noexcept
 {
     return static_cast<const uint8_t*>( static_cast<const void*>(data()) );
 }
@@ -54,12 +59,12 @@ void vbyte_buffer::clear()
     _buf.clear();
 }
 //=======================================================================================
-bool vbyte_buffer::operator ==( const vbyte_buffer& rhs ) const
+bool vbyte_buffer::operator ==( const vbyte_buffer& rhs ) const noexcept
 {
     return _buf == rhs._buf;
 }
 //=======================================================================================
-bool vbyte_buffer::operator !=( const vbyte_buffer& rhs ) const
+bool vbyte_buffer::operator !=( const vbyte_buffer& rhs ) const noexcept
 {
     return _buf != rhs._buf;
 }
@@ -70,7 +75,7 @@ vbyte_buffer& vbyte_buffer::operator += ( const vbyte_buffer& rhs )
     return *this;
 }
 //=======================================================================================
-vbyte_buffer::operator const std::string&() const
+vbyte_buffer::operator const std::string&() const noexcept
 {
     return _buf;
 }
@@ -251,7 +256,7 @@ vbyte_buffer vbyte_buffer::to_Hex( char separator ) const
     return _to_hex( *this, HEX_syms, true, separator );
 }
 //=======================================================================================
-bool vbyte_buffer::is_hex_symbol( char ch )
+bool vbyte_buffer::is_hex_symbol( char ch ) noexcept
 {
     return ch_from_hex(ch) >= 0;
 }
