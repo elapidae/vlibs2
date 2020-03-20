@@ -6,6 +6,7 @@
 #include <netinet/tcp.h>
 
 #include "impl_vposix/linux_call.h"
+#include "vcat.h"
 #include "vlog.h"
 
 using namespace impl_vposix;
@@ -13,21 +14,21 @@ using namespace impl_vposix;
 
 //=======================================================================================
 //  protocol == 0 --> default for domain & type.
-int _socket( int domain, int type )
+int wrap_sys_socket::socket( int domain, int type, int protocol )
 {
     type |= SOCK_NONBLOCK | SOCK_CLOEXEC;
 
-    return linux_call::check( ::socket, domain, type, 0 );
+    return linux_call::check( ::socket, domain, type, protocol );
 }
 //=======================================================================================
 int wrap_sys_socket::socket_tcp( int af_type )
 {
-    return _socket( af_type, SOCK_STREAM );
+    return socket( af_type, SOCK_STREAM, 0 );
 }
 //=======================================================================================
 int wrap_sys_socket::socket_udp( int af_type )
 {
-    return _socket( af_type, SOCK_DGRAM );
+    return socket( af_type, SOCK_DGRAM, 0 );
 }
 //=======================================================================================
 //  If the connection or binding succeeds, zero is returned.  On error,
@@ -165,19 +166,30 @@ ssize_t wrap_sys_socket::recv_no_err( int fd, void *buf, size_t len, int flags )
     return linux_call::no_err( ::recv, fd, buf, len, flags );
 }
 //=======================================================================================
-size_t wrap_sys_socket::recv_from( int fd, void *buf, size_t buf_size,
-                                   void *addr, unsigned addr_size )
+ssize_t wrap_sys_socket::recv_from_no_err( int fd, void *buf, size_t buf_size,
+                                           void *addr, unsigned addr_size )
 {
     socklen_t m_addr_size = addr_size;
     auto m_addr = static_cast<sockaddr*>( addr );
 
-    auto res = linux_call::check( ::recvfrom, fd,
-                                  buf, buf_size,
-                                  MSG_NOSIGNAL,
-                                  m_addr, &m_addr_size );
-    assert( m_addr_size > 0 );
+    auto res = linux_call::no_err( ::recvfrom, fd,
+                                   buf, buf_size,
+                                   MSG_NOSIGNAL,
+                                   m_addr, &m_addr_size );
 
-    return size_t(res);
+    assert( res < 0 || m_addr_size > 0 );
+
+    return res;
+}
+//=======================================================================================
+size_t wrap_sys_socket::recv_from( int fd, void *buf, size_t buf_size,
+                                   void *addr, unsigned addr_size )
+{
+    auto res = recv_from_no_err( fd, buf, buf_size, addr, addr_size );
+    if ( res < 0 )
+        ErrNo().do_throw( vcat("wrap_sys_socket::recv_from(",fd,")") );
+
+    return size_t( res );
 }
 //=======================================================================================
 static ssize_t _send_no_err( int fd, const void* buf, size_t sz )
@@ -202,6 +214,12 @@ bool wrap_sys_socket::send_no_err( int fd, const std::string& data )
         ptr  += usended;
         size -= usended;
     }
+}
+//=======================================================================================
+void wrap_sys_socket::send_raw(int fd, const void *data , size_t len)
+{
+    auto sended = _send_no_err( fd, data, len );
+    if ( sended < 0 ) ErrNo().do_throw( vcat("socket::send_1(",fd,",",data) );
 }
 //=======================================================================================
 void wrap_sys_socket::send_to( int fd, const std::string &data,
