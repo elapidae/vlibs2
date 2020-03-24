@@ -17,23 +17,13 @@ if ( NOT  VSETTINGS_INCLUDED )
 
     message( "=== include vsettings... ===" )
 
-    include( "${VLIBS_DIR}/cmake/vlog.cmake"    )
-    include( "${VLIBS_DIR}/cmake/vposix.cmake"  )
-    include( "${VLIBS_DIR}/cmake/vsignal.cmake" )
+    include( "${VLIBS_DIR}/cmake/vlog.cmake"         )
+    include( "${VLIBS_DIR}/cmake/vbyte_buffer.cmake" )
 
     include_directories( "${VLIBS_DIR}/vsettings/" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vsettings/vsocket_address.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vsettings/vsocket_address.cpp" )
-
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vsettings/vtcp_socket.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vsettings/vtcp_socket.cpp" )
-
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vsettings/vtcp_server.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vsettings/vtcp_server.cpp" )
-
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vsettings/vudp_socket.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vsettings/vudp_socket.cpp" )
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vsettings/vsettings.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vsettings/vsettings.cpp" )
 
     message( "=== vsettings included ===" )
 endif()

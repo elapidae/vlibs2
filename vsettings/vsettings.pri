@@ -18,8 +18,8 @@ isEmpty(qi_vsettings) {
 
     isEmpty(VLIBS_DIR): error("vsettings: Need VLIBS_DIR correct path.")
 
-    include( $$VLIBS_DIR/qmake/vlog.pri    )
-    include( $$VLIBS_DIR/qmake/vposix.pri  )
+    include( $$VLIBS_DIR/qmake/vlog.pri         )
+    include( $$VLIBS_DIR/qmake/vbyte_buffer.pri )
 
     INCLUDEPATH += $$VLIBS_DIR/vsettings
 

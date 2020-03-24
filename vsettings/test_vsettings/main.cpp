@@ -24,6 +24,66 @@ class TEST_VSETTINGS: public testing::Test
 #pragma GCC diagnostic pop
 
 //=======================================================================================
+TEST_F( TEST_VSETTINGS, vsettings_simple_use )
+{
+    vsettings settings;
+
+    auto val1 = "val1";
+    auto val2 = 42;
+    auto val3 = 3.1415926;
+
+    settings.set( "key1", val1 );
+    settings.set( "key2", val2 );
+    settings.set( "key3", val3 );
+
+    auto sub_group = settings.subgroup( "SUBGROUP" );
+    sub_group.set( "key1", val1 );
+    sub_group.set( "key2", val2 );
+    sub_group.set( "key3", val3 );
+
+    //vdeb << settings.to_ini();
+
+    EXPECT_EQ( settings.get("key1"), val1 );
+    EXPECT_EQ( settings.get<decltype(val2)>("key2"), val2 );
+    EXPECT_DOUBLE_EQ( settings.get<decltype(val3)>("key3"), val3 );
+
+    EXPECT_EQ( settings.subgroup("SUBGROUP").get("key1"), val1 );
+    EXPECT_EQ( settings.subgroup("SUBGROUP").get<decltype(val2)>("key2"), val2 );
+    EXPECT_DOUBLE_EQ( settings.subgroup("SUBGROUP").get<decltype(val3)>("key3"), val3 );
+}
+//=======================================================================================
+TEST_F( TEST_VSETTINGS, vsettings_schema_simple_use )
+{
+    vsettings::schema sh;
+
+    string val1 = "val1";
+    auto val2 = 42;
+    auto val3 = 3.1415926;
+
+    sh.add( "key1", &val1 );
+    sh.add( "key2", &val2 );
+    sh.add( "key3", &val3 );
+
+    //  Формируем настройки из текущих значений.
+    auto sett = sh.build();
+
+    val1.clear();
+    val2 = -1;
+    val3 = -1;
+
+    //  Устанавливаем значения согласно настройкам.
+    sh.capture( sett );
+
+    EXPECT_EQ( val1, "val1" );
+    EXPECT_EQ( val2, 42 );
+    EXPECT_DOUBLE_EQ( val3, 3.1415926 );
+
+    //  Все поля обязательны, чтение должно "навернуться".
+    EXPECT_TRUE( sett.del_key("key3") );
+    EXPECT_ANY_THROW( sh.capture(sett) );
+}
+//=======================================================================================
+//  Тест на то, чтобы пользователь случайно не добавил один и тот же ключ в группу.
 TEST_F( TEST_VSETTINGS, same_key )
 {
     vsettings::schema s;
@@ -39,6 +99,7 @@ TEST_F( TEST_VSETTINGS, same_key )
     EXPECT_ANY_THROW( s.add("1", &i3) );
 }
 //=======================================================================================
+//  Тест на то, чтобы пользователь случайно не добавил один и тот же указатель в схему.
 TEST_F( TEST_VSETTINGS, same_ptr )
 {
     vsettings::schema s;
@@ -61,6 +122,7 @@ TEST_F( TEST_VSETTINGS, escape_vals )
     string val;
     for ( int i = numeric_limits<char>::min(); i <= numeric_limits<char>::max(); ++i )
         val.push_back( i );
+
     s.set( "1", val );
 
     auto ini = s.to_ini();
@@ -89,8 +151,8 @@ TEST_F( TEST_VSETTINGS, escape_vals )
 //=======================================================================================
 int main(int argc, char *argv[])
 {
-//    ::testing::InitGoogleTest(&argc, argv);
-//    return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 
     vsettings::schema sh;
 

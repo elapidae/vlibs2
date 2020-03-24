@@ -10,45 +10,48 @@
 class vsettings final
 {
 public:
-    using string     = std::string;
-    using cstring    = const std::string&;
-    using str_vector = std::vector<string>;
+    using str        = std::string;
+    using cstr       = const std::string&;
+    using str_vector = std::vector<str>;
 
     class schema;
 
-    void set( cstring key, cstring val, cstring comment = {} );
+    void set( cstr key, cstr val, cstr comment = {} );
+    str  get( cstr key ) const;
 
-    string get( cstring key ) const;
+    template<typename T> T    get( cstr key ) const;
+    template<typename T> void set( cstr key, const T& val );
 
-    template<typename T>
-    T get( cstring key ) const;
+    vsettings& subgroup( cstr name, cstr comment = {} );
+    const vsettings& subgroup( cstr name ) const;
 
-    template<typename T>
-    void set( cstring key, const T& val );
+    bool has_key      ( cstr key  ) const;
+    bool has_subgroup ( cstr name ) const;
 
-    vsettings& subgroup( cstring name, cstring comment = {} );
-    const vsettings& subgroup( cstring name ) const;
-
-    bool has_key      ( cstring key )  const;
-    bool has_subgroup ( cstring name ) const;
+    bool del_key      ( cstr key  );
+    bool del_subgroup ( cstr name );
 
     str_vector keys()      const;
     str_vector subgroups() const;
 
-    string to_ini() const;
-    void from_ini( cstring ini );
+    str to_ini() const;
 
-    void from_ini_file( cstring fname );
-    void to_ini_file  ( cstring fname ) const;
+    //  NB! Не очищает свое содержимое! Читает значения поверх того, что уже есть.
+    //  Можно прочитать два и более ini и они объединяться, для одинаковых ключей
+    //  выиграет последнее прочитанное значение.
+    void from_ini( cstr ini );
+
+    void from_ini_file( cstr fname );
+    void to_ini_file  ( cstr fname ) const;
 
     vsettings();
     ~vsettings();
 
-    cstring comment_of_key      ( cstring key  ) const;
-    cstring comment_of_subgroup ( cstring name ) const;
+    cstr comment_of_key      ( cstr key  ) const;
+    cstr comment_of_subgroup ( cstr name ) const;
 
-    static bool is_valid_key      ( cstring key  );
-    static bool is_valid_subgroup ( cstring name );
+    static bool is_valid_key      ( cstr key  );
+    static bool is_valid_subgroup ( cstr name );
 
     vsettings(const vsettings&) = default;
     vsettings& operator =(const vsettings&) = default;
@@ -61,15 +64,15 @@ class vsettings::schema final
 {
 public:
     template<typename T>
-    void add( cstring key, T *val, cstring comment = {} );
+    void add( cstr key, T *val, cstr comment = {} );
 
     void capture( const vsettings& settings );
-    void capture_from_ini( cstring fname );
+    void capture_from_ini( cstr fname );
 
     vsettings build() const;
-    void save_to_ini( cstring fname ) const;
+    void save_to_ini( cstr fname ) const;
 
-    void subgroup( cstring name, cstring comment = {} );
+    void subgroup( cstr name, cstr comment = {} );
     void end_subgroup();
 
 private:
@@ -84,7 +87,7 @@ private:
     struct _group_t
     {
         using vector = std::vector<_group_t>;
-        string name, comment;
+        str name, comment;
     };
     _group_t::vector _groups;
     friend bool operator == ( const _group_t::vector& lhs, const _group_t::vector& rhs );
@@ -98,15 +101,15 @@ private:
 std::ostream& operator << (std::ostream& os, const vsettings& sett );
 //=======================================================================================
 template<typename T>
-T vsettings::get( cstring key ) const
+T vsettings::get( cstr key ) const
 {
     return vcat::from_text<T>( get(key) );
 }
 //=======================================================================================
 template<typename T>
-void vsettings::set( cstring key, const T& val )
+void vsettings::set( cstr key, const T& val )
 {
-    set( key, vcat(val).str() );
+    set( key, vcat().max_precision()(val).str() );
 }
 //=======================================================================================
 
@@ -114,10 +117,10 @@ void vsettings::set( cstring key, const T& val )
 //=======================================================================================
 struct vsettings::schema::_node_iface
 {
-    string key, comment;
+    str key, comment;
     _group_t::vector groups;
 
-    _node_iface( cstring k, cstring c )
+    _node_iface( cstr k, cstr c )
         : key     ( k )
         , comment ( c )
     {}
@@ -136,7 +139,7 @@ struct vsettings::schema::_node : vsettings::schema::_node_iface
     //-----------------------------------------------------------------------------------
     T* ptr;
     //-----------------------------------------------------------------------------------
-    _node( cstring k, cstring c, T *p )
+    _node( cstr k, cstr c, T *p )
         : _node_iface( k, c )
         , ptr( p )
     {}
@@ -167,7 +170,7 @@ struct vsettings::schema::_node : vsettings::schema::_node_iface
 };
 //=======================================================================================
 template<typename T>
-void vsettings::schema::add( cstring key, T *val, cstring comment )
+void vsettings::schema::add( cstr key, T *val, cstr comment )
 {
     auto ptr = std::make_shared<_node<T>>(key,comment,val);
     _add_node( ptr );

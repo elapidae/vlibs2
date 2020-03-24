@@ -8,9 +8,6 @@
 
 using namespace std;
 
-//  Type Definitions for debug.
-template <class> class TD;
-
 
 //=======================================================================================
 static void add_escaped( string* res, char ch )
@@ -29,7 +26,7 @@ static void add_escaped( string* res, char ch )
 
 
 //=======================================================================================
-bool vsettings::is_valid_key( cstring key )
+bool vsettings::is_valid_key( cstr key )
 {
     if ( key.empty() ) return false;
 
@@ -48,12 +45,12 @@ bool vsettings::is_valid_key( cstring key )
     return true;
 }
 //=======================================================================================
-bool vsettings::is_valid_subgroup( cstring name )
+bool vsettings::is_valid_subgroup( cstr name )
 {
     return is_valid_key( name );
 }
 //=======================================================================================
-string escape_value( vsettings::cstring val )
+string escape_value( vsettings::cstr val )
 {
     string res;
     for ( auto ch: val )
@@ -163,9 +160,35 @@ struct sub_settings
 class vsettings::_pimpl
 {
 public:
+    //-----------------------------------------------------------------------------------
+    enum let_do { let_add, let_error };
 
+    vsettings& subgroup( cstr name, cstr comment, let_do let )
+    {
+        if ( !is_valid_subgroup(name) )
+            throw verror << "Subgroup name '" << name << "' is incorrect";
+
+        for ( auto & sg: subs )
+        {
+            if ( sg.name == name )
+            {
+                if ( !comment.empty() )
+                    sg.comment = comment;
+
+                return sg.settings;
+            }
+        }
+
+        if ( let == let_error )
+            throw verror << "Subgroup with name '" << name << "' is absent.";
+
+        subs.push_back( {name,comment,{}} );
+        return subs.back().settings;
+    }
+    //-----------------------------------------------------------------------------------
     record::list        records;
     sub_settings::list  subs;
+    //-----------------------------------------------------------------------------------
 };
 //=======================================================================================
 vsettings::vsettings()
@@ -175,7 +198,7 @@ vsettings::vsettings()
 vsettings::~vsettings()
 {}
 //=======================================================================================
-vsettings::cstring vsettings::comment_of_key( cstring key ) const
+vsettings::cstr vsettings::comment_of_key( cstr key ) const
 {
     for ( auto & rec: _p->records )
     {
@@ -185,7 +208,7 @@ vsettings::cstring vsettings::comment_of_key( cstring key ) const
     throw verror << "Cannot find key '" << key << "'.";
 }
 //=======================================================================================
-vsettings::cstring vsettings::comment_of_subgroup( cstring name ) const
+vsettings::cstr vsettings::comment_of_subgroup( cstr name ) const
 {
     for ( auto & sub: _p->subs )
     {
@@ -195,7 +218,7 @@ vsettings::cstring vsettings::comment_of_subgroup( cstring name ) const
     throw verror << "Cannot find subgrop '" << name << "'.";
 }
 //=======================================================================================
-void vsettings::set( cstring key, cstring val, cstring comment )
+void vsettings::set( cstr key, cstr val, cstr comment )
 {
     if ( !is_valid_key(key) )
         throw verror << "Key '" << key << "' is incorrect";
@@ -214,7 +237,7 @@ void vsettings::set( cstring key, cstring val, cstring comment )
     _p->records.push_back( {key, val, comment} );
 }
 //=======================================================================================
-string vsettings::get( cstring key ) const
+string vsettings::get( cstr key ) const
 {
     for ( auto & rec: _p->records )
     {
@@ -224,33 +247,17 @@ string vsettings::get( cstring key ) const
     throw verror << "Value with key '" << key << "' don't found in settings.";
 }
 //=======================================================================================
-vsettings& vsettings::subgroup( cstring name, cstring comment )
+vsettings& vsettings::subgroup( cstr name, cstr comment )
 {
-    if ( !is_valid_subgroup(name) )
-        throw verror << "Subgroup name '" << name << "' is incorrect";
-
-    for ( auto & sg: _p->subs )
-    {
-        if ( sg.name == name )
-            return sg.settings;
-    }
-    _p->subs.push_back( {name,comment,{}} );
-
-    return _p->subs.back().settings;
+    return _p->subgroup( name, comment, _pimpl::let_add );
 }
 //=======================================================================================
-const vsettings &vsettings::subgroup( cstring name ) const
+const vsettings &vsettings::subgroup( cstr name ) const
 {
-    for ( auto & sg: _p->subs )
-    {
-        if ( sg.name == name )
-            return sg.settings;
-    }
-
-    throw verror << "Subgroup with name '" << name << "' is absent.";
+    return _p->subgroup( name, {}, _pimpl::let_error );
 }
 //=======================================================================================
-bool vsettings::has_key( cstring key ) const
+bool vsettings::has_key( cstr key ) const
 {
     for ( auto & rec: _p->records )
     {
@@ -261,7 +268,7 @@ bool vsettings::has_key( cstring key ) const
     return false;
 }
 //=======================================================================================
-bool vsettings::has_subgroup( cstring name ) const
+bool vsettings::has_subgroup( cstr name ) const
 {
     for ( auto & sg: _p->subs )
     {
@@ -269,6 +276,31 @@ bool vsettings::has_subgroup( cstring name ) const
             return true;
     }
 
+    return false;
+}
+//=======================================================================================
+bool vsettings::del_key( cstr key )
+{
+    for ( auto it = _p->records.begin(); it != _p->records.end(); ++it )
+    {
+        if ( it->key != key ) continue;
+
+        _p->records.erase( it );
+        return true;
+    }
+
+    return false;
+}
+//=======================================================================================
+bool vsettings::del_subgroup( cstr name )
+{
+    for ( auto it = _p->subs.begin(); it != _p->subs.end(); ++it )
+    {
+        if ( it->name != name ) continue;
+
+        _p->subs.erase( it );
+        return true;
+    }
     return false;
 }
 //=======================================================================================
@@ -290,7 +322,7 @@ vsettings::str_vector vsettings::subgroups() const
     return res;
 }
 //=======================================================================================
-void vsettings::from_ini_file( cstring fname )
+void vsettings::from_ini_file( cstr fname )
 {
     ifstream f( fname, ios_base::in|ios_base::binary );
     if ( !f.good() )
@@ -311,7 +343,7 @@ void vsettings::from_ini_file( cstring fname )
     from_ini( buffer.data() );
 }
 //=======================================================================================
-void vsettings::to_ini_file( cstring fname ) const
+void vsettings::to_ini_file( cstr fname ) const
 {
     ofstream f( fname, ios_base::out|ios_base::trunc|ios_base::binary );
     if ( !f.good() )
@@ -351,7 +383,7 @@ static void save_with_subs( vcat* res, string prefix, const vsettings& sett )
     }
 }
 //---------------------------------------------------------------------------------------
-vsettings::string vsettings::to_ini() const
+vsettings::str vsettings::to_ini() const
 {
     vcat res("## INI for NIIAS, with love\n#\n\n");
 
@@ -372,7 +404,7 @@ vsettings::string vsettings::to_ini() const
     return res;
 }
 //=======================================================================================
-void vsettings::from_ini( cstring ini )
+void vsettings::from_ini( cstr ini )
 {
     int line_num = 0;
     auto lines = vbyte_buffer::split( ini, '\n' );
@@ -394,7 +426,7 @@ void vsettings::from_ini( cstring ini )
         if ( line.at(0) == '[' )
         {
             auto end_pos = line.find( ']' );
-            if ( end_pos == string::npos )
+            if ( end_pos == str::npos )
                 throw verror << "Group not closed by ']' at line " << line_num;
 
             auto group_name = line.substr( 1, end_pos - 1 );
@@ -404,7 +436,7 @@ void vsettings::from_ini( cstring ini )
 
         //  Must be key = value pair.
         auto eq_pos = line.find( '=' );
-        if ( eq_pos == string::npos )
+        if ( eq_pos == str::npos )
             throw verror << "In line " << line_num << " '=' not found.";
 
         vbyte_buffer key = line.substr( 0, eq_pos );
@@ -446,7 +478,7 @@ void vsettings::schema::capture( const vsettings& settings )
         node->load( settings );
 }
 //=======================================================================================
-void vsettings::schema::capture_from_ini( cstring fname )
+void vsettings::schema::capture_from_ini( cstr fname )
 {
     vsettings s;
     s.from_ini_file( fname );
@@ -463,13 +495,13 @@ vsettings vsettings::schema::build() const
     return res;
 }
 //=======================================================================================
-void vsettings::schema::save_to_ini( cstring fname ) const
+void vsettings::schema::save_to_ini( cstr fname ) const
 {
     auto s = build();
     s.to_ini_file( fname );
 }
 //=======================================================================================
-void vsettings::schema::subgroup( cstring name, cstring comment )
+void vsettings::schema::subgroup( cstr name, cstr comment )
 {
     _groups.push_back( {name, comment} );
 }
