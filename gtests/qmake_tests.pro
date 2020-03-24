@@ -37,3 +37,6 @@ SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
 PROJECT = vserial_port
 SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
 
+PROJECT = vsettings
+SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
+
