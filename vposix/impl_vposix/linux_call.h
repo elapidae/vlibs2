@@ -2,6 +2,7 @@
 #define IMPL_VPOSIX_LINUX_CALL_H
 
 #include "impl_vposix/wrap_errno.h"
+#include "vcompiler_traits.h"
 
 //=======================================================================================
 /*
@@ -40,7 +41,7 @@ namespace impl_vposix
     //      Implementation
     //===================================================================================
     #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wnoexcept-type"
+    V_PRAGMA_DIAGNOSTIC_IGNORED_NOEXCEPT_TYPE
     template<typename Fun, typename ... Args>
     auto linux_call::no_err( Fun fun, Args ... args ) -> decltype( fun(args...) )
     {

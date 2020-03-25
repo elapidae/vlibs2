@@ -21,6 +21,8 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "vcompiler_traits.h"
+
 //=======================================================================================
 class vbyte_buffer_view;
 //=======================================================================================
@@ -208,7 +210,7 @@ T vbyte_buffer::to_any() const
 }
 //=======================================================================================
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+V_PRAGMA_DIAGNOSTIC_IGNORED_IMPLICIT_FALLTHROUGH
 template<typename T>
 typename std::enable_if< std::is_arithmetic<T>::value, T>::type
 vbyte_buffer::reverse_T( T val ) noexcept

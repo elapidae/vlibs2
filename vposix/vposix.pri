@@ -18,6 +18,10 @@ isEmpty(qi_vposix) {
 
     isEmpty(VLIBS_DIR): error("vposix: Need VLIBS_DIR correct path.")
 
+    include( $$VLIBS_DIR/qmake/vcompiler_traits.pri )
+
+    LIBS *= -pthread
+
     include( $$VLIBS_DIR/qmake/vcat.pri )
     include( $$VLIBS_DIR/qmake/vlog.pri )
     include( $$VLIBS_DIR/qmake/vcompiler_traits.pri )

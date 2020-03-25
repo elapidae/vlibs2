@@ -91,4 +91,34 @@
 #define V_HAS_GET_TIME (V_GNUC_COMPILER_VERSION > 0x040703)
 //=======================================================================================
 
+
+//=======================================================================================
+//  Для подавления предупреждений от компилятора.
+//  Новые версии выводят предупреждение, а старые компиляторы прагму не знают.
+//  NB! С версией не уверен.
+#if  (V_GNUC_COMPILER_VERSION <= 0x050400)
+    #define V_PRAGMA_DIAGNOSTIC_IGNORED_IMPLICIT_FALLTHROUGH
+#else
+    #define V_PRAGMA_DIAGNOSTIC_IGNORED_IMPLICIT_FALLTHROUGH \
+      #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif
+//=======================================================================================
+
+
+//=======================================================================================
+//  Для подавления предупреждений от компилятора.
+//  Новые версии выводят предупреждение, а старые компиляторы прагму не знают.
+//  NB! С версией не уверен.
+#if  (V_GNUC_COMPILER_VERSION <= 0x050400)
+    #define V_PRAGMA_DIAGNOSTIC_IGNORED_NOEXCEPT_TYPE
+#else
+    #define V_PRAGMA_DIAGNOSTIC_IGNORED_NOEXCEPT_TYPE \
+      #pragma GCC diagnostic ignored "-Wnoexcept-type"
+#endif
+//=======================================================================================
+
+
+
+
+
 #endif // VCOMPILER_TRAITS_H

@@ -18,7 +18,7 @@ isEmpty(qi_vbyte_buffer) {
 
     isEmpty(VLIBS_DIR): error("vbyte_buffer: Need VLIBS_DIR correct path.")
 
-    #include( $$VLIBS_DIR/qmake/vcompiler_traits.pri )
+    include( $$VLIBS_DIR/qmake/vcompiler_traits.pri )
 
     INCLUDEPATH += $$VLIBS_DIR/vbyte_buffer
 
