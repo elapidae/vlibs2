@@ -37,7 +37,7 @@ static std::string _inet_ntop( int af, const void *src )
 
     char buf[ addr_len ];
     auto cres = ::inet_ntop( af, src, buf, addr_len ); // [1]
-    assert( cres );
+    assert( cres == buf );
     return cres;
 }
 //---------------------------------------------------------------------------------------

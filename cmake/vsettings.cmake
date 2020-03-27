@@ -1,0 +1,1 @@
+../vsettings/vsettings.cmake
