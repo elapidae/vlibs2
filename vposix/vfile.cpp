@@ -34,7 +34,7 @@ std::string vfile::filename() const
 //=======================================================================================
 vfile_out::vfile_out( const std::string& fname, method how )
 {
-    int flags = O_WRONLY | O_LARGEFILE | O_EXCL | O_CLOEXEC;
+    int flags = O_WRONLY | O_LARGEFILE | O_CREAT | FD_CLOEXEC;
 
     if      ( how == truncate ) flags |= O_TRUNC;
     else if ( how == append   ) flags |= O_APPEND;
