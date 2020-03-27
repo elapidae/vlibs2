@@ -394,10 +394,12 @@ vsettings::str vsettings::to_ini() const
     for ( auto sname: subs )
     {
         auto comment = comment_of_subgroup( sname );
+
+        res << '\n';
         if ( !comment.empty() )
             res << "# " << escape_value(comment) << '\n';
 
-        res << '[' << sname << "]\n";
+        res << "[" << sname << "]\n";
         save_with_subs( &res, "", subgroup(sname) );
     }
 
