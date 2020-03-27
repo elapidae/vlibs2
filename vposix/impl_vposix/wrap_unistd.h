@@ -10,6 +10,7 @@
  *  http://man7.org/linux/man-pages/man2/read.2.html
  *  http://man7.org/linux/man-pages/man2/execve.2.html
  *  http://man7.org/linux/man-pages/man2/wait.2.html
+ *  http://man7.org/linux/man-pages/man2/getpid.2.html
  *
  *  Список функций см. ниже определения, он, таки, большой.
  *
@@ -17,7 +18,6 @@
 //=======================================================================================
 
 #include <string>
-#include "impl_vposix/wrap_sys_epoll.h"
 
 //=======================================================================================
 namespace impl_vposix
@@ -38,6 +38,8 @@ namespace impl_vposix
         static ssize_t read( int fd, void *buf, size_t buf_size );
         static ssize_t read_no_err( int fd, void *buf, size_t buf_size );
 
+        static bool unlink_no_err( const std::string& filename );
+
         //-------------------------------------------------------------------------------
         static void pipe_non_block( int fds[2] ); // do non blocking
         static void pipe( int fds[2] ); // do as default
@@ -46,6 +48,10 @@ namespace impl_vposix
         static int  dup( int clone_fd );
         static int  fork();
         static void exec( const char *cmd, const char * const *argv );
+        //-------------------------------------------------------------------------------
+        static pid_t get_pid()                noexcept;
+        static pid_t get_parent_pid()         noexcept;
+        static pid_t get_pid_group()          noexcept;
         //-------------------------------------------------------------------------------
     };
     //===================================================================================

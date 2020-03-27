@@ -44,6 +44,9 @@ if ( NOT  VPOSIX_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/vprocess.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vprocess.cpp" )
 
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/vfile.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/vfile.cpp" )
+
     #------------------------------------------------------------------------------------
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/linux_call.h"   )

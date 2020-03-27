@@ -62,6 +62,11 @@ ssize_t wrap_unistd::read_no_err( int fd, void *buf, size_t buf_size )
     return linux_call::no_err( ::read, fd, buf, buf_size );
 }
 //=======================================================================================
+bool wrap_unistd::unlink_no_err( const std::string& filename )
+{
+    return 0 == linux_call::no_err( ::unlink, filename.c_str() );
+}
+//=======================================================================================
 void wrap_unistd::pipe_non_block( int fds[] )
 {
     linux_call::check( ::pipe2, fds, O_NONBLOCK );
@@ -100,5 +105,20 @@ void wrap_unistd::exec( const char *cmd, const char * const * argv )
         vfatal.nospace() << '\t' << *argv++;
 
     ErrNo().do_throw( "wrap_unistd::exec" );
+}
+//=======================================================================================
+pid_t wrap_unistd::get_pid() noexcept
+{
+    return ::getpid();
+}
+//=======================================================================================
+pid_t wrap_unistd::get_parent_pid() noexcept
+{
+    return ::getppid();
+}
+//=======================================================================================
+pid_t wrap_unistd::get_pid_group() noexcept
+{
+    return ::getpgrp();
 }
 //=======================================================================================
