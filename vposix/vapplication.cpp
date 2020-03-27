@@ -60,7 +60,7 @@ vapplication::args_parser::str vapplication::args_parser::app_name() const
     if ( pos == str::npos )
         throw verror << "Bad application name: '" << _args.at(0) << "'.";
 
-    return _args.at(0).substr( pos );
+    return _args.at(0).substr( pos + 1 );
 }
 //=======================================================================================
 vapplication::args_parser::str vapplication::args_parser::app_path() const
