@@ -209,8 +209,11 @@ T vbyte_buffer::to_any() const
     return res;
 }
 //=======================================================================================
+
 #pragma GCC diagnostic push
-V_PRAGMA_DIAGNOSTIC_IGNORED_IMPLICIT_FALLTHROUGH
+#ifdef V_PRAGMA_GCC_KNOWS_IMPLICIT_FALLTHROUGH
+    #pragma GCC diagnostic ignored "-Wimpilicit-fallthrough"
+#endif
 template<typename T>
 typename std::enable_if< std::is_arithmetic<T>::value, T>::type
 vbyte_buffer::reverse_T( T val ) noexcept

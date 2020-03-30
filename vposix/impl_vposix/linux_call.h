@@ -41,7 +41,9 @@ namespace impl_vposix
     //      Implementation
     //===================================================================================
     #pragma GCC diagnostic push
-    V_PRAGMA_DIAGNOSTIC_IGNORED_NOEXCEPT_TYPE
+    #ifdef V_PRAGMA_GCC_KNOWS_NOEXCEPT_TYPE
+        #pragma GCC diagnostic ignored "-Wnoexcept-type"
+    #endif
     template<typename Fun, typename ... Args>
     auto linux_call::no_err( Fun fun, Args ... args ) -> decltype( fun(args...) )
     {

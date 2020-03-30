@@ -96,11 +96,8 @@
 //  Для подавления предупреждений от компилятора.
 //  Новые версии выводят предупреждение, а старые компиляторы прагму не знают.
 //  NB! С версией не уверен.
-#if  (V_GNUC_COMPILER_VERSION <= 0x050400)
-    #define V_PRAGMA_DIAGNOSTIC_IGNORED_IMPLICIT_FALLTHROUGH
-#else
-    #define V_PRAGMA_DIAGNOSTIC_IGNORED_IMPLICIT_FALLTHROUGH \
-      #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#if  (V_GNUC_COMPILER_VERSION >= 0x070000)
+    #define V_PRAGMA_GCC_KNOWS_IMPLICIT_FALLTHROUGH
 #endif
 //=======================================================================================
 
@@ -109,11 +106,8 @@
 //  Для подавления предупреждений от компилятора.
 //  Новые версии выводят предупреждение, а старые компиляторы прагму не знают.
 //  NB! С версией не уверен.
-#if  (V_GNUC_COMPILER_VERSION <= 0x050400)
-    #define V_PRAGMA_DIAGNOSTIC_IGNORED_NOEXCEPT_TYPE
-#else
-    #define V_PRAGMA_DIAGNOSTIC_IGNORED_NOEXCEPT_TYPE \
-      #pragma GCC diagnostic ignored "-Wnoexcept-type"
+#if  (V_GNUC_COMPILER_VERSION >= 0x070000)
+    #define V_PRAGMA_GCC_KNOWS_NOEXCEPT_TYPE
 #endif
 //=======================================================================================
 
