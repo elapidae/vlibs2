@@ -24,6 +24,9 @@ isEmpty(qi_vnetwork) {
 
     INCLUDEPATH += $$VLIBS_DIR/vnetwork
 
+    HEADERS     += $$VLIBS_DIR/vnetwork/vnetwork.h
+    SOURCES     += $$VLIBS_DIR/vnetwork/vnetwork.cpp
+
     HEADERS     += $$VLIBS_DIR/vnetwork/vsocket_address.h
     SOURCES     += $$VLIBS_DIR/vnetwork/vsocket_address.cpp
 

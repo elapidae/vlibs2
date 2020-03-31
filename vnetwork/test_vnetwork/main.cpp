@@ -26,6 +26,7 @@ class VNetwork_Test: public testing::Test
 #include "vcat.h"
 #include "vudp_socket.h"
 #include "vbyte_buffer.h"
+#include "vnetwork.h"
 
 //=======================================================================================
 
@@ -164,6 +165,22 @@ TEST_F( VNetwork_Test, raw_conversions )
     addr = vsocket_address::from_raw_ip6( b.data(), 234 );
     EXPECT_EQ( addr.ip(), "10::11" );
     EXPECT_EQ( addr.port(), 234 );
+}
+
+//=======================================================================================
+
+TEST_F( VNetwork_Test, resolve_address )
+{
+    auto addresses = vnetwork::resolve_address( "localhost" );
+    vdeb << "Resolving localhost addresses:" << addresses;
+
+    addresses = vnetwork::resolve_address( "", "http" );
+    vdeb << "Resolving http addresses:" << addresses;
+
+    addresses = vnetwork::resolve_address( "ya.ru", "imap" );
+    vdeb << "Resolving ya.ru:imap addresses:" << addresses;
+
+    EXPECT_THROW( vnetwork::resolve_address("",""), vnetwork::error );
 }
 
 //=======================================================================================

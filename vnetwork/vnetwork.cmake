@@ -23,6 +23,9 @@ if ( NOT  VNETWORK_INCLUDED )
 
     include_directories( "${VLIBS_DIR}/vnetwork/" )
 
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vnetwork.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vnetwork.cpp" )
+
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vnetwork/vsocket_address.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vnetwork/vsocket_address.cpp" )
 
