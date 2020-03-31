@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "phony:"           >Makefile
+echo "	echo All ok."   >>Makefile
+echo "check:"           >>Makefile
+echo "	cd gtests && ./run_all.sh || exit 1" >>Makefile
+
+exit 0
