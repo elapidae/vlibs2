@@ -340,7 +340,7 @@ void vsettings::from_ini_file( cstr fname )
 
     f.read( buffer.data(), fsize );
 
-    from_ini( buffer.data() );
+    from_ini( str{buffer.data(),sz} );
 }
 //=======================================================================================
 void vsettings::to_ini_file( cstr fname ) const
@@ -408,6 +408,7 @@ vsettings::str vsettings::to_ini() const
 //=======================================================================================
 void vsettings::from_ini( cstr ini )
 {
+    vdeb << "|||" << ini << "|||";
     int line_num = 0;
     auto lines = vbyte_buffer::split( ini, '\n' );
 

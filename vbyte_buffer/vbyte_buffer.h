@@ -212,7 +212,7 @@ T vbyte_buffer::to_any() const
 
 #pragma GCC diagnostic push
 #ifdef V_PRAGMA_GCC_KNOWS_IMPLICIT_FALLTHROUGH
-    #pragma GCC diagnostic ignored "-Wimpilicit-fallthrough"
+    #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #endif
 template<typename T>
 typename std::enable_if< std::is_arithmetic<T>::value, T>::type
