@@ -313,6 +313,41 @@ TEST_F( VPoll_Test, context )
 }
 
 //=======================================================================================
+TEST_F( VPoll_Test, vapplication_args_parser )
+{
+    std::vector<const char*> v_args;
+    v_args.push_back( "app_path/app_name" );
+    v_args.push_back( "has" );
+
+    v_args.push_back( "key" );
+    v_args.push_back( "val" );
+
+    v_args.push_back( "if=somefile" );
+    v_args.push_back( "-p722" );
+
+    vapplication::args_parser args( v_args.size(), v_args.data() );
+
+    //  has не трогает, take помечает.
+    EXPECT_TRUE( args.has("has") );
+    EXPECT_TRUE( args.has("has") );
+    EXPECT_TRUE( args.take("has") );
+    EXPECT_FALSE( args.has("has") );
+    EXPECT_FALSE( args.take("has") );
+
+    EXPECT_EQ( args.take_next("key"), "val" );
+    EXPECT_EQ( args.safe_next("key", "not"), "not" );
+    EXPECT_EQ( args.safe_next("-c", "%"), "%" );
+    EXPECT_THROW( args.take_next("key"), vapplication::args_parser::error );
+
+    EXPECT_EQ( args.take_starts_with("if="), "somefile" );
+    EXPECT_EQ( args.take_starts_with("-p"), "722" );
+
+    EXPECT_THROW( args.take_starts_with("if="), vapplication::args_parser::error );
+
+    EXPECT_EQ( args.safe_starts_with("-c=", "%"), "%" );
+}
+
+//=======================================================================================
 
 
 //=======================================================================================
