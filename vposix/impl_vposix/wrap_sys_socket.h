@@ -21,6 +21,7 @@ namespace impl_vposix
     //===================================================================================
     struct wrap_sys_socket
     {
+        static int socket( int domain, int type, int protocol );
         static int socket_tcp( int af_type );
         static int socket_udp( int af_type );
 
@@ -46,10 +47,13 @@ namespace impl_vposix
         static int accept_no_err( int fd, void *peer_sa, unsigned peer_size );
         static ssize_t recv_no_err( int fd, void* buf, size_t len, int flags = 0 );
 
+        static ssize_t recv_from_no_err( int fd, void *buf, size_t buf_size,
+                                         void* addr, unsigned addr_size );
         static size_t recv_from( int fd, void *buf, size_t buf_size,
                                  void* addr, unsigned addr_size );
 
         static bool send_no_err( int fd, const std::string& data );
+        static void send_raw   ( int fd, const void *data, size_t len );
 
         static void send_to( int fd, const std::string& data,
                              const void *peer_sa, unsigned peer_size );

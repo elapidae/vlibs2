@@ -34,6 +34,8 @@ isEmpty(qi_vposix) {
 
     OTHER_FILES += $$VLIBS_DIR/vposix/vposix.cmake
     OTHER_FILES += $$VLIBS_DIR/vposix/README
+    OTHER_FILES += $$VLIBS_DIR/vposix/impl_vposix/_z_wrap_fish.h
+    OTHER_FILES += $$VLIBS_DIR/vposix/impl_vposix/_z_wrap_fish.cpp
 
     #------------------------------------------------------------------------------------
 
@@ -74,6 +76,12 @@ isEmpty(qi_vposix) {
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_fcntl.h
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_fcntl.cpp
 
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_linux_can.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_linux_can.cpp
+
+    HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_net_if.h
+    SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_net_if.cpp
+
     HEADERS     += $$VLIBS_DIR/vposix/impl_vposix/wrap_stdio.h
     SOURCES     += $$VLIBS_DIR/vposix/impl_vposix/wrap_stdio.cpp
 
@@ -107,4 +115,3 @@ isEmpty(qi_vposix) {
 }
 # vposix.pri
 #========================================================================================
-
