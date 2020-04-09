@@ -40,3 +40,6 @@ SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
 PROJECT = vsettings
 SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
 
+PROJECT = vcan_socket
+SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
+

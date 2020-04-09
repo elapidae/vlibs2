@@ -16,10 +16,9 @@
 #include "vbyte_buffer.h"
 #include "vapplication.h"
 #include "vlog.h"
+#include "vtimer.h"
 
 template<class> class TD;
-
-//using namespace std;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
@@ -35,49 +34,40 @@ TEST_F( vcan_socket_Test, ctors )
     vcan_socket can;
 }
 //=======================================================================================
+void test_receiving_on_vcan0()
+{
+    vcan_socket s;
+    try
+    {
+        s.bind( "vcan0" );
+        s.send( 0x123, "12345678" );
+    } catch (...)
+    {
+        vwarning << "Cannot bind to vcan0";
+        vapplication::stop();
+    }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
+    s.received += []( vcan_socket::message msg )
+    {
+        vdeb << msg;
+    };
 
-#include <net/if.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/ioctl.h>
+    //  пару секунд послушаем и остановим поллинг, начнем тест.
+    vtimer timer;
+    timer.start( std::chrono::seconds(2) );
+    timer.timeout += vapplication::stop;
 
-#include <linux/can.h>
-#include <linux/can/raw.h>
+    vapplication::poll();
+}
+//=======================================================================================
 
-//#include "impl_vposix/wrap_net_if.h"
 
 //=======================================================================================
 //  Main, do not delete...
 //=======================================================================================
 int main(int argc, char *argv[])
 {
-    vcan_socket s;
-    s.bind( "vcan0" );
-    s.send( 0x123, "12345678" );
-
-    s.received += []( vcan_socket::message msg )
-    {
-        vdeb << msg;
-//        vdeb.aligned(msg.id, 5)
-//            .aligned(vbyte_buffer(msg.data).to_Hex(), 3*8 + 5)
-//            .aligned(msg.iface, 7)
-//            .aligned(msg.rx, 5)
-//            .aligned(msg.tx, 5);
-    };
-
-    vapplication::poll();
-
-//    auto s = socket(PF_CAN, SOCK_RAW, CAN_RAW);
-
-//    for (auto& s: impl_vposix::wrap_net_if::interfaces())
-//        vdeb << s.index << s.name;
-
-//    return 0;
+    test_receiving_on_vcan0();
 
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

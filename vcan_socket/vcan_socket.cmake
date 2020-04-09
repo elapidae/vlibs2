@@ -18,6 +18,8 @@ if ( NOT  vcan_socket_INCLUDED )
     message( "=== include vcan_socket... ===" )
 
     include( "${VLIBS_DIR}/cmake/c++11.cmake" )
+    include( "${VLIBS_DIR}/cmake/vsignal.cmake" )
+    include( "${VLIBS_DIR}/cmake/vposix.cmake" )
 
     include_directories( "${VLIBS_DIR}/vcan_socket/" )
 

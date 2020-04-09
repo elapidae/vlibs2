@@ -31,7 +31,7 @@ public:
     ~vcan_socket();
 
 private:
-    class _pimpl; _pimpl * _p;
+    class _pimpl; std::unique_ptr<_pimpl> _p;
 };
 //=======================================================================================
 std::ostream& operator << ( std::ostream& os, const vcan_socket::message& msg );

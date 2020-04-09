@@ -49,6 +49,10 @@ PROJECT=vsettings
 vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
 
 echo ====================================================================================
+PROJECT=vcan_socket
+vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
+
+echo ====================================================================================
 
 
 

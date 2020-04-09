@@ -7,6 +7,8 @@ CONFIG -= console
 VLIBS_DIR = $$PWD/../..
 include( $$VLIBS_DIR/qmake/gtest.pri )
 include( $$VLIBS_DIR/qmake/vcan_socket.pri )
-include( $$VLIBS_DIR/qmake/vlog.pri )
+include( $$VLIBS_DIR/qmake/vtimer.pri )
 
 SOURCES += main.cpp
+
+OTHER_FILES += CMakeLists.txt

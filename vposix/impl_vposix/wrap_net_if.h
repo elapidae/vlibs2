@@ -6,6 +6,10 @@
  *
  * http://ru.manpages.org/if_nametoindex/3
  * http://man7.org/linux/man-pages/man3/if_nameindex.3.html
+ *
+ *  TODO:
+ *  UPD 2020-04-09 -- методы из этого враппера следует перенести в vnetwork, тогда
+ *  список интерфейсов можно реализовать без лишних сущностей в интерфейсе vnetwork.
 */
 //=======================================================================================
 
@@ -27,6 +31,7 @@ namespace impl_vposix
             unsigned int index;
             std::string  name;
         };
+
         static net_iface::vector interfaces();
     };
     //===================================================================================
