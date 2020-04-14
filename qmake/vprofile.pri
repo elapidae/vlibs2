@@ -1,0 +1,1 @@
+../vprofile/vprofile.pri
