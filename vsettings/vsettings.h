@@ -58,6 +58,7 @@ public:
 
 private:
     class _pimpl; std::shared_ptr<_pimpl> _p;
+    template<typename T> struct _getter;
 };
 //=======================================================================================
 class vsettings::schema final
@@ -79,6 +80,7 @@ private:
     //  Развязка для аккуратного хранения типизированных указателей на данные.
     struct _node_iface;
     using  _node_ptr = std::shared_ptr<_node_iface>;
+    template <typename T> struct _node_iface2;
     template <typename T> struct _node;
     void _add_node( _node_ptr && );
 
@@ -101,9 +103,44 @@ private:
 std::ostream& operator << (std::ostream& os, const vsettings& sett );
 //=======================================================================================
 template<typename T>
+struct vsettings::_getter
+{
+    static T get( cstr val )
+    {
+        return vcat::from_text<T>( val );
+    }
+};
+//---------------------------------------------------------------------------------------
+template<>
+struct vsettings::_getter<bool>
+{
+    static bool get( cstr val )
+    {
+        std::string low;
+        for ( auto ch: val )
+            low.push_back( std::tolower(ch) );
+
+        if      ( low == "true"  ) return true;
+        else if ( low == "on"    ) return true;
+        else if ( low == "false" ) return false;
+        else if ( low == "off"   ) return false;
+        else throw std::runtime_error( vcat("Cannot interpret bool value '",val,"'") );
+    }
+};
+//---------------------------------------------------------------------------------------
+template<>
+struct vsettings::_getter<std::string>
+{
+    static str get( cstr val )
+    {
+        return val;
+    }
+};
+//---------------------------------------------------------------------------------------
+template<typename T>
 T vsettings::get( cstr key ) const
 {
-    return vcat::from_text<T>( get(key) );
+    return _getter<T>::get( get(key) );
 }
 //=======================================================================================
 template<typename T>
@@ -134,12 +171,12 @@ struct vsettings::schema::_node_iface
 };
 //=======================================================================================
 template <typename T>
-struct vsettings::schema::_node : vsettings::schema::_node_iface
+struct vsettings::schema::_node_iface2 : vsettings::schema::_node_iface
 {
     //-----------------------------------------------------------------------------------
     T* ptr;
     //-----------------------------------------------------------------------------------
-    _node( cstr k, cstr c, T *p )
+    _node_iface2( cstr k, cstr c, T *p )
         : _node_iface( k, c )
         , ptr( p )
     {}
@@ -169,21 +206,23 @@ struct vsettings::schema::_node : vsettings::schema::_node_iface
     //-----------------------------------------------------------------------------------
 };
 //=======================================================================================
-template <>
-struct vsettings::schema::_node<bool> : vsettings::schema::_node_iface
+template <typename T>
+struct vsettings::schema::_node : vsettings::schema::_node_iface2<T>
 {
     //-----------------------------------------------------------------------------------
-    bool* ptr;
-    //-----------------------------------------------------------------------------------
-    _node( cstr k, cstr c, bool *p )
-        : _node_iface( k, c )
-        , ptr( p )
+    _node( cstr k, cstr c, T * p )
+        : vsettings::schema::_node_iface2<T>( k, c, p )
     {}
     //-----------------------------------------------------------------------------------
-    virtual void* stored_ptr() const override
-    {
-        return ptr;
-    }
+};
+//=======================================================================================
+template <>
+struct vsettings::schema::_node<bool> : vsettings::schema::_node_iface2<bool>
+{
+    //-----------------------------------------------------------------------------------
+    _node( cstr k, cstr c, bool * p )
+        : vsettings::schema::_node_iface2<bool>( k, c, p )
+    {}
     //-----------------------------------------------------------------------------------
     void load( const vsettings& settings ) override
     {
@@ -204,12 +243,24 @@ struct vsettings::schema::_node<bool> : vsettings::schema::_node_iface
         else throw std::runtime_error( vcat("Cannot interpret bool value '",text,"'") );
     }
     //-----------------------------------------------------------------------------------
-    void save( vsettings* settings ) const override
+};
+//=======================================================================================
+template <>
+struct vsettings::schema::_node<std::string> : vsettings::schema::_node_iface2<str>
+{
+    //-----------------------------------------------------------------------------------
+    _node( cstr k, cstr c, std::string * p )
+        : vsettings::schema::_node_iface2<std::string>( k, c, p )
+    {}
+    //-----------------------------------------------------------------------------------
+    void load( const vsettings& settings ) override
     {
-        for ( auto& g: groups )
-            settings = &settings->subgroup( g.name, g.comment );
+        const vsettings *sett_ptr = &settings;
 
-        settings->set( key, *ptr, comment );
+        for ( auto & g: groups )
+            sett_ptr = &sett_ptr->subgroup( g.name );
+
+        *ptr = sett_ptr->get( key );
     }
     //-----------------------------------------------------------------------------------
 };
