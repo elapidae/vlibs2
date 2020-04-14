@@ -135,6 +135,60 @@ TEST_F( TEST_VSETTINGS, escape_vals )
     EXPECT_EQ( val, ck );
 }
 //=======================================================================================
+//  2020-04-14 обнаружился баг, что при чтении строки из схемы, читается не вся строка,
+//  а только часть до пробела, потому-что работает не через метод str get(), а через
+//  метод get<string>().
+TEST_F( TEST_VSETTINGS, bug_reading_string )
+{
+    const std::string val = "bug fix \t fix!";
+    std::string v = val;
+
+    vsettings::schema sh;
+    sh.add("key", &v);
+
+    auto ini = sh.build().to_ini();
+
+    v.clear();
+    vsettings sett;
+    sett.from_ini( ini );
+    sh.capture( sett );
+
+    EXPECT_EQ( v, val );
+
+    sett.set( "2", val );
+    EXPECT_EQ( sett.get("2"), val );
+    EXPECT_EQ( sett.get<std::string>("2"), val );
+}
+//=======================================================================================
+TEST_F( TEST_VSETTINGS, test_reading_bool )
+{
+    bool t = true;
+    bool f = false;
+
+    vsettings::schema sh;
+    sh.add("true", &t);
+    sh.add("false", &f);
+
+    auto ini = sh.build().to_ini();
+
+    vsettings sett;
+    sett.from_ini( ini );
+
+    std::swap( t, f );
+    sh.capture( sett );
+
+    EXPECT_EQ( t, true );
+    EXPECT_EQ( f, false );
+
+    sett.set("on", "on");
+    sett.set("off", "off");
+
+    EXPECT_EQ( sett.get<bool>("on"),    true  );
+    EXPECT_EQ( sett.get<bool>("off"),   false );
+    EXPECT_EQ( sett.get<bool>("true"),  true  );
+    EXPECT_EQ( sett.get<bool>("false"), false );
+}
+//=======================================================================================
 //  EXPECT_TRUE
 //
 //  EXPECT_EQ
@@ -151,33 +205,29 @@ TEST_F( TEST_VSETTINGS, escape_vals )
 //=======================================================================================
 int main(int argc, char *argv[])
 {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    bool t = true;
+    bool f = false;
 
     vsettings::schema sh;
+    sh.add("true", &t);
+    sh.add("false", &f);
 
-    int i1, i2;
-    sh.add( "i", &i1 );
+    auto ini = sh.build().to_ini();
 
-    sh.subgroup("0", "comment 0");
-    sh.add( "i", &i2 );
+    vsettings sett;
+    sett.from_ini( ini );
 
-    string str = "ololo\12";
-    sh.add( "s", &str );
+    std::swap( t, f );
+    sh.capture( sett );
 
-    sh.subgroup( "GROUP1", "Comment 1" );
-    uint u1 = 1, u2 = 2, u3 = 3, u4 = 4;
-    sh.add( "u1", &u1 );
-    sh.subgroup( "S1" );
-    sh.add( "u2", &u2 );
-    sh.subgroup( "SS2" );
-    sh.add( "u3", &u3 );
-    sh.end_subgroup();
-    sh.add( "u4", &u4 );
+    sett.set("on", "on");
+    sett.set("off", "off");
 
-    vdeb << sh.build().to_ini();
+    EXPECT_EQ( sett.get<bool>("on"),  true  );
+    EXPECT_EQ( sett.get<bool>("off"), false );
 
-    return 0;
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
 //=======================================================================================
 //  Main, do not delete...

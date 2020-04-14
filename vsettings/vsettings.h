@@ -58,6 +58,7 @@ public:
 
 private:
     class _pimpl; std::shared_ptr<_pimpl> _p;
+    template<typename T> struct _getter;
 };
 //=======================================================================================
 class vsettings::schema final
@@ -100,10 +101,47 @@ private:
 //=======================================================================================
 std::ostream& operator << (std::ostream& os, const vsettings& sett );
 //=======================================================================================
+//  Чтение методом get<T> осуществляется через _getter, чтобы специфицировать
+//  чтение типов bool и std::string.
+template<typename T>
+struct vsettings::_getter
+{
+    static T get( cstr val )
+    {
+        return vcat::from_text<T>( val );
+    }
+};
+//---------------------------------------------------------------------------------------
+template<>
+struct vsettings::_getter<bool>
+{
+    static bool get( cstr val )
+    {
+        std::string low;
+        for ( auto ch: val )
+            low.push_back( std::tolower(ch) );
+
+        if      ( low == "true"  ) return true;
+        else if ( low == "on"    ) return true;
+        else if ( low == "false" ) return false;
+        else if ( low == "off"   ) return false;
+        else throw std::runtime_error( vcat("Cannot interpret bool value '",val,"'") );
+    }
+};
+//---------------------------------------------------------------------------------------
+template<>
+struct vsettings::_getter<std::string>
+{
+    static str get( cstr val )
+    {
+        return val;
+    }
+};
+//---------------------------------------------------------------------------------------
 template<typename T>
 T vsettings::get( cstr key ) const
 {
-    return vcat::from_text<T>( get(key) );
+    return _getter<T>::get( get(key) );
 }
 //=======================================================================================
 template<typename T>
@@ -157,51 +195,6 @@ struct vsettings::schema::_node : vsettings::schema::_node_iface
             sett_ptr = &sett_ptr->subgroup( g.name );
 
         *ptr = sett_ptr->get<T>( key );
-    }
-    //-----------------------------------------------------------------------------------
-    void save( vsettings* settings ) const override
-    {
-        for ( auto& g: groups )
-            settings = &settings->subgroup( g.name, g.comment );
-
-        settings->set( key, *ptr, comment );
-    }
-    //-----------------------------------------------------------------------------------
-};
-//=======================================================================================
-template <>
-struct vsettings::schema::_node<bool> : vsettings::schema::_node_iface
-{
-    //-----------------------------------------------------------------------------------
-    bool* ptr;
-    //-----------------------------------------------------------------------------------
-    _node( cstr k, cstr c, bool *p )
-        : _node_iface( k, c )
-        , ptr( p )
-    {}
-    //-----------------------------------------------------------------------------------
-    virtual void* stored_ptr() const override
-    {
-        return ptr;
-    }
-    //-----------------------------------------------------------------------------------
-    void load( const vsettings& settings ) override
-    {
-        const vsettings *sett_ptr = &settings;
-
-        for ( auto & g: groups )
-            sett_ptr = &sett_ptr->subgroup( g.name );
-
-        auto text = sett_ptr->get( key );
-        std::string low;
-        for ( auto ch: text )
-            low.push_back( std::tolower(ch) );
-
-        if      ( low == "true"  ) *ptr = true;
-        else if ( low == "on"    ) *ptr = true;
-        else if ( low == "false" ) *ptr = false;
-        else if ( low == "off"   ) *ptr = false;
-        else throw std::runtime_error( vcat("Cannot interpret bool value '",text,"'") );
     }
     //-----------------------------------------------------------------------------------
     void save( vsettings* settings ) const override
