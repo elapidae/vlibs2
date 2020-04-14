@@ -237,6 +237,14 @@ void vsettings::set( cstr key, cstr val, cstr comment )
     _p->records.push_back( {key, val, comment} );
 }
 //=======================================================================================
+vsettings::str vsettings::safe_get( cstr key, cstr default_val ) const
+{
+    if ( !has_key(key) )
+        return default_val;
+
+    return get( key );
+}
+//=======================================================================================
 string vsettings::get( cstr key ) const
 {
     for ( auto & rec: _p->records )
@@ -322,11 +330,14 @@ vsettings::str_vector vsettings::subgroups() const
     return res;
 }
 //=======================================================================================
-void vsettings::from_ini_file( cstr fname )
+bool vsettings::from_ini_file( cstr fname )
 {
     ifstream f( fname, ios_base::in|ios_base::binary );
+    //  2020-04-14 - -Было принято решение, что если файла нету, то ничего страшного.
+    //  Пусть возвращает
+    //throw verror << "Cannot open file '" << fname << "' for load ini.";
     if ( !f.good() )
-        throw verror << "Cannot open file '" << fname << "' for load ini.";
+        return false;
 
     f.seekg (0, std::ios::end);
     auto fsize = f.tellg();
@@ -341,6 +352,8 @@ void vsettings::from_ini_file( cstr fname )
     f.read( buffer.data(), fsize );
 
     from_ini( str{buffer.data(),sz} );
+
+    return true;
 }
 //=======================================================================================
 void vsettings::to_ini_file( cstr fname ) const
@@ -408,7 +421,6 @@ vsettings::str vsettings::to_ini() const
 //=======================================================================================
 void vsettings::from_ini( cstr ini )
 {
-    vdeb << "|||" << ini << "|||";
     int line_num = 0;
     auto lines = vbyte_buffer::split( ini, '\n' );
 

@@ -16,10 +16,13 @@ public:
 
     class schema;
 
-    void set( cstr key, cstr val, cstr comment = {} );
     str  get( cstr key ) const;
+    str  safe_get( cstr key, cstr default_val = {} ) const;
 
-    template<typename T> T    get( cstr key ) const;
+    template<typename T> T get( cstr key ) const;
+    template<typename T> T safe_get( cstr key, const T& default_val = {} ) const;
+
+    void set( cstr key, cstr val, cstr comment = {} );
     template<typename T> void set( cstr key, const T& val, cstr comment = {} );
 
     vsettings& subgroup( cstr name, cstr comment = {} );
@@ -41,7 +44,7 @@ public:
     //  выиграет последнее прочитанное значение.
     void from_ini( cstr ini );
 
-    void from_ini_file( cstr fname );
+    bool from_ini_file( cstr fname );
     void to_ini_file  ( cstr fname ) const;
 
     vsettings();
@@ -142,6 +145,13 @@ template<typename T>
 T vsettings::get( cstr key ) const
 {
     return _getter<T>::get( get(key) );
+}
+//=======================================================================================
+template<typename T>
+T vsettings::safe_get( cstr key, const T& default_val ) const
+{
+    if ( !has_key(key) ) return default_val;
+    get<T>( key );
 }
 //=======================================================================================
 template<typename T>
