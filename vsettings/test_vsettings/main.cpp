@@ -154,6 +154,10 @@ TEST_F( TEST_VSETTINGS, bug_reading_string )
     sh.capture( sett );
 
     EXPECT_EQ( v, val );
+
+    sett.set( "2", val );
+    EXPECT_EQ( sett.get("2"), val );
+    EXPECT_EQ( sett.get<std::string>("2"), val );
 }
 //=======================================================================================
 TEST_F( TEST_VSETTINGS, test_reading_bool )
@@ -173,14 +177,16 @@ TEST_F( TEST_VSETTINGS, test_reading_bool )
     std::swap( t, f );
     sh.capture( sett );
 
+    EXPECT_EQ( t, true );
+    EXPECT_EQ( f, false );
+
     sett.set("on", "on");
     sett.set("off", "off");
 
-    EXPECT_EQ( sett.get<bool>("on"),  true  );
-    EXPECT_EQ( sett.get<bool>("off"), false );
-
-    EXPECT_EQ( t, true );
-    EXPECT_EQ( f, false );
+    EXPECT_EQ( sett.get<bool>("on"),    true  );
+    EXPECT_EQ( sett.get<bool>("off"),   false );
+    EXPECT_EQ( sett.get<bool>("true"),  true  );
+    EXPECT_EQ( sett.get<bool>("false"), false );
 }
 //=======================================================================================
 //  EXPECT_TRUE

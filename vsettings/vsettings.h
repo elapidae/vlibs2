@@ -80,7 +80,6 @@ private:
     //  Развязка для аккуратного хранения типизированных указателей на данные.
     struct _node_iface;
     using  _node_ptr = std::shared_ptr<_node_iface>;
-    template <typename T> struct _node_iface2;
     template <typename T> struct _node;
     void _add_node( _node_ptr && );
 
@@ -102,6 +101,8 @@ private:
 //=======================================================================================
 std::ostream& operator << (std::ostream& os, const vsettings& sett );
 //=======================================================================================
+//  Чтение методом get<T> осуществляется через _getter, чтобы специфицировать
+//  чтение типов bool и std::string.
 template<typename T>
 struct vsettings::_getter
 {
@@ -171,12 +172,12 @@ struct vsettings::schema::_node_iface
 };
 //=======================================================================================
 template <typename T>
-struct vsettings::schema::_node_iface2 : vsettings::schema::_node_iface
+struct vsettings::schema::_node : vsettings::schema::_node_iface
 {
     //-----------------------------------------------------------------------------------
     T* ptr;
     //-----------------------------------------------------------------------------------
-    _node_iface2( cstr k, cstr c, T *p )
+    _node( cstr k, cstr c, T *p )
         : _node_iface( k, c )
         , ptr( p )
     {}
@@ -202,65 +203,6 @@ struct vsettings::schema::_node_iface2 : vsettings::schema::_node_iface
             settings = &settings->subgroup( g.name, g.comment );
 
         settings->set( key, *ptr, comment );
-    }
-    //-----------------------------------------------------------------------------------
-};
-//=======================================================================================
-template <typename T>
-struct vsettings::schema::_node : vsettings::schema::_node_iface2<T>
-{
-    //-----------------------------------------------------------------------------------
-    _node( cstr k, cstr c, T * p )
-        : vsettings::schema::_node_iface2<T>( k, c, p )
-    {}
-    //-----------------------------------------------------------------------------------
-};
-//=======================================================================================
-template <>
-struct vsettings::schema::_node<bool> : vsettings::schema::_node_iface2<bool>
-{
-    //-----------------------------------------------------------------------------------
-    _node( cstr k, cstr c, bool * p )
-        : vsettings::schema::_node_iface2<bool>( k, c, p )
-    {}
-    //-----------------------------------------------------------------------------------
-    void load( const vsettings& settings ) override
-    {
-        const vsettings *sett_ptr = &settings;
-
-        for ( auto & g: groups )
-            sett_ptr = &sett_ptr->subgroup( g.name );
-
-        auto text = sett_ptr->get( key );
-        std::string low;
-        for ( auto ch: text )
-            low.push_back( std::tolower(ch) );
-
-        if      ( low == "true"  ) *ptr = true;
-        else if ( low == "on"    ) *ptr = true;
-        else if ( low == "false" ) *ptr = false;
-        else if ( low == "off"   ) *ptr = false;
-        else throw std::runtime_error( vcat("Cannot interpret bool value '",text,"'") );
-    }
-    //-----------------------------------------------------------------------------------
-};
-//=======================================================================================
-template <>
-struct vsettings::schema::_node<std::string> : vsettings::schema::_node_iface2<str>
-{
-    //-----------------------------------------------------------------------------------
-    _node( cstr k, cstr c, std::string * p )
-        : vsettings::schema::_node_iface2<std::string>( k, c, p )
-    {}
-    //-----------------------------------------------------------------------------------
-    void load( const vsettings& settings ) override
-    {
-        const vsettings *sett_ptr = &settings;
-
-        for ( auto & g: groups )
-            sett_ptr = &sett_ptr->subgroup( g.name );
-
-        *ptr = sett_ptr->get( key );
     }
     //-----------------------------------------------------------------------------------
 };
