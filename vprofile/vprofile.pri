@@ -29,13 +29,13 @@ isEmpty(qi_vprofile) {
     INCLUDEPATH += $$VLIBS_DIR/vprofile
 
     HEADERS     += $$VLIBS_DIR/vprofile/vprofile.h
+    SOURCES     += $$VLIBS_DIR/vprofile/vprofile.cpp
 
-    HEADERS     += $$VLIBS_DIR/vprofile/impl_vprofile/profile.h
-    SOURCES     += $$VLIBS_DIR/vprofile/impl_vprofile/profile.cpp
-
-    contains(DEFINES, V_HAS_QT): include( $$VLIBS_DIR/qmake/vsettings.pri )
-    contains(DEFINES, V_HAS_QT): HEADERS += $$VLIBS_DIR/vprofile/vprofile_widget.h
-    contains(DEFINES, V_HAS_QT): SOURCES += $$VLIBS_DIR/vprofile/vprofile_widget.cpp
+    contains(DEFINES, V_HAS_QT) {
+        include( $$VLIBS_DIR/qmake/vsettings.pri )
+        HEADERS += $$VLIBS_DIR/vprofile/vprofile_widget.h
+        SOURCES += $$VLIBS_DIR/vprofile/vprofile_widget.cpp
+    } # has qt
 
     OTHER_FILES += $$VLIBS_DIR/vprofile/vprofile.cmake
 }

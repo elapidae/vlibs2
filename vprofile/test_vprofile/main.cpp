@@ -36,6 +36,7 @@ class test_profiler: public testing::Test
 //
 TEST_F( test_profiler, _test_name )
 {
+    V_PROFILE;
     // type here
 }
 //=======================================================================================
@@ -75,7 +76,7 @@ int main(int argc, char *argv[])
         w.show();
         //w.resize(800,600);
         QTimer t;
-        t.start(1000);
+        t.start(2000);
         QObject::connect( &t, &QTimer::timeout, [&]{app.quit();} );
         app.exec();
     }

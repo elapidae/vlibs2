@@ -26,9 +26,7 @@ if ( NOT  VPROFILE_INCLUDED )
     include_directories( "${VLIBS_DIR}/vprofile/" )
 
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vprofile/vprofile.h"   )
-
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vprofile/impl_vprofile/profile.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vprofile/impl_vprofile/profile.cpp" )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vprofile/vprofile.cpp" )
 
     message( "=== vprofile included ===" )
 endif()

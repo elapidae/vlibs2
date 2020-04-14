@@ -29,8 +29,7 @@ VProfile_Widget::VProfile_Widget(QWidget *parent)
     {
         V_PROFILE;
         setRowCount(0);
-        auto list = impl_vprofile::profile::current();
-        if (list.empty()) return;
+        auto list = vprofile::current();
 
         setRowCount( list.size() );
         int row = 0;
@@ -49,10 +48,6 @@ VProfile_Widget::VProfile_Widget(QWidget *parent)
             setItem( row, 3, twitem(time)       );
             ++row;
         }
-//        resizeRowsToContents();
-        //        resizeColumnsToContents();
-
-
     });
     horizontalHeader()->setStretchLastSection(true);
 }
