@@ -13,6 +13,6 @@ include( $$VLIBS_DIR/qmake/vlog.pri  )
 
 include( $$VLIBS_DIR/qmake/vprofile.pri )
 #DEFINES -= V_NEED_PROFILE
-DEFINES -= V_HAS_QT
+#DEFINES -= V_HAS_QT
 
 SOURCES += main.cpp

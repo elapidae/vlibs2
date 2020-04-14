@@ -14,6 +14,7 @@ public:
     ~VProfile_Widget() override;
 
     void set_settings( vsettings settings );
+    void save_settings();
 
 private:
     vsettings _settings;

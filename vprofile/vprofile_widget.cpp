@@ -54,8 +54,7 @@ VProfile_Widget::VProfile_Widget(QWidget *parent)
 //=======================================================================================
 VProfile_Widget::~VProfile_Widget()
 {
-    _settings.set( "geometry", saveGeometry().toStdString() );
-    _settings.set( "headers", horizontalHeader()->saveState().toStdString() );
+    save_settings();
 }
 //=======================================================================================
 void VProfile_Widget::set_settings( vsettings settings )
@@ -66,6 +65,12 @@ void VProfile_Widget::set_settings( vsettings settings )
     auto geom = _settings.safe_get( "geometry" );
     restoreGeometry( QByteArray(geom.c_str(),geom.size()) );
     horizontalHeader()->restoreState( QByteArray(head.c_str(),head.size()) );
+}
+//=======================================================================================
+void VProfile_Widget::save_settings()
+{
+    _settings.set( "geometry", saveGeometry().toStdString() );
+    _settings.set( "headers", horizontalHeader()->saveState().toStdString() );
 }
 //=======================================================================================
 #endif // V_HAS_QT

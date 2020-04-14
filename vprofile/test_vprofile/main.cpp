@@ -69,17 +69,15 @@ int main(int argc, char *argv[])
 #ifdef V_HAS_QT
     vsettings s;
     s.from_ini_file( "sett.ini" );
-    {
-        QApplication app(argc,argv);
-        VProfile_Widget w;
-        w.set_settings(s);
-        w.show();
-        //w.resize(800,600);
-        QTimer t;
-        t.start(2000);
-        QObject::connect( &t, &QTimer::timeout, [&]{app.quit();} );
-        app.exec();
-    }
+    QApplication app(argc,argv);
+    VProfile_Widget w;
+    w.set_settings(s);
+    w.show();
+    QTimer t;
+    t.start(2000);
+    QObject::connect( &t, &QTimer::timeout, [&]{app.quit();} );
+    app.exec();
+    w.save_settings();
     s.to_ini_file( "sett.ini" );
 #endif
 
