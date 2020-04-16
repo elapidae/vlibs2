@@ -189,6 +189,23 @@ TEST_F( TEST_VSETTINGS, test_reading_bool )
     EXPECT_EQ( sett.get<bool>("false"), false );
 }
 //=======================================================================================
+TEST_F( TEST_VSETTINGS, test_utf8_russ )
+{
+    auto val = "Русская строка";
+    auto comm = "Русский комментарий";
+
+    vsettings s;
+    s.set( "key", val, comm );
+    auto res = s.to_ini();
+
+    //vdeb << res;
+
+    EXPECT_NE( res.find(val),  string::npos ); // строка найдена.
+    EXPECT_NE( res.find(comm), string::npos ); // строка найдена.
+
+    EXPECT_EQ( s.get("key"), val );
+}
+//=======================================================================================
 //  EXPECT_TRUE
 //
 //  EXPECT_EQ
@@ -205,27 +222,6 @@ TEST_F( TEST_VSETTINGS, test_reading_bool )
 //=======================================================================================
 int main(int argc, char *argv[])
 {
-    bool t = true;
-    bool f = false;
-
-    vsettings::schema sh;
-    sh.add("true", &t);
-    sh.add("false", &f);
-
-    auto ini = sh.build().to_ini();
-
-    vsettings sett;
-    sett.from_ini( ini );
-
-    std::swap( t, f );
-    sh.capture( sett );
-
-    sett.set("on", "on");
-    sett.set("off", "off");
-
-    EXPECT_EQ( sett.get<bool>("on"),  true  );
-    EXPECT_EQ( sett.get<bool>("off"), false );
-
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

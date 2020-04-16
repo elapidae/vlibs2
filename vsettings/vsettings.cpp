@@ -50,11 +50,69 @@ bool vsettings::is_valid_subgroup( cstr name )
     return is_valid_key( name );
 }
 //=======================================================================================
+//  [1] --Parsing UTF-8 characters
+//  https://ru.wikipedia.org/wiki/UTF-8
+//  if bits == 11 0xx xxx   -- it is two  bytes UTF-8 symbol.
+//  if bits == 11 10x xxx   -- it is tree bytes UTF-8 symbol.
+//  if bits == 11 110 xxx   -- it is four bytes UTF-8 symbol.
+//
+//  if first bits == 10 -- it is second and next utf8 symbols.
+//
+//  0300 == 11000000 mask for testing second and next utf8 symbols.
+//
+//  Returns: one correct UTF-8 symbol, extracted from begin of sequence
+//  If begin of sequence is not correct UTF-8 symbol, returns empty string.
+static std::string extract_utf8_symbol( const std::string& sequence )
+{
+    std::string res;
+    if ( sequence.empty() ) return res;
+
+    auto first_ch = sequence.at(0);
+    auto is_first_utf8 = (first_ch & 0300) == 0300;   // begins with 11.
+    if ( !is_first_utf8 ) return res;
+
+    uint stays = (first_ch & 0040) == 0000 ? 1 :  // two  bytes, stays 1 byte,
+                 (first_ch & 0060) == 0040 ? 2 :  // tree bytes, stays 2 bytes,
+                 (first_ch & 0070) == 0060 ? 3 :  // four bytes, stays 3 bytes,
+                 0;                               // not UTF-8.
+
+    //  Not UTF-8 marker.
+    if (stays == 0) return res;
+
+    //  sequence is too short.
+    if ( sequence.size() < stays + 1 ) return res;
+
+    //  Check all next symbols, that they begin with 10 bits.
+    for ( uint i = 1; i <= stays; ++i )
+        if ( (sequence[i] & 0300) != 0200 ) return res;
+
+    //  Form result.
+    res.push_back( first_ch );
+    for ( uint i = 1; i <= stays; ++i )
+        res.push_back( sequence[i] );
+
+    return res;
+}
+//---------------------------------------------------------------------------------------
 string escape_value( vsettings::cstr val )
 {
     string res;
-    for ( auto ch: val )
+    for ( uint i = 0; i < val.size(); ++i )
     {
+        auto ch = val.at(i);
+
+        auto is_first_utf8 = (ch & 0300) == 0300;   // begins with 11.
+        if ( is_first_utf8 )
+        {
+            auto utf8 = extract_utf8_symbol( val.substr(i) );
+            if ( !utf8.empty() )
+            {
+                res += utf8;
+                i += utf8.size() - 1;
+                continue;
+            }
+        }
+
         if ( std::iscntrl(ch) )
         {
             add_escaped( &res, ch );
