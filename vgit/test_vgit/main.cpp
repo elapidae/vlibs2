@@ -175,10 +175,40 @@ TEST_F( VGit_Test, entry )
     EXPECT_EQ( entry.author_name,   vgit::author_name()     );
     EXPECT_EQ( entry.author_email,  vgit::author_email()    );
     EXPECT_EQ( entry.date,          vgit::date()            );
+    EXPECT_EQ( entry.vlibs,         vgit::vlibs_msg()       );
 }
 
 //=======================================================================================
 
+TEST_F( VGit_Test, test_vlibs_fix )
+{
+    EXPECT_EQ( vgit::hash(),        vgit::vlibs_hash()      );
+    EXPECT_EQ( vgit::revcount(),    vgit::vlibs_revcount()  );
+}
+
+//=======================================================================================
+
+TEST_F( VGit_Test, test_macro )
+{
+    bool ok =
+        #if VLIBS_REVCOUNT >= 198
+            true;
+        #else
+            false;
+        #endif
+
+    EXPECT_TRUE( ok );
+}
+
+//=======================================================================================
+
+TEST_F( VGit_Test, test_vlibs_feature )
+{
+    vdeb << "We can know vlibs ver: " << vgit::vlibs_msg();
+    vdeb << "And commits count (use macro VLIBS_REVCOUNT):" << VLIBS_REVCOUNT;
+}
+
+//=======================================================================================
 
 
 //=======================================================================================
@@ -186,6 +216,8 @@ TEST_F( VGit_Test, entry )
 //=======================================================================================
 int main(int argc, char *argv[])
 {
+    vdeb << "Cur revcount + 1: " << (VLIBS_REVCOUNT + 1) << "\n\n";
+
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

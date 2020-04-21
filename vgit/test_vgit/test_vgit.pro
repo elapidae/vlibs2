@@ -11,5 +11,3 @@ include( $$VLIBS_DIR/qmake/gtest.pri )
 
 MAIN_DIR = $$PWD
 include( $$VLIBS_DIR/qmake/vgit.pri )
-
-INCLUDEPATH += $$PWD

@@ -12,7 +12,7 @@
 
 
 #========================================================================================
-#   NB! Краткие комментарии см. в vgit_impl.pri
+#   NB! Краткие комментарии см. в impl_vgit.pri
 #========================================================================================
 
 
@@ -88,13 +88,36 @@ if ( NOT  VGIT_IMPL_INCLUDED )
     string(REGEX REPLACE "[\"\r\n]+" "" VGIT_DATE ${VGIT_DATE})
     add_definitions( -DVGIT_DATE_ELPD=${VGIT_DATE} )
 
+    # vlibs -----------------------------------------------------------------------------
+    # vlibs hash ------------------------------------------------------------------------
+    execute_process( COMMAND git log -n 1 --pretty=format:"%H"
+                     WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
+                     OUTPUT_VARIABLE VGIT_VLIBS_HASH )
+
+    string(REGEX REPLACE "[\"\r\n]+" "" VGIT_VLIBS_HASH ${VGIT_VLIBS_HASH})
+    add_definitions( -DVGIT_VLIBS_HASH_ELPD=${VGIT_VLIBS_HASH} )
+
+    # vlibs revcount --------------------------------------------------------------------
+    execute_process( COMMAND git rev-list HEAD --count
+                     WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
+                     OUTPUT_VARIABLE VGIT_VLIBS_REVCOUNT )
+
+    string(REGEX REPLACE "[\"\r\n]+" "" VGIT_VLIBS_REVCOUNT ${VGIT_VLIBS_REVCOUNT})
+    add_definitions( -DVGIT_VLIBS_REVCOUNT_ELPD=${VGIT_VLIBS_REVCOUNT} )
+
+    # -----------------------------------------------------------------------------------
+    set( VGIT_VLIBS "${VGIT_VLIBS_HASH}(${VGIT_VLIBS_REVCOUNT})" )
+    add_definitions( -DVLIBS_REVCOUNT=${VGIT_VLIBS_REVCOUNT} )
+    set( VLIBS_REVCOUNT ${VGIT_VLIBS_REVCOUNT} )
+
     # -----------------------------------------------------------------------------------
     message( "=== Catched git hash: ${VGIT_HASH}"
                   ", rev-count: ${VGIT_REVCOUNT}"
                      ", branch: ${VGIT_BRANCH}"
                 ", author-name: ${VGIT_AUTHOR_NAME}"
                ", author-email: ${VGIT_AUTHOR_EMAIL}"
-                       ", date: ${VGIT_DATE} ===" )
+                       ", date: ${VGIT_DATE}"
+                      ", vlibs: ${VGIT_VLIBS} ===" )
 
     message( "=== vgit impl included ===" )
 
