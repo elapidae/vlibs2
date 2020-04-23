@@ -6,9 +6,15 @@ using namespace impl_vposix;
 
 
 //=======================================================================================
-void wrap_sys_file::lock_exclusive( int fd )
+bool wrap_sys_file::try_lock_exclusive( int fd )
 {
-    flock(fd,8);
-    linux_call::check( ::flock, fd, LOCK_EX|LOCK_NB );
+    auto res = linux_call::no_err( ::flock, fd, LOCK_EX|LOCK_NB );
+    if ( res == 0 ) return true;
+
+    ErrNo err;
+    if ( err.resource_unavailable_try_again() )
+        return false;
+
+    throw posix_error( "wrap_sys_file::try_lock_exclusive( int fd )" );
 }
 //=======================================================================================
