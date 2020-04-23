@@ -27,6 +27,10 @@ public:
     static std::string author_email();
     static std::string date();
 
+    static std::string vlibs_msg();
+    static std::string vlibs_hash();
+    static std::string vlibs_revcount();
+
     // Метка времени компиляции.
     // К git отношения не имеет, но здесь вполне уместно...
     static std::string compile_datetime();
@@ -51,6 +55,7 @@ public:
         std::string author_name;
         std::string author_email;
         std::string date;
+        std::string vlibs;
     };
 
     static entry cur_entry();
@@ -69,7 +74,7 @@ namespace s11n
     {
         using _s = std::string;
 
-        static std::tuple<_s,_s,_s,_s,_s,_s>
+        static std::tuple<_s,_s,_s,_s,_s,_s,_s>
         to_tuple( const vgit::entry& e )
         {
             return  std::make_tuple( e.hash,
@@ -77,7 +82,8 @@ namespace s11n
                                      e.branch,
                                      e.author_name,
                                      e.author_email,
-                                     e.date );
+                                     e.date,
+                                     e.vlibs );
         }
     };
 } // s11n namespace

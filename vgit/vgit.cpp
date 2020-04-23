@@ -21,14 +21,17 @@
 //  Частично здесь: https://habr.com/en/post/246971/
 //  Частично подбором. Второй макрос нужен, даже если кажется что нет.
 #define VGIT_QUOTES_FOR_EXTRACT_DEFINES(name) #name
-#define VGIT_STRING_FOR_EXTRACT_DEFINES(macro) VGIT_QUOTES_FOR_EXTRACT_DEFINES(macro)
+#define VGIT_STR_FOR_EXTRACT(macro) VGIT_QUOTES_FOR_EXTRACT_DEFINES(macro)
 //=======================================================================================
-#define VGIT_CURRECT_HASH         VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_HASH_ELPD)
-#define VGIT_CURRECT_REVCOUNT     VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_REVCOUNT_ELPD)
-#define VGIT_CURRECT_BRANCH       VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_BRANCH_ELPD)
-#define VGIT_CURRECT_AUTHOR_NAME  VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_AUTHOR_NAME_ELPD)
-#define VGIT_CURRECT_AUTHOR_EMAIL VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_AUTHOR_EMAIL_ELPD)
-#define VGIT_CURRECT_DATE         VGIT_STRING_FOR_EXTRACT_DEFINES(VGIT_DATE_ELPD)
+#define VGIT_CURRECT_HASH               VGIT_STR_FOR_EXTRACT(VGIT_HASH_ELPD)
+#define VGIT_CURRECT_REVCOUNT           VGIT_STR_FOR_EXTRACT(VGIT_REVCOUNT_ELPD)
+#define VGIT_CURRECT_BRANCH             VGIT_STR_FOR_EXTRACT(VGIT_BRANCH_ELPD)
+#define VGIT_CURRECT_AUTHOR_NAME        VGIT_STR_FOR_EXTRACT(VGIT_AUTHOR_NAME_ELPD)
+#define VGIT_CURRECT_AUTHOR_EMAIL       VGIT_STR_FOR_EXTRACT(VGIT_AUTHOR_EMAIL_ELPD)
+#define VGIT_CURRECT_DATE               VGIT_STR_FOR_EXTRACT(VGIT_DATE_ELPD)
+
+#define VGIT_VLIBS_CURRECT_HASH         VGIT_STR_FOR_EXTRACT(VGIT_VLIBS_HASH_ELPD)
+#define VGIT_VLIBS_CURRECT_REVCOUNT     VGIT_STR_FOR_EXTRACT(VGIT_VLIBS_REVCOUNT_ELPD)
 //=======================================================================================
 
 
@@ -49,7 +52,7 @@ std::string vgit::branch()
     std::string res = VGIT_CURRECT_BRANCH;
 
     if ( res.empty() )
-        return  "DETACHED HEAD";
+        res = "DETACHED HEAD";
 
     return res;
 }
@@ -67,6 +70,21 @@ std::string vgit::author_email()
 std::string vgit::date()
 {
     return VGIT_CURRECT_DATE;
+}
+//=======================================================================================
+std::string vgit::vlibs_msg()
+{
+    return vlibs_hash() + "(" + vlibs_revcount() + ")";
+}
+//=======================================================================================
+std::string vgit::vlibs_hash()
+{
+    return VGIT_VLIBS_CURRECT_HASH;
+}
+//=======================================================================================
+std::string vgit::vlibs_revcount()
+{
+    return VGIT_VLIBS_CURRECT_REVCOUNT;
 }
 //=======================================================================================
 
@@ -91,6 +109,10 @@ std::string vgit::as_message( const std::string& query )
     if ( query == "--vgit-author-email" )   return author_email();
     if ( query == "--vgit-date"         )   return date();
 
+    if ( query == "--vgit-vlibs"          ) return vlibs_msg();
+    if ( query == "--vgit-vlibs-hash"     ) return vlibs_hash();
+    if ( query == "--vgit-vlibs-revcount" ) return vlibs_revcount();
+
     std::stringstream ss;
     ss << "hash="           << hash()
        << ", branch="       << branch()
@@ -98,7 +120,8 @@ std::string vgit::as_message( const std::string& query )
        << ", date="         << date()
        << ", author-name="  << author_name()
        << ", author-email=" << author_email()
-       << ", comptime="     << compile_datetime();
+       << ", comptime="     << compile_datetime()
+       << ", vlibs="        << vlibs_msg();
 
     return ss.str();
 }
@@ -121,13 +144,14 @@ void vgit::print_and_exit_if_need( int argc, const char * const * const argv,
 //=======================================================================================
 vgit::entry vgit::cur_entry()
 {
-    return { hash(), revcount(), branch(), author_name(), author_email(), date() };
+    return { hash(), revcount(), branch(), author_name(), author_email(), date(),
+             vlibs_msg() };
 }
 //=======================================================================================
 
 //=======================================================================================
 #undef VGIT_QUOTES_FOR_EXTRACT_DEFINES
-#undef VGIT_STRING_FOR_EXTRACT_DEFINES
+#undef VGIT_STR_FOR_EXTRACT
 
 #undef VGIT_CURRECT_HASH
 #undef VGIT_CURRECT_REVCOUNT

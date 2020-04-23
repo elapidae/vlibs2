@@ -9,7 +9,7 @@
 ##  information to ensure the GNU Lesser General Public License version 3 requirements
 ##  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 #########################################################################################
-# vgit_impl/vgit_impl.pri
+# impl_vgit/impl_vgit.pri
 
 #========================================================================================
 #
@@ -28,13 +28,13 @@
 #   Юра написал команду sed, чтобы избавиться от этой самой скобочки.
 #
 #   UPD 2019-02-06  by Elapidae
-#   Вся механика перенесена в этот файл (vgit_impl.pri) чтобы случайно не затереть.
+#   Вся механика перенесена в этот файл (impl_vgit.pri) чтобы случайно не затереть.
 #
 #========================================================================================
 
-isEmpty(qi_vgit_impl) {
+isEmpty(qi_impl_vgit) {
     # -----------------------------------------------------------------------------------
-    qi_vgit_impl = 1;
+    qi_impl_vgit = 1;
     isEmpty(qi_not_print_pri_messages): message("=== vgit (impl) appended ===")
 
     # MAIN_DIR symbol control -----------------------------------------------------------
@@ -72,13 +72,31 @@ isEmpty(qi_vgit_impl) {
     DEFINES +=         VGIT_DATE_ELPD=\"$${VGIT_DATE}\"
 
     # -----------------------------------------------------------------------------------
+    #   Поддержка версии vlibs.
+    VGIT_VLIBS_HASH     = "$$system(cd \"$$system_path($$PWD)\"  &&  \
+                           git log -n 1 --pretty=format:\"%H\")"
 
-    message(">>> Current git hash: $${VGIT_HASH}, \
-                         revcount: $${VGIT_REVCOUNT}, \
-                           branch: $${VGIT_BRANCH}, \
-                      author-name: $${VGIT_AUTHOR_NAME}, \
-                     author-email: $${VGIT_AUTHOR_EMAIL}, \
-                             date: $${VGIT_DATE}\
+    VGIT_VLIBS_REVCOUNT = "$$system(cd \"$$system_path($$PWD)\"  &&  \
+                           git rev-list HEAD --count)"
+
+    VGIT_VLIBS          = $${VGIT_VLIBS_HASH}($${VGIT_VLIBS_REVCOUNT})
+
+    DEFINES +=         VGIT_VLIBS_HASH_ELPD=\"$${VGIT_VLIBS_HASH}\"
+    DEFINES +=     VGIT_VLIBS_REVCOUNT_ELPD=\"$${VGIT_VLIBS_REVCOUNT}\"
+
+    #   Пусть будет для фиксации и проверки на версионность.
+    DEFINES += VLIBS_REVCOUNT=$${VGIT_VLIBS_REVCOUNT}
+    VLIBS_REVCOUNT = $${VGIT_VLIBS_REVCOUNT}
+
+    # -----------------------------------------------------------------------------------
+
+    message(">>> Current git hash: $${VGIT_HASH},\
+                         revcount: $${VGIT_REVCOUNT},\
+                           branch: $${VGIT_BRANCH},\
+                      author-name: $${VGIT_AUTHOR_NAME},\
+                     author-email: $${VGIT_AUTHOR_EMAIL},\
+                             date: $${VGIT_DATE},\
+                            vlibs: $${VGIT_VLIBS}\
                              ")
 
     # -----------------------------------------------------------------------------------
@@ -94,6 +112,6 @@ isEmpty(qi_vgit_impl) {
                         $(DEL_FILE) $${VMakeFileForRemove}
 
     # -----------------------------------------------------------------------------------
-} # ifndef qi_vgit_impl
-# vgit_impl/vgit_impl.pri
+} # ifndef qi_impl_vgit
+# impl_vgit/impl_vgit.pri
 #========================================================================================
