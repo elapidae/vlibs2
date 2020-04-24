@@ -47,3 +47,6 @@ add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
 set( PROJECT vprofile )
 add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
 
+set( PROJECT vcmdline_parser )
+add_subdirectory( "${VLIBS_DIR}/${PROJECT}/test_${PROJECT}/" )
+

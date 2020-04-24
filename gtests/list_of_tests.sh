@@ -57,6 +57,10 @@ PROJECT=vprofile
 vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
 
 echo ====================================================================================
+PROJECT=vcmdline_parser
+vlibs/$PROJECT/test_$PROJECT/test_$PROJECT      || exit 1
+
+echo ====================================================================================
 
 
 

@@ -45,3 +45,6 @@ SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
 
 PROJECT = vprofile
 SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
+
+PROJECT = vcmdline_parser
+SUBDIRS += vlibs/$${PROJECT}/test_$${PROJECT}
