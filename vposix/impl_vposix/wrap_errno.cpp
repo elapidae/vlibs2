@@ -10,6 +10,11 @@
 using namespace impl_vposix;
 
 //=======================================================================================
+posix_error::posix_error( const std::string& msg )
+    : runtime_error( msg )
+    , err()
+{}
+//=======================================================================================
 posix_error::posix_error( int e, const std::string& msg )
     : runtime_error( msg )
     , err( e )
@@ -25,6 +30,11 @@ ErrNo::ErrNo()
 ErrNo::ErrNo( int code )
     : _err( code )
 {}
+//=======================================================================================
+int ErrNo::code() const
+{
+    return _err;
+}
 //=======================================================================================
 std::string ErrNo::text() const
 {

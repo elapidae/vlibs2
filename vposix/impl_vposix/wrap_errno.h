@@ -26,7 +26,8 @@ namespace impl_vposix
         ErrNo();
         ErrNo( int code );
 
-        bool has() const;
+        int  code() const;
+        bool has()  const;
         std::string text() const;
 
         //  Бросает verror(text) если есть ошибка.
@@ -57,6 +58,7 @@ namespace impl_vposix
     class posix_error : public std::runtime_error
     {
     public:
+        posix_error( const std::string& msg );
         posix_error( int e, const std::string& msg );
         ErrNo err;
     };
