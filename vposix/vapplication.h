@@ -25,8 +25,6 @@ public:
     static void poll();
     static void stop();
 
-    class args_parser;
-
     static pid_t pid() noexcept;
 
 private:

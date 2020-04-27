@@ -10,6 +10,19 @@
 **  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 ****************************************************************************************/
 
+//=======================================================================================
+/*
+ *  TODO: Пора разбирать posix на отдельные блоки:
+ *   - polling
+ *   - file operations
+ *   - time operations
+ *   - terminal & serial port
+ *   - sockets & network & tcp & udp & can
+ *   - processes
+ *  Иначе все в одной куче получается, неудобно.
+*/
+//=======================================================================================
+
 #include "gtest/gtest.h"
 #include "vcat.h"
 #include "vlog.h"
@@ -64,25 +77,6 @@ TEST_F( VPosix_Test, 1 )
     auto fd2 = wrap_fcntl::open_append( "test.txt" );
     wrap_unistd::write( fd2, "3\n" );
     wrap_stdio::file_rename( "test.txt", "test.1.txt" );
-}
-
-//=======================================================================================
-
-TEST_F( VPosix_Test, 2 )
-{
-    using namespace impl_vposix;
-
-    // к сожалению, не умею делать блокировку файлов.
-    auto fd1 = wrap_fcntl::open_append( "1.txt" );
-    wrap_unistd::close( fd1 );
-
-    //wrap_unistd::write( fd1, vcat(getpid(), "\n") );
-
-    //wrap_sys_file::lock_exclusive( fd1 );
-    //wrap_fcntl::set_write_lock( fd1 );
-    //wrap_fcntl::get_print_lock( fd1 );
-    //vdeb << "locked";
-    //sleep(1000);
 }
 
 //=======================================================================================
@@ -310,41 +304,6 @@ TEST_F( VPoll_Test, context )
     }); // in thread
 
     vapplication::poll();
-}
-
-//=======================================================================================
-TEST_F( VPoll_Test, vapplication_args_parser )
-{
-    std::vector<const char*> v_args;
-    v_args.push_back( "app_path/app_name" );
-    v_args.push_back( "has" );
-
-    v_args.push_back( "key" );
-    v_args.push_back( "val" );
-
-    v_args.push_back( "if=somefile" );
-    v_args.push_back( "-p722" );
-
-    vapplication::args_parser args( v_args.size(), v_args.data() );
-
-    //  has не трогает, take помечает.
-    EXPECT_TRUE( args.has("has") );
-    EXPECT_TRUE( args.has("has") );
-    EXPECT_TRUE( args.take("has") );
-    EXPECT_FALSE( args.has("has") );
-    EXPECT_FALSE( args.take("has") );
-
-    EXPECT_EQ( args.take_next("key"), "val" );
-    EXPECT_EQ( args.safe_next("key", "not"), "not" );
-    EXPECT_EQ( args.safe_next("-c", "%"), "%" );
-    EXPECT_THROW( args.take_next("key"), vapplication::args_parser::error );
-
-    EXPECT_EQ( args.take_starts_with("if="), "somefile" );
-    EXPECT_EQ( args.take_starts_with("-p"), "722" );
-
-    EXPECT_THROW( args.take_starts_with("if="), vapplication::args_parser::error );
-
-    EXPECT_EQ( args.safe_starts_with("-c=", "%"), "%" );
 }
 
 //=======================================================================================
