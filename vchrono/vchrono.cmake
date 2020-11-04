@@ -30,6 +30,11 @@ if ( NOT  VCHRONO_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/impl_vchrono/time_meter.h" )
 
     set( V_HEADERS ${V_HEADERS}
+                  "${VLIBS_DIR}/vchrono/impl_vchrono/sys_helper_vchrono.h")
+    set( V_HEADERS ${V_HEADERS}
+                  "${VLIBS_DIR}/vchrono/impl_vchrono/sys_helper_vchrono.cpp")
+
+    set( V_HEADERS ${V_HEADERS}
                   "${VLIBS_DIR}/vchrono/impl_vchrono/human_readable_time.h" )
     set( V_SOURCES ${V_SOURCES}
                   "${VLIBS_DIR}/vchrono/impl_vchrono/human_readable_time.cpp" )

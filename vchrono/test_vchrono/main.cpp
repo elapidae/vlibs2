@@ -24,9 +24,6 @@
 #include "vtime_point.h"
 #include "vtime_meter.h"
 
-//#include "vtimemeter.h"
-//#include <list>
-//#include <deque>
 
 using namespace std;
 using namespace std::chrono;
