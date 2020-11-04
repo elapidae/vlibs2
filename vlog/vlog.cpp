@@ -6,9 +6,32 @@
 #include <cassert>
 #include <memory>
 
-#include "impl_vlog/shared_log.h"
-#include "impl_vlog/leveled_log.h"
 #include "vcat.h"
+
+//=======================================================================================
+//  UPD 2020-11-04 -- omit file loggers in windows systems.
+#ifndef V_LOG_NOT_USE_POSIX
+
+    #include "impl_vlog/shared_log.h"
+    #include "impl_vlog/leveled_log.h"
+
+    static std::unique_ptr<pre_posix::file::shared_log>  shared_log;
+    static std::unique_ptr<pre_posix::file::leveled_log> leveled_log;
+
+    static void clear_file_loggers()
+    {
+        shared_log.reset();
+        leveled_log.reset();
+    }
+
+#else
+
+    static void clear_file_loggers()
+    {}
+
+#endif
+//=======================================================================================
+
 
 using namespace impl_vlog;
 using namespace std;
@@ -21,8 +44,6 @@ static void to_cout( const entry& e );
 static std::vector<vlog::Executer>      executers { to_cout };
 static std::unordered_set<std::string>  omit_domains {};
 
-static std::unique_ptr<pre_posix::file::shared_log>  shared_log;
-static std::unique_ptr<pre_posix::file::leveled_log> leveled_log;
 //---------------------------------------------------------------------------------------
 static string for_std_cxxx( const entry& e )
 {
@@ -51,8 +72,7 @@ static void to_cerr( const entry& e )
 void vlog::clear_executers()
 {
     executers.clear();
-    shared_log.reset();
-    leveled_log.reset();
+    clear_file_loggers();
 }
 //---------------------------------------------------------------------------------------
 void vlog::add_executer( vlog::Executer e )
@@ -93,19 +113,32 @@ bool vlog::_need_omit_domain( const string& domain )
     return omit_domains.count( domain );
 }
 //=======================================================================================
-void vlog::set_shared_log( const string& fname, uint filesize, uint rotates )
+#ifndef V_LOG_NOT_USE_POSIX
+void vlog::set_shared_log( const string& fname, unsigned filesize, unsigned rotates )
 {
     assert( !shared_log );
     shared_log.reset(new pre_posix::file::shared_log( fname, filesize, rotates) );
 
     add_executer( [](const entry& e){ shared_log->write(e); } );
 }
-//=======================================================================================
-void vlog::set_leveled_log( const string& path, uint filesize, uint rotates )
+
+void vlog::set_leveled_log( const string& path, unsigned filesize, unsigned rotates )
 {
     assert( !leveled_log );
     leveled_log.reset( new pre_posix::file::leveled_log(path,filesize,rotates) );
 
     add_executer( [](const entry& e){ leveled_log->write(e); } );
 }
+#else
+//=======================================================================================
+//  Not deprecated, but do not work!
+[[deprecated]]
+void vlog::set_shared_log( const string&, unsigned, unsigned )
+{}
+
+//  Not deprecated, but do not work!
+[[deprecated]]
+void vlog::set_leveled_log( const string&, unsigned, unsigned )
+{}
+#endif
 //=======================================================================================
