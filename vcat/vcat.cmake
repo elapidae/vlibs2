@@ -32,6 +32,9 @@ if ( NOT  VCAT_INCLUDED )
     set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/impl_vcat/vcat_qt_deploy.h"   )
     set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vcat/impl_vcat/vcat_qt_deploy.cpp" )
 
+    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcat/impl_vcat/vcat_wchar_deploy.h"   )
+    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vcat/impl_vcat/vcat_wchar_deploy.cpp" )
+
     message( "=== vcat included ===" )
 endif()
 # vcat.cmake
