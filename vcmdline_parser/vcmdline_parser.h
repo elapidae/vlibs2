@@ -25,6 +25,7 @@ public:
 public:
     using str  = std::string;
     using cstr = const str&;
+    using uint = unsigned int;
 
     class error : public std::runtime_error { public: error(cstr msg); };
 

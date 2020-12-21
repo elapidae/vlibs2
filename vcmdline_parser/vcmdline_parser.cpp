@@ -3,8 +3,9 @@
 #include "vcat.h"
 #include <cassert>
 
-using str = std::string;
+using str  = std::string;
 using cstr = const str&;
+using uint = unsigned int;
 
 //=======================================================================================
 //      vcmdline_parser

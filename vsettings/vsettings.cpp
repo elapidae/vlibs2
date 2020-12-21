@@ -8,6 +8,7 @@
 
 using namespace std;
 
+using uint = unsigned int;
 
 //=======================================================================================
 static void add_escaped( string* res, char ch )
