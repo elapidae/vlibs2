@@ -94,8 +94,8 @@ public:
     // размера filesize последнего файла логгирования происходит очистка первого файла
     // и дальнейшая запись в него и т.д.
     static void set_shared_log( const std::string& fname,
-                                uint filesize,
-                                uint rotates );
+                                unsigned filesize,
+                                unsigned rotates );
 
     // Leveled log - каждый уровень логгирования записывается в свой собственный файл.
     // Принцип работы логгера идентичен Shared Log, только параметр rotates определяет
@@ -103,8 +103,8 @@ public:
     // Т.е. список файлов логов представляет собой warn_log.0 ... warn_log.n,
     // debug_log.0 ... debug_log.n и т.д., где n определяется через rotates.
     static void set_leveled_log( const std::string& path,
-                                 uint filesize,
-                                 uint rotates );
+                                 unsigned filesize,
+                                 unsigned rotates );
 
     //-----------------------------------------------------------------------------------
     // Кухня работы с доменами логов.

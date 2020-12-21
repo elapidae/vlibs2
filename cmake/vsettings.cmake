@@ -1,1 +1,1 @@
-../vsettings/vsettings.cmake
+include(${CMAKE_CURRENT_LIST_DIR}/../vsettings/vsettings.cmake)

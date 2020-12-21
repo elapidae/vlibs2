@@ -38,7 +38,7 @@
 
 //=======================================================================================
 //  For debugging...
-#define vdeb std::cout << basename(__FILE__) << ":" << __LINE__ << "==> "
+#define vcout std::cout << basename(__FILE__) << ":" << __LINE__ << "==> "
 //=======================================================================================
 
 
@@ -57,7 +57,7 @@ class VCat_Test: public testing::Test
 
 TEST_F( VCat_Test, hello_world )
 {
-    vdeb << vcat( "Hello", " ", "world", '!', '\n' );
+    vcout << vcat( "Hello", " ", "world", '!', '\n' );
 
     EXPECT_EQ( vcat().str(), "" );
     EXPECT_EQ( vcat("Hello world!").str(), "Hello world!" );
@@ -220,12 +220,23 @@ TEST_F( VCat_Test, aligned )
     l2.precision(6).aligned(rd(), 7)("|").aligned(rd(), 7)("|").aligned(rd(),7) << "|";
     l3.precision(6).aligned(rd(), 7)("|").aligned(rd(), 7)("|").aligned(rd(),7) << "|";
 
-    vdeb << vcat().aligned('-', 25, '-') << endl;
-    vdeb << l1 << endl;
-    vdeb << l2 << endl;
-    vdeb << l3 << endl;
-    vdeb << vcat().aligned('-', 25, '-') << endl;
+    vcout << vcat().aligned('-', 25, '-') << endl;
+    vcout << l1 << endl;
+    vcout << l2 << endl;
+    vcout << l3 << endl;
+    vcout << vcat().aligned('-', 25, '-') << endl;
 
+}
+
+//=======================================================================================
+
+TEST_F( VCat_Test, wchar_output )
+{
+    wchar_t test[] = L"Превед медвеДЪ hello world 1234567890";
+    vcout << test << endl;
+
+    std::wstring t2 = L"Как же мну уникод шестнадцатый не вставился-то...";
+    vcout << t2 << endl;
 }
 
 //=======================================================================================

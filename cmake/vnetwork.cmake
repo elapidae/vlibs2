@@ -1,1 +1,1 @@
-../vnetwork/vnetwork.cmake
+include(${CMAKE_CURRENT_LIST_DIR}/../vnetwork/vnetwork.cmake)

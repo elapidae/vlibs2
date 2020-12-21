@@ -1,12 +1,12 @@
 #include "human_readable_time.h"
 
-#include <assert.h>
-#include <stdexcept>
-#include "vvoid_type.h"
-#include "vcompiler_traits.h"
-
 #include <sstream>
 #include <iomanip>
+#include <assert.h>
+#include <stdexcept>
+
+#include "vcompiler_traits.h"
+#include "impl_vchrono/sys_helper_vchrono.h"
 
 using namespace impl_vchrono;
 
@@ -15,7 +15,7 @@ using namespace impl_vchrono;
 // Милый mktime считает, что время локальное, не UTC.
 // Еле нашел решение (которое "- timezone"):
 // http://qaru.site/questions/221156/stdmktime-and-timezone-info
-static time_t tm_to_time_t( tm * tm )
+static time_t tm_to_time_t( tm * tm ) noexcept
 {
     return std::mktime(tm) - timezone;
 }
@@ -30,24 +30,12 @@ static std::string str_ms( int ms )
 
 
 //=======================================================================================
+//  UPD 2020-11-04 -- Logic has moved to module sys_helper_vchrono.
 human_readable_time human_readable_time::from_format( const std::string& dt,
                                                       const std::string& fmt )
 {
-    //      Alternate variant, but do not work on gcc 4.8
-    //    std::tm t = {};
-    //    std::istringstream ss( dt );
-    //    ss >> std::get_time( &t, fmt.c_str() );
-    //    if ( ss.fail() || ss.bad() )
-    //        throw std::runtime_error( "human_readable_time: bad date '" + dt +
-    //                                  "' with fmt '" + fmt + "'" );
-
-    std::tm t {0,0,0,0,0,0,0,0,0,0,nullptr};
-    auto end_pos = strptime( dt.c_str(), fmt.c_str(), &t );
-    uint distance = uint(end_pos - dt.c_str());
-    if ( distance != dt.size() )
-        throw std::runtime_error( "human_readable_time: bad date '" + dt +
-                                  "' with fmt '" + fmt + "'" );
-    return tm_to_time_t( &t );
+    auto res = sys_helper::str_to_tm( dt, fmt );
+    return tm_to_time_t( &res );
 }
 //=======================================================================================
 human_readable_time human_readable_time::from_date_time( const std::string& dt )
@@ -76,7 +64,7 @@ human_readable_time human_readable_time::from_utc( int year, int month,  int day
     if ( minute < 0 || minute > 59 ) th_err( "bad minute"   );
     if ( sec    < 0 || sec    > 59 ) th_err( "bad second"   );
 
-    tm t {0,0,0,0,0,0,0,0,0,0,nullptr};
+    tm t {};
     t.tm_year = year - 1900;
     t.tm_mon  = month - 1;
     t.tm_mday = day;
@@ -90,11 +78,11 @@ human_readable_time human_readable_time::from_utc( int year, int month,  int day
 
 
 //=======================================================================================
-human_readable_time::human_readable_time( time_t tt, uint millisec )
+human_readable_time::human_readable_time( time_t tt, unsigned millisec )
     : _milliseconds( int(millisec) )
 {
     assert( millisec < 1000 );
-    gmtime_r( &tt, &_tm );
+    sys_helper::time_t_to_tm( tt, &_tm );
 }
 //---------------------------------------------------------------------------------------
 int human_readable_time::year() const

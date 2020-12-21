@@ -34,7 +34,7 @@ namespace impl_vchrono
             : human_readable_time( tp.to_time_t(), tp.milliseconds().count() % 1000 )
         {}
 
-        human_readable_time( std::time_t tt, uint millisec = 0 );
+        human_readable_time( std::time_t tt, unsigned millisec = 0 );
 
         //-------------------------------------------------------------------------------
         int year()          const;  //
