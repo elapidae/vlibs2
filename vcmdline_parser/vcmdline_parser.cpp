@@ -27,6 +27,12 @@ vcmdline_parser::vcmdline_parser( int argc, const char * const * const argv )
     //  Parse application name and path.
     auto pos = _args.at(0).find_last_of( '/' );
 
+    //  For MinGW...
+    if ( pos == str::npos )
+    {
+        pos = _args.at(0).find_last_of( '\\' );
+    }
+
     if ( pos == str::npos )
         throw error( vcat("Bad application name: '", _args.at(0),"'.") );
 
