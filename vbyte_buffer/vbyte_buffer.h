@@ -32,6 +32,8 @@ public:
     //-----------------------------------------------------------------------------------
 
     using vector = std::vector<vbyte_buffer>;
+    using uint   = unsigned int;        //  For MinGW
+    using ulong  = unsigned long;       //  compatibility
 
     //-----------------------------------------------------------------------------------
 
