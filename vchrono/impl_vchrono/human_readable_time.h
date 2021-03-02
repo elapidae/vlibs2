@@ -34,7 +34,7 @@ namespace impl_vchrono
             : human_readable_time( tp.to_time_t(), tp.milliseconds().count() % 1000 )
         {}
 
-        human_readable_time( std::time_t tt, unsigned millisec = 0 );
+        human_readable_time( time_t tt, unsigned millisec = 0 );
 
         //-------------------------------------------------------------------------------
         int year()          const;  //
@@ -70,7 +70,7 @@ namespace impl_vchrono
         std::tm _tm;
         int _milliseconds = 0;
 
-        std::time_t _to_time_t() const;
+        time_t _to_time_t() const;
     };
     //===================================================================================
     template<typename TimePoint>

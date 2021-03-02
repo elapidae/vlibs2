@@ -41,7 +41,7 @@ namespace impl_vchrono
 
         //-------------------------------------------------------------------------------
         system_type time_point() const;
-        std::time_t to_time_t()  const;
+        time_t to_time_t()  const;
 
         //-------------------------------------------------------------------------------
         human_readable_time humanable() const;
@@ -173,7 +173,7 @@ namespace impl_vchrono
     }
     //-----------------------------------------------------------------------------------
     template<typename Clk, typename Derived>
-    std::time_t time_point_base<Clk,Derived>::to_time_t() const
+    time_t time_point_base<Clk,Derived>::to_time_t() const
     {
         return Clk::to_time_t( _tp );
     }

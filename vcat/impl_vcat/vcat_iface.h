@@ -127,7 +127,10 @@ namespace impl_vcat
         D& _cat ( _std_hex_type          modifier );
         D& _cat ( _std_setprecision_type modifier );
         D& _cat ( _std_setfill_type      modifier );
+
+        #ifndef _MSC_VER
         D& _cat ( _std_setw_type         modifier );
+        #endif
     };
     //===================================================================================
     //      vcat_iface
@@ -226,11 +229,13 @@ namespace impl_vcat
         return _mod_cat( std::move(modifier) );
     }
     //-----------------------------------------------------------------------------------
+    #ifndef _MSC_VER
     template< typename D >
     D& vcat_iface<D>::_cat ( _std_setw_type modifier )
     {
         return _mod_cat( std::move(modifier) );
     }
+    #endif
     //===================================================================================
 
     //===================================================================================
