@@ -37,9 +37,11 @@ namespace impl_vlog
     //===================================================================================
 } // namespace impl_vlog
 //=======================================================================================
-
+#ifndef _MSC_VER
 #define V_POSITION_FIX impl_vlog::position_fix( __FILE__, __LINE__, __PRETTY_FUNCTION__ )
-
+#else
+#define V_POSITION_FIX impl_vlog::position_fix( __FILE__, __LINE__, __func__ )
+#endif
 //=======================================================================================
 
 #endif // IMPL_VLOG_POSITION_FIX_H

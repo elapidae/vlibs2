@@ -11,6 +11,9 @@
 using namespace impl_vchrono;
 
 
+#ifndef timezone
+    #define timezone _timezone
+#endif
 //=======================================================================================
 // Милый mktime считает, что время локальное, не UTC.
 // Еле нашел решение (которое "- timezone"):
