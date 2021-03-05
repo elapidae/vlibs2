@@ -11,9 +11,6 @@
 using namespace impl_vchrono;
 
 
-#ifndef timezone
-    #define timezone _timezone
-#endif
 //=======================================================================================
 #ifdef _MSC_VER
     #define timezone _timezone
