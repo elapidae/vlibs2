@@ -37,6 +37,11 @@ std::string position_fix::filename() const
 {
     std::string fpath( _file );
     auto slash_it = std::find( fpath.rbegin(), fpath.rend(), '/' );
+
+    //  Correction, if path use window slashes.
+    if ( slash_it == fpath.rend() )
+        slash_it = std::find( fpath.rbegin(), fpath.rend(), '\\' );
+
     return { slash_it.base(), fpath.end() };
 }
 //=======================================================================================
