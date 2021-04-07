@@ -67,6 +67,11 @@ const string& entry::domain() const
     return _domain;
 }
 //=======================================================================================
+const entry::fields_type &entry::fields() const
+{
+    return _fields;
+}
+//=======================================================================================
 string entry::level_str() const
 {
     switch ( _level )

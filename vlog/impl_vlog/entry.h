@@ -1,6 +1,7 @@
 #ifndef IMPL_VLOG_ENTRY_H
 #define IMPL_VLOG_ENTRY_H
 
+#include <map>
 #include "impl_vlog/position_fix.h"
 
 //=======================================================================================
@@ -14,12 +15,14 @@
 //=======================================================================================
 namespace impl_vlog
 {
+    class logger;
+
     class entry final
     {
     public:
         //-------------------------------------------------------------------------------
         enum class Level { Trace, Dbg, Runlog, Warning, Fatal };
-
+        using fields_type = std::map<std::string,std::string>;
         //-------------------------------------------------------------------------------
         const position_fix& pos()       const;
 
@@ -37,6 +40,8 @@ namespace impl_vlog
 
         bool        has_domain()        const;
         const std::string& domain()     const;
+
+        const fields_type& fields()     const;
 
         //-------------------------------------------------------------------------------
         //  Сервисная часть, нормальным людям ни к чему.
@@ -59,6 +64,8 @@ namespace impl_vlog
         std::string     _msg;
         std::string     _domain;
 
+        friend class    logger;
+        fields_type     _fields;
     }; // vlog::entry
     //===================================================================================
 } // namespace impl_vlog

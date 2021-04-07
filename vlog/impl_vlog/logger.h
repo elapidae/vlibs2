@@ -24,6 +24,11 @@ namespace impl_vlog
         logger& operator[] ( std::string domain );          // логирование по доменам
         logger& operator[] ( const char* domain );          //
 
+        logger& add_field( const std::string& key, const std::string& val );
+
+        template<typename T>
+        logger& add_field( const std::string& key, const T& val );
+
         //-------------------------------------------------------------------------------
     private:
         bool _is_on = true;         // меняется через operator[bool]
@@ -42,11 +47,23 @@ namespace impl_vlog
             _stream << std::forward<T>( val );
         }
 
+        entry::fields_type _fields;
+
         logger( logger && )                   = delete;
         logger( const logger & )              = delete;
         logger& operator= ( logger && )       = delete;
         logger& operator= ( const logger & )  = delete;
-    }; // logger class
+    };
+    //===================================================================================
+    template<typename T>
+    logger& logger::add_field( const std::string& key, const T& val )
+    {
+        //  If compile errors occured here, means type cannot streaming.
+        std::ostringstream ss;
+        ss << val;
+        add_field( key, ss.str() );
+        return *this;
+    } // logger class
     //===================================================================================
 } // impl_vlog namespace
 //=======================================================================================

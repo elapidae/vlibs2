@@ -28,6 +28,7 @@ logger::~logger() noexcept(false)
         msg.push_back( '\n' );
 
     auto ent = entry( _pos, _level, msg, _domain );
+    ent._fields = _fields;
     vlog::_execute( ent );
 }
 //=======================================================================================
@@ -51,5 +52,11 @@ logger& logger::operator[]( std::string domain )
 logger& logger::operator[]( const char* domain )
 {
     return operator[]( std::string(domain) );
+}
+//=======================================================================================
+logger &logger::add_field( const string& key, const string& val )
+{
+    _fields.emplace( key, val );
+    return *this;
 }
 //=======================================================================================

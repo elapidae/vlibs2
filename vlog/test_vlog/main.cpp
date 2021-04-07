@@ -226,6 +226,25 @@ TEST_F( VLog_Test, _primitive_file_logs )
     // См. логи около бинарника программы.
 }
 //=======================================================================================
+TEST_F( VLog_Test, fields )
+{
+    vlog::clear_executers();
+
+    vlog::add_executer( [](impl_vlog::entry e)
+    {
+        cout << "<--------------->" << endl;
+        for ( auto& f: e.fields() )
+        {
+            cout << "Field: " << f.first << ":" << f.second << endl;
+        }
+        cout << "</-------------->" << endl;
+    });
+    vdeb.add_field("key 1", "val 1");
+    vdeb.add_field("int", 42)
+        .add_field("ulong", 4242ul)
+        .add_field("time", vtime_point::now());
+}
+//=======================================================================================
 
 
 //=======================================================================================
