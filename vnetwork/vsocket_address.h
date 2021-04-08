@@ -45,6 +45,8 @@ public:
     bool is_ip4()   const noexcept;
     bool is_ip6()   const noexcept;
 
+    void set_port( uint16_t new_port );
+
     //-----------------------------------------------------------------------------------
 private:
     void _init() noexcept;

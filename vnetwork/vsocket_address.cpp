@@ -5,6 +5,7 @@
 
 #include "impl_vposix/wrap_arpa_inet.h"
 #include "vlog.h"
+#include "vnetwork.h"
 
 using namespace impl_vposix;
 
@@ -200,6 +201,20 @@ bool vsocket_address::is_ip6() const noexcept
     return _family() == AF_INET6;
 }
 //=======================================================================================
+void vsocket_address::set_port( uint16_t new_port )
+{
+    new_port = port_host_to_net( new_port );
+
+    auto s4 = cast_over_void<sockaddr_in*> ( _data() );
+    auto s6 = cast_over_void<sockaddr_in6*>( _data() );
+
+    if ( is_ip4() ) s4->sin_port  = new_port;
+    else
+    if ( is_ip6() ) s6->sin6_port = new_port;
+    else
+    throw verror << "Cannot set port, socket address is invalid.";
+}
+//=======================================================================================
 void vsocket_address::_init() noexcept
 {
     bzero( _data(), _raw_data_size );
@@ -222,11 +237,24 @@ bool vsocket_address::_init( const std::string& addr, uint16_t prt, vsocket_addr
 
     sockaddr_in6 *s6 = cast_over_void<sockaddr_in6*>( dst->_data() );
     ok = wrap_arpa_inet::inet_pton_ip6( addr, &s6->sin6_addr );
-    if (!ok) return false;
+    if (ok)
+    {
+        s6->sin6_port   = port_host_to_net( prt );
+        s6->sin6_family = AF_INET6;
+        return true;
+    }
 
-    s6->sin6_port   = port_host_to_net( prt );
-    s6->sin6_family = AF_INET6;
-    return true;
+    auto may_addrs = vnetwork::resolve_address( addr );
+    for ( auto & may_a: may_addrs )
+    {
+        if ( may_a.protocol == vnetwork::type_of_protocol::tcp )
+        {
+            *dst = may_a.address;
+            dst->set_port( prt );
+            return true;
+        }
+    }
+    return false;
 }
 //=======================================================================================
 void *vsocket_address::_data() noexcept
