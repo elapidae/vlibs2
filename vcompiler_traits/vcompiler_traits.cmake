@@ -19,13 +19,20 @@ if ( NOT  VMACROSES_INCLUDED )
 
     include( "${VLIBS_DIR}/cmake/c++11.cmake" )
 
-    include_directories( "${VLIBS_DIR}/vcompiler_traits/")
+    set( vcomp_path "${VLIBS_DIR}/vcompiler_traits/" )
+    include_directories( ${vcomp_path} )
 
-    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcompiler_traits/vcompiler_traits.h")
-    set(V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcompiler_traits/vvoid_type.h")
+    set( V_HEADERS ${V_HEADERS} "${vcomp_path}/vcompiler_traits.h"  )
 
+    set( V_HEADERS ${V_HEADERS} "${vcomp_path}/details/vplatform.h" )
+    set( V_HEADERS ${V_HEADERS} "${vcomp_path}/details/vendian.h"   )
+    set( V_HEADERS ${V_HEADERS} "${vcomp_path}/details/vpretty_function.h" )
 
- message( "=== vcompiler_traits includede ===" )
+    #deprecated
+    set(V_HEADERS ${V_HEADERS} "${vcomp_path}/vvoid_type.h")
+
+    unset( vcomp_path )
+    message( "=== vcompiler_traits includede ===" )
 
 endif()
 # # vcompiler_traits.cmake

@@ -13,6 +13,8 @@
 #ifndef VCOMPILER_TRAITS_H
 #define VCOMPILER_TRAITS_H
 
+#include "details/vendian.h"
+#include "details/vpretty_function.h"
 
 //=======================================================================================
 //  Пока все выводится от компилятора, надо найти список стандартных предопределенных

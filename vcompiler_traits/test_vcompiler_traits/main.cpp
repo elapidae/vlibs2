@@ -19,6 +19,7 @@
 
 #include "vcompiler_traits.h"
 #include "vvoid_type.h"
+//#include "vendian.h"
 
 using namespace std;
 
@@ -83,6 +84,55 @@ TEST_F( VCompiler_Traits_Test, vvoid_type )
 #else
 //ddd
 #endif
+
+
+//=======================================================================================
+
+union _test_endian
+{
+    uint32_t u32 = 0x12345678;
+    struct
+    {
+        uint8_t b1,b2,b3,b4;
+    } bytes;
+};
+static constexpr bool little_endian()
+{
+    constexpr _test_endian te{ 0x12345678 };
+    return
+        te.bytes.b1 == 0x78 &&
+        te.bytes.b2 == 0x56 &&
+        te.bytes.b3 == 0x34 &&
+        te.bytes.b4 == 0x12;
+}
+static constexpr bool big_endian()
+{
+    constexpr _test_endian te{ 0x12345678 };
+    return
+        te.bytes.b1 == 0x12 &&
+        te.bytes.b2 == 0x34 &&
+        te.bytes.b3 == 0x56 &&
+        te.bytes.b4 == 0x78;
+}
+
+TEST_F( VCompiler_Traits_Test, endian )
+{
+    //    auto l = vendian_is_little();
+    //    auto b = vendian_is_big();
+    auto l = little_endian();
+    auto b = big_endian();
+    auto lonly = l && !b;
+    auto bonly = b && !l;
+
+    auto _or  = lonly || bonly;
+    auto _and = lonly && bonly;
+
+    EXPECT_TRUE ( _or  );
+    EXPECT_FALSE( _and );
+
+    if ( l ) cout << "little endian" << endl;
+    if ( b ) cout << "BIG endian"    << endl;
+}
 //=======================================================================================
 
 
