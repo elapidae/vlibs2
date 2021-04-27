@@ -18,6 +18,7 @@ if ( NOT  VBYTE_BUFFER_INCLUDED )
     message( "=== include vbyte_buffer... ===" )
 
     include( "${VLIBS_DIR}/cmake/c++11.cmake" )
+    include( "${VLIBS_DIR}/cmake/vcompiler_traits.cmake" )
 
     include_directories( "${VLIBS_DIR}/vbyte_buffer/" )
 

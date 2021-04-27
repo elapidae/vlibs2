@@ -206,36 +206,19 @@ T vbyte_buffer::to_any() const
 
     if ( ss.fail() || ss.bad() )
         throw std::runtime_error( std::string("Error during interpretation text: '") +
-                _buf + "', in function " + __PRETTY_FUNCTION__ );
+                _buf + "', in function " + V_PRETTY_FUNCTION );
 
     return res;
 }
 //=======================================================================================
 
-#pragma GCC diagnostic push
-#ifdef V_PRAGMA_GCC_KNOWS_IMPLICIT_FALLTHROUGH
-    #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#endif
+// deprecated
 template<typename T>
 typename std::enable_if< std::is_arithmetic<T>::value, T>::type
 vbyte_buffer::reverse_T( T val ) noexcept
 {
-    static_assert ( sizeof(T) <= 8, "Cannot reverse values more than 8 bytes." );
-
-    auto *ch = static_cast<char*>( static_cast<void*>(&val) );
-    constexpr auto tsize = sizeof(T);
-
-    switch( tsize )
-    {
-    case 8: std::swap( ch[3], ch[tsize-4] );
-            std::swap( ch[2], ch[tsize-3] );
-    case 4: std::swap( ch[1], ch[tsize-2] );
-    case 2: std::swap( ch[0], ch[tsize-1] );
-    }
-
-    return val;
+    return v::endian::reverse_val( val );
 }
-#pragma GCC diagnostic pop
 //=======================================================================================
 template<typename T>
 void vbyte_buffer::_append( const T& val )
@@ -248,9 +231,7 @@ template<typename T>
 typename std::enable_if<std::is_arithmetic<T>::value, void>::type
 vbyte_buffer::append_LE( T val )
 {
-    #if BYTE_ORDER == BIG_ENDIAN
-        val = vbyte_buffer::reverse_T( val );
-    #endif
+    val = v::endian::to_little_endian( val );
     _append( val );
 }
 //=======================================================================================
@@ -258,9 +239,7 @@ template<typename T>
 typename std::enable_if<std::is_arithmetic<T>::value, void>::type
 vbyte_buffer::append_BE( T val )
 {
-    #if BYTE_ORDER == LITTLE_ENDIAN
-        val = vbyte_buffer::reverse_T( val );
-    #endif
+    val = v::endian::to_big_endian( val );
     _append( val );
 }
 //=======================================================================================
