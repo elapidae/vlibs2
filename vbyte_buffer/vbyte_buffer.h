@@ -86,6 +86,22 @@ public:
     void append( const std::string& val );  //  строки и их аналоги
     void append( const char* val );         //
 
+    //  Записывает либо 11111111 (true) либо 0 (false)
+    void append( bool b );
+
+    //-----------------------------------------------------------------------------------
+
+    //  Группа основных методов: change -- переписывает часть буффера по позиции.
+    //  Change data in positions with Little Endian
+    template<typename T>
+    typename std::enable_if<std::is_arithmetic<T>::value, void>::type
+    change_LE( size_t pos, T val );
+
+    //  Change data in positions with Big Endian
+    template<typename T>
+    typename std::enable_if<std::is_arithmetic<T>::value, void>::type
+    change_BE( size_t pos, T val );
+
     //-----------------------------------------------------------------------------------
 
     //  Отрезать count байт с разных сторон.
@@ -184,6 +200,7 @@ private:
     std::string _buf;
 
     template<typename T> void _append( const T& val );
+    template<typename T> void _change( size_t pos, const T& val );
 }; // vbyte_buffer
 //=======================================================================================
 std::ostream& operator << ( std::ostream& os, const vbyte_buffer& buf );
@@ -228,6 +245,19 @@ void vbyte_buffer::_append( const T& val )
 }
 //=======================================================================================
 template<typename T>
+void vbyte_buffer::_change( size_t pos, const T& val )
+{
+    if ( pos + sizeof (T) > _buf.size() )
+        throw std::out_of_range( "vbyte_buffer::_change" );
+
+    auto first = static_cast<const char*>( static_cast<const void*>(&val) );
+    auto last  = first + sizeof(T);
+    auto dst   = _buf.data() + pos;
+
+    std::copy( first, last, dst );
+}
+//=======================================================================================
+template<typename T>
 typename std::enable_if<std::is_arithmetic<T>::value, void>::type
 vbyte_buffer::append_LE( T val )
 {
@@ -241,6 +271,22 @@ vbyte_buffer::append_BE( T val )
 {
     val = v::endian::to_big_endian( val );
     _append( val );
+}
+//=======================================================================================
+template<typename T>
+typename std::enable_if<std::is_arithmetic<T>::value, void>::type
+vbyte_buffer::change_LE( size_t pos, T val )
+{
+    val = v::endian::to_little_endian( val );
+    _change( pos, val );
+}
+//=======================================================================================
+template<typename T>
+typename std::enable_if<std::is_arithmetic<T>::value, void>::type
+vbyte_buffer::change_BE( size_t pos, T val )
+{
+    val = v::endian::to_big_endian( val );
+    _change( pos, val );
 }
 //=======================================================================================
 

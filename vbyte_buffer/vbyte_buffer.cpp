@@ -107,6 +107,12 @@ void vbyte_buffer::append( const char * val )
     _buf.append( val );
 }
 //=======================================================================================
+void vbyte_buffer::append( bool b )
+{
+    signed char ch = b ? -1 : 0;
+    append( ch );
+}
+//=======================================================================================
 //      chop, resize, left, right, middle
 //=======================================================================================
 void vbyte_buffer::chop_front( size_t count )

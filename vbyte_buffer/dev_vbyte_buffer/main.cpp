@@ -6,6 +6,9 @@ using namespace std;
 
 int main()
 {
+    cout << "is big: " << v::endian::is_big() << endl;
+    cout << "is little: " << v::endian::is_little() << endl;
+
     char     center = 0x00;
     int32_t  i32    = 0x12345678;
     uint16_t u16    = 0xABCD;
