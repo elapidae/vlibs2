@@ -161,49 +161,29 @@ T vbyte_buffer_view::_extract()
 template<typename T>
 T vbyte_buffer_view::show_LE() const
 {
-    auto res = _show<T>();
-
-    #if BYTE_ORDER == BIG_ENDIAN
-        res = vbyte_buffer::reverse_T( res );
-    #endif
-
-    return res;
+    auto val = _show<T>();
+    return v::endian::to_little_endian( val );
 }
 //=======================================================================================
 template<typename T>
 T vbyte_buffer_view::show_BE() const
 {
-    auto res = _show<T>();
-
-    #if BYTE_ORDER == LITTLE_ENDIAN
-        res = vbyte_buffer::reverse_T( res );
-    #endif
-
-    return res;
+    auto val = _show<T>();
+    return v::endian::to_big_endian( val );
 }
 //=======================================================================================
 template<typename T>
 T vbyte_buffer_view::LE()
 {
-    auto res = _extract<T>();
-
-    #if BYTE_ORDER == BIG_ENDIAN
-        res = vbyte_buffer::reverse_T( res );
-    #endif
-
-    return res;
+    auto val = _extract<T>();
+    return v::endian::to_little_endian( val );
 }
 //=======================================================================================
 template<typename T>
 T vbyte_buffer_view::BE()
 {
-    auto res = _extract<T>();
-
-    #if BYTE_ORDER == LITTLE_ENDIAN
-        res = vbyte_buffer::reverse_T( res );
-    #endif
-
-    return res;
+    auto val = _extract<T>();
+    return v::endian::to_big_endian( val );
 }
 //=======================================================================================
 
