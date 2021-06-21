@@ -31,7 +31,7 @@ if ( NOT  VCHRONO_INCLUDED )
 
     set( V_HEADERS ${V_HEADERS}
                   "${VLIBS_DIR}/vchrono/impl_vchrono/sys_helper_vchrono.h")
-    set( V_HEADERS ${V_HEADERS}
+    set( V_SOURCES ${V_SOURCES}
                   "${VLIBS_DIR}/vchrono/impl_vchrono/sys_helper_vchrono.cpp")
 
     set( V_HEADERS ${V_HEADERS}

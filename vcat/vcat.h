@@ -18,6 +18,7 @@
 
 #include <stdexcept>
 
+#include "vcompiler_traits.h"
 #include "impl_vcat/vcat_iface.h"
 
 //=======================================================================================
@@ -153,7 +154,7 @@ T vcat::from_text( const std::string& text )
 
     if ( ss.fail() || ss.bad() )
         throw std::runtime_error( std::string("Error during interpretation text: '") +
-                text + "', in function " + __PRETTY_FUNCTION__ );
+                text + "', in function " + V_PRETTY_FUNCTION );
 
     return res;
 }
