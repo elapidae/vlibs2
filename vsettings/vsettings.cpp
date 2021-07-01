@@ -393,15 +393,14 @@ bool vsettings::from_ini_file( cstr fname )
 {
     ifstream f( fname, ios_base::in|ios_base::binary );
     //  2020-04-14 - -Было принято решение, что если файла нету, то ничего страшного.
-    //  Пусть возвращает
-    //throw verror << "Cannot open file '" << fname << "' for load ini.";
+    //  Пусть возвращает false и принимающая сторона проверяет.
     if ( !f.good() )
         return false;
 
     f.seekg (0, std::ios::end);
     auto fsize = f.tellg();
     if (fsize < 0)
-        verror << "Cannot get size of file '" << fname << "'.";
+        throw verror << "Cannot get size of file '" << fname << "'.";
 
     f.seekg (0, std::ios::beg);
 
@@ -457,7 +456,7 @@ static void save_with_subs( vcat* res, string prefix, const vsettings& sett )
 //---------------------------------------------------------------------------------------
 vsettings::str vsettings::to_ini() const
 {
-    vcat res("## INI for NIIAS, with love\n#\n\n");
+    vcat res("## INI files, with love\n#\n\n");
 
     save_keys( &res, "", *this );
 

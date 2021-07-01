@@ -5,6 +5,9 @@ project( test_vsettings )
 
 set( VLIBS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../.." )
 
+set( CMAKE_CXX_STANDARD 17 )
+set( CMAKE_CXX_STANDARD_REQUIRED ON )
+
 include( "${VLIBS_DIR}/cmake/gtest.cmake"     )
 include( "${VLIBS_DIR}/cmake/vsettings.cmake" )
 
