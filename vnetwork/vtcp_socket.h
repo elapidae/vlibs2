@@ -36,7 +36,7 @@ public:
 
     void close();
 
-    void send( const std::string& data );
+    bool send( const std::string& data );
 
     void keep_alive( int idle, int intvl, int cnt );
 
