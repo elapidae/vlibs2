@@ -312,9 +312,9 @@ bool vtcp_socket::is_connected() const
     return _p->is_connected();
 }
 //---------------------------------------------------------------------------------------
-void vtcp_socket::send( const std::string& data )
+bool vtcp_socket::send( const std::string& data )
 {
-    _p->send( data );
+    return _p->send( data );
 }
 //---------------------------------------------------------------------------------------
 void vtcp_socket::keep_alive( int idle, int intvl, int cnt )

@@ -204,15 +204,25 @@ bool wrap_sys_socket::send_no_err( int fd, const std::string& data )
     auto size = data.size();
     while (true)
     {
-        auto sended = _send_no_err(fd, ptr, size);
-        size_t usended = size_t( sended );
+        auto sent = _send_no_err(fd, ptr, size);
 
-        if ( sended < 0 )      return false;
-        if ( usended == size ) return true;
+        if ( sent < 0 )
+        {
+            //  По документации, такая ошибка возникает только при неблокирующей записи.
+            //  Однако, умные люди нашли, что система может вернуть такую ошибку
+            //  даже при блокирующей записи. Проверка обязательна!
+            if ( ErrNo().resource_unavailable_try_again() )
+                continue;
 
-        assert( usended < size );
-        ptr  += usended;
-        size -= usended;
+            return false;
+        }
+
+        size_t usent = size_t( sent );
+        if ( usent == size ) return true;
+
+        assert( usent < size );
+        ptr  += usent;
+        size -= usent;
     }
 }
 //=======================================================================================
