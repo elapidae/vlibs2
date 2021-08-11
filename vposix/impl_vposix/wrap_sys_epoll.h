@@ -12,6 +12,8 @@
 
 #include <stdint.h>
 #include <string>
+#include <map>
+#include <functional>
 
 //=======================================================================================
 namespace impl_vposix
@@ -64,6 +66,10 @@ namespace impl_vposix
     private:
         int _efd;
         int _count = 0;
+
+        std::map<int, void*> _polled;
+        bool is_polled(void* rcv) const;
+        bool is_polled(int fd) const;
     };
     //===================================================================================
 
@@ -80,7 +86,7 @@ namespace impl_vposix
 
         static void del( int efd, int fd );
 
-        static void wait_once( int efd );
+        static void wait_once( int efd, std::function<bool(void*)> checker );     //  зачем этот враппер и к тому же в хидере?
     };
     //===================================================================================
 } // namespace impl_vposix
