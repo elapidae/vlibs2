@@ -56,25 +56,53 @@ epoll::~epoll()
 void epoll::add( int fd, epoll::Direction d, epoll_receiver *receiver )
 {
 //    vdeb["poll"] << "add to epoll\t" << receiver << "\n";
+
     wrap_sys_epoll::add( _efd, fd, d, receiver );
     ++_count;
+
+    if (is_polled(fd)) {
+        vwarning["poll"] << "Poll addition. Descriptor" << fd << "is polled already";
+    }
+    _polled.insert_or_assign(fd, receiver);
 }
 //=======================================================================================
 void epoll::mod( int fd, epoll::Direction d, epoll_receiver *receiver )
 {
     wrap_sys_epoll::mod( _efd, fd, d, receiver );
+
+    if (!is_polled(fd)) {
+        vwarning["poll"] << "Poll modifying. Descriptor" << fd << "is not polled yet";
+    }
+    _polled.insert_or_assign(fd, receiver);
 }
 //=======================================================================================
 void epoll::del( int fd )
 {
     wrap_sys_epoll::del( _efd, fd );
     --_count;
+
+    if (!is_polled(fd)) {
+        vwarning["poll"] << "Poll deleting. Descriptor" << fd << "is not polled";
+    }
+    _polled.erase(fd);
 }
+
+bool epoll::is_polled(void* rcv) const {
+    auto it = std::find_if(_polled.begin(), _polled.end(),
+                        [rcv](decltype(_polled)::value_type v){return v.second == rcv;});
+    return it != _polled.end();
+}
+
+bool epoll::is_polled(int fd) const {
+    return _polled.find(fd) != _polled.end();
+}
+
 //=======================================================================================
 void epoll::wait_once()
 {
-    wrap_sys_epoll::wait_once( _efd );
+    wrap_sys_epoll::wait_once( _efd, [this](void* rcv){return is_polled(rcv);} );
 }
+
 //=======================================================================================
 
 //=======================================================================================
@@ -138,7 +166,7 @@ void wrap_sys_epoll::del( int efd, int fd )
 //    return res;
 //}
 //---------------------------------------------------------------------------------------
-void wrap_sys_epoll::wait_once( int efd )
+void wrap_sys_epoll::wait_once( int efd, std::function<bool(void*)> checker )
 {
     enum { waits_count = 16 };
 
@@ -150,6 +178,12 @@ void wrap_sys_epoll::wait_once( int efd )
         epoll_receiver *receiver = static_cast<epoll_receiver*>( events[i].data.ptr );
         //uint32_t evs = events[i].events;
         //vdeb.hex() << "epolled" << receiver << evs << deb_flags(evs);
+
+        if (!checker(receiver)) {
+            vdeb["poll"] << "event is not polled already:" << receiver;
+            continue;
+        }
+
         receiver->on_events( {events[i].events} );
     }
 }
