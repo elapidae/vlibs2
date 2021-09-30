@@ -72,15 +72,16 @@ const entry::fields_type &entry::fields() const
     return _fields;
 }
 //=======================================================================================
+
 string entry::level_str() const
 {
     switch ( _level )
     {
-    case Level::Trace:   return "TRC";
-    case Level::Dbg:     return "DBG";
-    case Level::Runlog:  return "RUN";
-    case Level::Warning: return "WRN";
-    case Level::Fatal:   return "FTL";
+    case Level::Trace:   return "info";
+    case Level::Dbg:     return "debug";
+    case Level::Runlog:  return "run";
+    case Level::Warning: return "warning";
+    case Level::Fatal:   return "fatal";
     }
     throw std::logic_error( "Unknown type" );
 }
