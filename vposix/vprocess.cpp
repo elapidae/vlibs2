@@ -151,4 +151,24 @@ void vprocess::wait()
     _p.reset();
 }
 //=======================================================================================
+void vprocess::kill()
+{
+    if ( !_p )
+    {
+        vwarning << "Kill cannot send to empty process.";
+        return;
+    }
+    ::kill( _p->pid, SIGTERM );
+}
+//=======================================================================================
+void vprocess::force_kill()
+{
+    if ( !_p )
+    {
+        vwarning << "Kill cannot send to empty process.";
+        return;
+    }
+    ::kill( _p->pid, SIGKILL );
+}
+//=======================================================================================
 

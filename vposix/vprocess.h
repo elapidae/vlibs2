@@ -30,9 +30,8 @@ public:
     bool is_finished()   const;
     void wait();
 
-//    int  child_pid()     const;
-//    void kill();
-//    void kill9();
+    void kill();        // Send SIGTERM (default for kill command)
+    void force_kill();  // Send SIGKILL (kill -9)
 
 private:
     class _pimpl; std::unique_ptr<_pimpl> _p;

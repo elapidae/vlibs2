@@ -41,6 +41,7 @@
 #include "vprocess.h"
 #include "vthread_context.h"
 #include <thread>
+#include "vtimer.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
@@ -55,10 +56,20 @@ class VPosix_Test: public testing::Test
 template<class> class TD;
 
 //=======================================================================================
-
 TEST_F( VPosix_Test, vprocess )
 {
-
+    //  Тест затеян для проверки, что работает vprocess::kill()
+    vprocess p;
+    p.cout += [](std::string s){ vdeb << s;};
+    p.exec_simple("watch echo hello");
+    vtimer t;
+    t.start(std::chrono::seconds(5));
+    t.timeout += [&]
+    {
+        p.kill();
+        vapplication().stop();
+    };
+    vapplication::poll();
 }
 
 //=======================================================================================
