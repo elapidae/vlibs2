@@ -47,7 +47,6 @@ std::string ErrNo::text() const
     return vcat( '[', _err, "] ", ::strerror_r(_err, buf, buf_size) );
 }
 //=======================================================================================
-V_NORETURN
 void ErrNo::do_throw( const std::string& msg )
 {
     throw posix_error( _err, vcat(text(), '(', msg, ')') );
