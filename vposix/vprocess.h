@@ -33,6 +33,7 @@ public:
     void kill();        // Send SIGTERM (default for kill command)
     void force_kill();  // Send SIGKILL (kill -9)
 
+    pid_t pid() const;
 private:
     class _pimpl; std::unique_ptr<_pimpl> _p;
 };
