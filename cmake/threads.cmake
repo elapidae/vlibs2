@@ -15,17 +15,16 @@
 ##  information to ensure the GNU Lesser General Public License version 3 requirements
 ##  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 #########################################################################################
-
+cmake_minimum_required( VERSION 3.10 )
+include_guard()
 
 #========================================================================================
-if ( NOT  CPP_11_STANDARD_INCLUDED )
-    set ( CPP_11_STANDARD_INCLUDED TRUE )
+# https://cmake.org/cmake/help/latest/module/FindThreads.html
 
-    message( "=== from c++11.cmake -- add_definitions(-std=c++11) ===" )
+include( FindThreads )
+if ( NOT DEFINED Threads_FOUND )
+    message( FATAL_ERROR "Threads library not found" )
+endif()
+set( V_LIBRARIES ${V_LIBRARIES} Threads::Threads )
 
-    add_definitions( -std=c++11 )
-
-endif() #CPP_11_STANDARD_INCLUDED
 #========================================================================================
-
-

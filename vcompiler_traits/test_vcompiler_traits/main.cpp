@@ -18,20 +18,10 @@
 #include <iostream>
 
 #include "vcompiler_traits.h"
-#include "vvoid_type.h"
-//#include "vendian.h"
+#include "details/vendian.h"
 
 using namespace std;
 
-//=======================================================================================
-std::string last_fname(const char *filepath)
-{
-    std::string fp(filepath);
-    auto pos = fp.find_last_of( '/' );
-    if ( pos == std::string::npos ) return fp;
-    return fp.substr( pos + 1 );
-}
-#define vdeb std::cout << last_fname(__FILE__) << ":" << __LINE__ << "==> "
 //=======================================================================================
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
@@ -52,12 +42,13 @@ TEST_F( VCompiler_Traits_Test, gnuc_only )
 }
 
 //=======================================================================================
+//  In old compilers might not work std::void_t, let's test std::void_t.
 template<typename T, typename = void>
-struct test_vvoid_type : public std::false_type
+struct test_void_t : public std::false_type
 {};
 
 template<typename T>
-struct test_vvoid_type<T, vvoid_type<int> > : public std::true_type
+struct test_void_t<T, std::void_t<int> > : public std::true_type
 {};
 //---------------------------------------------------------------------------------------
 struct SFoo { static void foo(); };
@@ -65,26 +56,20 @@ struct SFoo { static void foo(); };
 template<typename T, typename = void>
 struct has_foo : public std::false_type {};
 template<typename T>
-struct has_foo<T, vvoid_type<decltype(T::foo)> > : public std::true_type {};
+struct has_foo<T, std::void_t<decltype(T::foo)> > : public std::true_type {};
 //---------------------------------------------------------------------------------------
 template<typename T, typename = void>
 struct has_bar : public std::false_type {};
 
 template<typename T>
-struct has_bar<T, vvoid_type<decltype(T::bar)> > : public std::true_type {};
+struct has_bar<T, std::void_t<decltype(T::bar)> > : public std::true_type {};
 //---------------------------------------------------------------------------------------
 TEST_F( VCompiler_Traits_Test, vvoid_type )
 {
-    EXPECT_TRUE( test_vvoid_type<uint>::value );
+    EXPECT_TRUE( test_void_t<uint>::value );
     EXPECT_TRUE( has_foo<SFoo>::value );
     EXPECT_FALSE( has_bar<SFoo>::value );
 }
-
-#ifdef V_DO_NOT_KNOW_STD_VOID_T
-#else
-//ddd
-#endif
-
 
 //=======================================================================================
 
@@ -117,8 +102,6 @@ static constexpr bool big_endian()
 
 TEST_F( VCompiler_Traits_Test, endian )
 {
-    //    auto l = vendian_is_little();
-    //    auto b = vendian_is_big();
     auto l = little_endian();
     auto b = big_endian();
     auto lonly = l && !b;
@@ -132,10 +115,14 @@ TEST_F( VCompiler_Traits_Test, endian )
 
     if ( l ) cout << "little endian" << endl;
     if ( b ) cout << "BIG endian"    << endl;
+
+    auto ll = v::endian::is_little();
+    auto bb = v::endian::is_big();
+
+    EXPECT_TRUE ( ll == l );
+    EXPECT_TRUE ( bb == b );
 }
 //=======================================================================================
-
-
 
 
 //=======================================================================================

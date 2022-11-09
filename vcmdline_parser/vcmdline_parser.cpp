@@ -33,8 +33,12 @@ vcmdline_parser::vcmdline_parser( int argc, const char * const * const argv )
         pos = _args.at(0).find_last_of( '\\' );
     }
 
+    //  For wine, absolute path may not be set...
     if ( pos == str::npos )
-        throw error( vcat("Bad application name: '", _args.at(0),"'.") );
+    {
+        _app_name = _args.at( 0 );
+        return;
+    }
 
     _app_path = _args.at(0).substr( 0, pos );
     _app_name = _args.at(0).substr( pos + 1 );

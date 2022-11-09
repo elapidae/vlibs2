@@ -191,7 +191,7 @@ TEST_F( VGit_Test, test_vlibs_fix )
 TEST_F( VGit_Test, test_macro )
 {
     bool ok =
-        #if VLIBS_REVCOUNT >= 198
+        #if VLIBS_REVCOUNT >= 235
             true;
         #else
             false;
@@ -204,8 +204,8 @@ TEST_F( VGit_Test, test_macro )
 
 TEST_F( VGit_Test, test_vlibs_feature )
 {
-    vdeb << "We can know vlibs ver: " << vgit::vlibs_msg();
-    vdeb << "And commits count (use macro VLIBS_REVCOUNT):" << VLIBS_REVCOUNT;
+    vdeb << "We can know vlibs ver: " << vgit::vlibs_msg() << endl;
+    vdeb << "And commits count (use macro VLIBS_REVCOUNT):" << VLIBS_REVCOUNT << endl;
 }
 
 //=======================================================================================

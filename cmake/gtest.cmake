@@ -1,7 +1,4 @@
 #########################################################################################
-##
-##  VLIBS codebase, NIIAS
-##
 ##  GNU Lesser General Public License Usage
 ##  This file may be used under the terms of the GNU Lesser General Public License
 ##  version 3 as published by the Free Software Foundation and appearing in the file
@@ -9,23 +6,17 @@
 ##  information to ensure the GNU Lesser General Public License version 3 requirements
 ##  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 #########################################################################################
-
+include_guard()
 
 #========================================================================================
-if ( NOT  GTEST_INCLUDED )
-    set ( GTEST_INCLUDED TRUE )
+message( STATUS "About to find gtest library..." )
 
-    message( "=== About to find gtest library... ===" )
+find_library( GTEST_LIBRARY NAMES libgtest.a PATHS ${EXT_LIBS_PATH} )
+set( V_LIBRARIES ${V_LIBRARIES} ${GTEST_LIBRARY} )
+set( V_LIBRARIES ${V_LIBRARIES} -lgtest )
+unset( GTEST_LIBRARY )
 
-    find_library( GTEST_LIBRARY NAMES libgtest.a PATHS ${EXT_LIBS_PATH} )
-    set( V_LIBRARIES ${V_LIBRARIES} ${GTEST_LIBRARY} )
-    set( V_LIBRARIES ${V_LIBRARIES} -lgtest )
-    unset( GTEST_LIBRARY )
+include( "${VLIBS_DIR}/cmake/threads.cmake" )
 
-    include( "${VLIBS_DIR}/cmake/pthread.cmake" )
-
-    message( "=== gtest library added to V_LIBRARIES ===" )
-endif() #GTEST_INCLUDED
+message( STATUS "gtest library added to V_LIBRARIES" )
 #========================================================================================
-
-

@@ -323,7 +323,7 @@ vbyte_buffer& vbyte_buffer::trim_spaces()
         ++from;
 
     auto to = _buf.end() - 1;
-    while( to != from && std::isspace(*to) )
+    while( to > from && std::isspace(*to) )
         --to;
 
     _buf = {from, to + 1};

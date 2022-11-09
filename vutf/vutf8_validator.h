@@ -15,10 +15,10 @@ public:
     void append( cstring new_portion ) noexcept;
     void append( unsigned char ch    ) noexcept;
 
-    bool error()   const noexcept;    //  Error detected, use position() for find.
-    bool between() const noexcept;    //  Between codepoints.
+    bool error()    const noexcept; //  Error detected, use position() for find.
+    bool between()  const noexcept; //  Between codepoints.
 
-    int  position()   const noexcept;    //  Position is text or detected error position.
+    int  position() const noexcept; //  Position is text or detected error position.
 
 private:
     enum Stage

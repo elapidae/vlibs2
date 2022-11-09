@@ -9,7 +9,7 @@
 ##  information to ensure the GNU Lesser General Public License version 3 requirements
 ##  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 #########################################################################################
-
+include_guard()
 
 #========================================================================================
 #   NB! Add it after add_executable!
@@ -18,20 +18,14 @@
 
 
 #========================================================================================
-if ( NOT  VGIT_INCLUDED )
-    set ( VGIT_INCLUDED TRUE )
+message( STATUS "About include vgit..." )
 
-    message( "=== About to include vgit... ===" )
+include( "${VLIBS_DIR}/vgit/impl_vgit/impl_vgit.cmake" )
 
-    include( "${VLIBS_DIR}/cmake/c++11.cmake" )     # need for old compiler...
-    include( "${VLIBS_DIR}/vgit/impl_vgit/impl_vgit.cmake" )
+include_directories( "${VLIBS_DIR}/vgit/" )
 
-    include_directories( "${VLIBS_DIR}/vgit/" )
+set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vgit/vgit.h"   )
+set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vgit/vgit.cpp" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vgit/vgit.h"   )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vgit/vgit.cpp" )
-
-    message( "=== vgit included ===" )
-endif()
-# vgit.cmake
+message( STATUS "vgit has included" )
 #========================================================================================

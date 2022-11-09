@@ -1,7 +1,4 @@
 #########################################################################################
-##
-##  VLIBS codebase, NIIAS
-##
 ##  GNU Lesser General Public License Usage
 ##  This file may be used under the terms of the GNU Lesser General Public License
 ##  version 3 as published by the Free Software Foundation and appearing in the file
@@ -9,38 +6,37 @@
 ##  information to ensure the GNU Lesser General Public License version 3 requirements
 ##  will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 #########################################################################################
-# vchrono.cmake
+include_guard()
+
 
 #========================================================================================
-if ( NOT  VCHRONO_INCLUDED )
-    set ( VCHRONO_INCLUDED TRUE )
+message( STATUS "About include vchrono_path..." )
 
-    message( "=== about include vchrono... ===" )
+include( "${VLIBS_DIR}/cmake/vcompiler_traits.cmake" )
 
-    include( "${VLIBS_DIR}/cmake/vcompiler_traits.cmake" )
+set ( vchrono_path "${VLIBS_DIR}/vchrono" )
+set ( impl_vchrono_path "${vchrono_path}/impl_vchrono" )
 
-    include_directories( "${VLIBS_DIR}/vchrono/" )
+include_directories( ${vchrono_path} )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vtime_point.h" )
-    set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vchrono/impl_vchrono/vtime_point.cpp" )
+set( V_HEADERS ${V_HEADERS} "${vchrono_path}/vtime_point.h" )
+set( V_HEADERS ${V_HEADERS} "${vchrono_path}/vtime_meter.h" )
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/vtime_meter.h" )
+#----------------------------------------------------------------------------------------
 
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/impl_vchrono/time_point_base.h" )
-    set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vchrono/impl_vchrono/time_meter.h" )
+set( V_SOURCES ${V_SOURCES} "${impl_vchrono_path}/vtime_point.cpp" )
 
-    set( V_HEADERS ${V_HEADERS}
-                  "${VLIBS_DIR}/vchrono/impl_vchrono/sys_helper_vchrono.h")
-    set( V_SOURCES ${V_SOURCES}
-                  "${VLIBS_DIR}/vchrono/impl_vchrono/sys_helper_vchrono.cpp")
+set( V_HEADERS ${V_HEADERS} "${impl_vchrono_path}/time_point_base.h" )
+set( V_HEADERS ${V_HEADERS} "${impl_vchrono_path}/time_meter.h" )
 
-    set( V_HEADERS ${V_HEADERS}
-                  "${VLIBS_DIR}/vchrono/impl_vchrono/human_readable_time.h" )
-    set( V_SOURCES ${V_SOURCES}
-                  "${VLIBS_DIR}/vchrono/impl_vchrono/human_readable_time.cpp" )
+set( V_HEADERS ${V_HEADERS} "${impl_vchrono_path}/sys_helper_vchrono.h" )
+set( V_SOURCES ${V_SOURCES} "${impl_vchrono_path}/sys_helper_vchrono.cpp" )
 
-    message( "=== vchrono included ===" )
+set( V_HEADERS ${V_HEADERS} "${impl_vchrono_path}/human_readable_time.h" )
+set( V_SOURCES ${V_SOURCES} "${impl_vchrono_path}/human_readable_time.cpp" )
 
-endif()
-# vchrono.cmake
+unset( vchrono_path )
+unset( impl_vchrono_path )
+
+message( STATUS "vchrono_path has included" )
 #========================================================================================

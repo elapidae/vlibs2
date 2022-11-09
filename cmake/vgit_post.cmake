@@ -1,1 +1,1 @@
-include(${CMAKE_CURRENT_LIST_DIR}/../vgit_post/vgit_post.cmake)
+include( "${CMAKE_CURRENT_LIST_DIR}/../vgit/vgit_post.cmake" )

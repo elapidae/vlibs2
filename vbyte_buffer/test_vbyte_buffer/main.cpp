@@ -409,6 +409,9 @@ TEST_F( VByteBuffer_Test, empty )
 //=======================================================================================
 int main(int argc, char *argv[])
 {
+    vbyte_buffer empty;
+    auto r = empty.split('=');
+
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

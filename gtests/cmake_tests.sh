@@ -4,7 +4,7 @@ rm -rf build-cmake-tests
 mkdir  build-cmake-tests
 cd     build-cmake-tests
 cmake .. || exit 1
-make -j6 || exit 1
+make -j11 || exit 1
 
 ../list_of_tests.sh || exit 1
 
