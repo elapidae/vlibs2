@@ -151,7 +151,7 @@ template<typename T>
 T vsettings::safe_get( cstr key, const T& default_val ) const
 {
     if ( !has_key(key) ) return default_val;
-    get<T>( key );
+    return get<T>( key );
 }
 //=======================================================================================
 template<typename T>
