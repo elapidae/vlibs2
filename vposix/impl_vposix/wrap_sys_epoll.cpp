@@ -31,17 +31,68 @@ using namespace impl_vposix;
 
 
 //=======================================================================================
-//      epoll_receiver, throws not implemented message
+namespace impl_vposix
+{
+    //===================================================================================
+    //  UPD 2022-12-xx by elapidae
+    //
+    //  Здесь решается следующая проблема:
+    //   - пусть у нас есть управляющий и управляемый polled объекты;
+    //   - управляющий объект может удалить управляемый при вызове on_events();
+    //   - управляемый объект также попал в пул событий после управляющего;
+    //
+    //  При появлении всех этих условий, имеем вызов управляемого объекта уже после его
+    //  удаления. Чтобы решить эту проблему, при удалении и изменении условий поллинга,
+    //  будем очищать совпадающие объекты из текущего результата поллинга.
+    struct epoll::triggered_events final
+    {
+        enum { waits_count = 64 };
+        struct epoll_event events[ waits_count ];
+
+        int cur = 0;    //  Idexes will be iterate in wait_once() method.
+        int end = 0;    //
+
+        void drop( void * ptr )
+        {
+            for ( int i = cur; i < end; ++i )
+            {
+                if ( events[i].data.ptr != ptr )
+                    continue;
+
+                events[i].data.ptr = nullptr;
+                break;
+            }
+        }
+    };
+    //-----------------------------------------------------------------------------------
+    //  UPD 2022-12-16 by elapidae
+    //  Перенесено из хедера сюда, чтобы можно было поллить, сбрасывая уже невалидные
+    //  указатели.
+    //
+    //  на все события, помимо In, Out выставляются флаги |EPOLLRDHUP|EPOLLPRI;
+    //  efd -- epoll file descriptor.
+    //  fd  -- controlled file descriptor.
+    struct wrap_sys_epoll final
+    {
+        static int create();
+
+        static void add( int efd, int fd, epoll::Direction d, epoll_receiver *receiver );
+        static void mod( int efd, int fd, epoll::Direction d, epoll_receiver *receiver );
+
+        static void del( int efd, int fd );
+
+        static void wait_once( int efd, epoll::triggered_events * events );
+    };
+} // namespace impl_vposix
 //=======================================================================================
-impl_vposix::epoll_receiver::~epoll_receiver()
-{}
-//=======================================================================================
+
 
 //=======================================================================================
 //      epoll as normal class
 //=======================================================================================
 epoll::epoll()
     : _efd( wrap_sys_epoll::create() )
+    , _triggered_events( new triggered_events )
 {}
 //=======================================================================================
 epoll::~epoll()
@@ -55,54 +106,28 @@ epoll::~epoll()
 //=======================================================================================
 void epoll::add( int fd, epoll::Direction d, epoll_receiver *receiver )
 {
-//    vdeb["poll"] << "add to epoll\t" << receiver << "\n";
-
     wrap_sys_epoll::add( _efd, fd, d, receiver );
     ++_count;
-
-    if (is_polled(fd)) {
-        vwarning["poll"] << "Poll addition. Descriptor" << fd << "is polled already";
-    }
-    _polled.insert_or_assign(fd, receiver);
 }
 //=======================================================================================
 void epoll::mod( int fd, epoll::Direction d, epoll_receiver *receiver )
 {
+    _triggered_events->drop( receiver );
     wrap_sys_epoll::mod( _efd, fd, d, receiver );
-
-    if (!is_polled(fd)) {
-        vwarning["poll"] << "Poll modifying. Descriptor" << fd << "is not polled yet";
-    }
-    _polled.insert_or_assign(fd, receiver);
 }
 //=======================================================================================
-void epoll::del( int fd )
+void epoll::del( int fd, epoll_receiver *receiver )
 {
+    _triggered_events->drop( receiver );
     wrap_sys_epoll::del( _efd, fd );
     --_count;
-
-    if (!is_polled(fd)) {
-        vwarning["poll"] << "Poll deleting. Descriptor" << fd << "is not polled";
-    }
-    _polled.erase(fd);
 }
-
-bool epoll::is_polled(void* rcv) const {
-    auto it = std::find_if(_polled.begin(), _polled.end(),
-                        [rcv](decltype(_polled)::value_type v){return v.second == rcv;});
-    return it != _polled.end();
-}
-
-bool epoll::is_polled(int fd) const {
-    return _polled.find(fd) != _polled.end();
-}
-
 //=======================================================================================
 void epoll::wait_once()
 {
-    wrap_sys_epoll::wait_once( _efd, [this](void* rcv){return is_polled(rcv);} );
+    *_triggered_events = {};
+    wrap_sys_epoll::wait_once( _efd, _triggered_events.get() );
 }
-
 //=======================================================================================
 
 //=======================================================================================
@@ -166,25 +191,18 @@ void wrap_sys_epoll::del( int efd, int fd )
 //    return res;
 //}
 //---------------------------------------------------------------------------------------
-void wrap_sys_epoll::wait_once( int efd, std::function<bool(void*)> checker )
+void wrap_sys_epoll::wait_once( int efd, epoll::triggered_events * evs )
 {
-    enum { waits_count = 16 };
+    evs->end = linux_call::check( ::epoll_wait, efd, evs->events, evs->waits_count, -1 );
 
-    struct epoll_event events[waits_count];
-    int count = linux_call::check( ::epoll_wait, efd, events, waits_count, -1 );
 
-    for ( int i = 0; i < count; ++i )
+    for ( evs->cur = 0; evs->cur < evs->end; ++evs->cur )
     {
-        epoll_receiver *receiver = static_cast<epoll_receiver*>( events[i].data.ptr );
-        //uint32_t evs = events[i].events;
-        //vdeb.hex() << "epolled" << receiver << evs << deb_flags(evs);
+        auto event = evs->events[ evs->cur ];
+        if ( !event.data.ptr ) continue;
 
-        if (!checker(receiver)) {
-            vdeb["poll"] << "event is not polled already:" << receiver;
-            continue;
-        }
-
-        receiver->on_events( {events[i].events} );
+        epoll_receiver *receiver = static_cast<epoll_receiver*>( event.data.ptr );
+        receiver->on_events( {event.events} );
     }
 }
 //=======================================================================================

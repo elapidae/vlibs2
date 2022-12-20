@@ -24,7 +24,7 @@ void safe_fd::close()
 {
     if ( !has() ) return;
 
-    if (_in_poll) poll_del();
+    if ( in_poll() ) poll_del();
 
     wrap_unistd::close( _fd );
     _fd = -1;
@@ -42,19 +42,19 @@ bool safe_fd::has() const noexcept
 //=======================================================================================
 bool safe_fd::in_poll() const noexcept
 {
-    return _in_poll;
+    return _receiver;
 }
 //=======================================================================================
 safe_fd::safe_fd( safe_fd && other ) noexcept
 {
     std::swap( _fd, other._fd );
-    std::swap( _in_poll, other._in_poll );
+    std::swap( _receiver, other._receiver );
 }
 //=======================================================================================
 safe_fd &safe_fd::operator =( safe_fd && other ) noexcept
 {
     std::swap( _fd, other._fd );
-    std::swap( _in_poll, other._in_poll );
+    std::swap( _receiver, other._receiver );
     return *this;
 }
 //=======================================================================================
@@ -67,47 +67,47 @@ safe_fd& safe_fd::operator = ( int other )
 //=======================================================================================
 void safe_fd::poll_add_read( epoll_receiver *receiver )
 {
-    assert( !_in_poll );
+    assert( !in_poll() );
     poll_context::current()->epoll.add( _fd, epoll::In, receiver );
-    _in_poll = true;
+    _receiver = receiver;
 }
 //=======================================================================================
 void safe_fd::poll_add_write( epoll_receiver *receiver )
 {
-    assert( !_in_poll );
+    assert( !in_poll() );
     poll_context::current()->epoll.add( _fd, epoll::Out, receiver );
-    _in_poll = true;
+    _receiver = receiver;
 }
 //=======================================================================================
 void safe_fd::poll_add_rw( epoll_receiver *receiver )
 {
-    assert( !_in_poll );
+    assert( !in_poll() );
     poll_context::current()->epoll.add( _fd, epoll::InOut, receiver );
-    _in_poll = true;
+    _receiver = receiver;
 }
 //=======================================================================================
-void safe_fd::poll_mod_read( epoll_receiver *receiver )
+void safe_fd::poll_mod_read()
 {
-    assert( _in_poll );
-    poll_context::current()->epoll.mod( _fd, epoll::In, receiver );
+    assert( in_poll() );
+    poll_context::current()->epoll.mod( _fd, epoll::In, _receiver );
 }
 //=======================================================================================
-void safe_fd::poll_mod_write( epoll_receiver *receiver )
+void safe_fd::poll_mod_write()
 {
-    assert( _in_poll );
-    poll_context::current()->epoll.mod( _fd, epoll::Out, receiver );
+    assert( in_poll() );
+    poll_context::current()->epoll.mod( _fd, epoll::Out, _receiver );
 }
 //=======================================================================================
-void safe_fd::poll_mod_rw( epoll_receiver *receiver )
+void safe_fd::poll_mod_rw()
 {
-    assert( _in_poll );
-    poll_context::current()->epoll.mod( _fd, epoll::InOut, receiver );
+    assert( in_poll() );
+    poll_context::current()->epoll.mod( _fd, epoll::InOut, _receiver );
 }
 //=======================================================================================
 void safe_fd::poll_del()
 {
-    assert( _in_poll );
-    poll_context::current()->epoll.del( _fd );
-    _in_poll = false;
+    assert( in_poll() );
+    poll_context::current()->epoll.del( _fd, _receiver );
+    _receiver = nullptr;
 }
 //=======================================================================================

@@ -21,7 +21,7 @@ poll_context::poll_context()
 //=======================================================================================
 poll_context::~poll_context()
 {
-    epoll.del( semaphore.handle() );
+    epoll.del( semaphore.handle(), this );
 }
 //=======================================================================================
 void poll_context::on_events( impl_vposix::epoll_receiver::events e )

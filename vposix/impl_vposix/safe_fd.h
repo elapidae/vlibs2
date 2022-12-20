@@ -36,19 +36,19 @@ namespace impl_vposix
         bool in_poll() const noexcept;
 
         //-------------------------------------------------------------------------------
-        void poll_add_read   ( epoll_receiver * receiver );
-        void poll_add_write  ( epoll_receiver * receiver );
-        void poll_add_rw     ( epoll_receiver * receiver );
+        void poll_add_read  ( epoll_receiver * receiver );
+        void poll_add_write ( epoll_receiver * receiver );
+        void poll_add_rw    ( epoll_receiver * receiver );
 
-        void poll_mod_read   ( epoll_receiver * receiver );
-        void poll_mod_write  ( epoll_receiver * receiver );
-        void poll_mod_rw     ( epoll_receiver * receiver );
+        void poll_mod_read  ();
+        void poll_mod_write ();
+        void poll_mod_rw    ();
 
-        void poll_del();
+        void poll_del       ();
 
         //-------------------------------------------------------------------------------
     private:
-        bool _in_poll = false;
+        epoll_receiver * _receiver = nullptr;
         int  _fd = -1;
 
         safe_fd( const safe_fd& ) = delete;

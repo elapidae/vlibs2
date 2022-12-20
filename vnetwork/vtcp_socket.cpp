@@ -187,7 +187,7 @@ void vtcp_socket::_pimpl::when_ready_write()
     if ( stage != WaitConnection )
         throw verror( "Bad logic, do not wait write signal" );
 
-    fd.poll_mod_read( this );
+    fd.poll_mod_read();
     stage = Connected;
 
     owner->connected();

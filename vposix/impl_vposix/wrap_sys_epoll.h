@@ -12,8 +12,8 @@
 
 #include <stdint.h>
 #include <string>
-#include <map>
-#include <functional>
+#include <memory>
+
 
 //=======================================================================================
 namespace impl_vposix
@@ -24,7 +24,7 @@ namespace impl_vposix
     public:
         class events;
 
-        virtual ~epoll_receiver();
+        virtual ~epoll_receiver() = default;
 
         virtual void on_events( events ) = 0;
     };
@@ -58,35 +58,17 @@ namespace impl_vposix
 
         void add( int fd, epoll::Direction d, epoll_receiver *receiver );
         void mod( int fd, epoll::Direction d, epoll_receiver *receiver );
+        void del( int fd, epoll_receiver *receiver );
 
-        void del        ( int fd );
+        void wait_once();
 
-        void wait_once  ();
+        struct triggered_events;
 
     private:
         int _efd;
         int _count = 0;
 
-        std::map<int, void*> _polled;
-        bool is_polled(void* rcv) const;
-        bool is_polled(int fd) const;
-    };
-    //===================================================================================
-
-    //===================================================================================
-    //  на все события, помимо In, Out выставляются флаги |EPOLLRDHUP|EPOLLPRI;
-    //  efd -- epoll file descriptor.
-    //  fd  -- controlled file descriptor.
-    struct wrap_sys_epoll final
-    {
-        static int create();
-
-        static void add( int efd, int fd, epoll::Direction d, epoll_receiver *receiver );
-        static void mod( int efd, int fd, epoll::Direction d, epoll_receiver *receiver );
-
-        static void del( int efd, int fd );
-
-        static void wait_once( int efd, std::function<bool(void*)> checker );     //  зачем этот враппер и к тому же в хидере?
+        std::unique_ptr<triggered_events> _triggered_events;
     };
     //===================================================================================
 } // namespace impl_vposix
