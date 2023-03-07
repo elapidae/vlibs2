@@ -249,7 +249,6 @@ bool vsocket_address::_init( const std::string& addr, uint16_t prt, vsocket_addr
     {
         if ( may_a.protocol == vnetwork::type_of_protocol::tcp )
         {
-            vdeb << may_a.address;
             *dst = may_a.address;
             dst->set_port( prt );
             return true;

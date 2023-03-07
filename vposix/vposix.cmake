@@ -61,9 +61,6 @@ set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_errno.cpp" )
 set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_fcntl.h"   )
 set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_fcntl.cpp" )
 
-set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_linux_can.h"   )
-set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_linux_can.cpp" )
-
 set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_net_if.h"   )
 set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_net_if.cpp" )
 

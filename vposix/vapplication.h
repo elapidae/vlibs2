@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "vinvoke_iface.h"
+#include "impl_vposix/wrap_unistd.h"
 
 //=======================================================================================
 /*

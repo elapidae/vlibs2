@@ -19,6 +19,17 @@
 
 #include <string>
 
+//  For alpine compatibility
+#ifndef __mode_t_defined
+    //  Copied from linux system
+    // #define __MODE_T_TYPE    __U32_TYPE
+    // __STD_TYPE __MODE_T_TYPE __mode_t;
+
+    using mode_t = uint32_t;
+    #define __mode_t_defined
+#endif
+
+
 //=======================================================================================
 namespace impl_vposix
 {

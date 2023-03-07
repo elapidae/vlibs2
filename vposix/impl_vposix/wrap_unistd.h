@@ -19,6 +19,18 @@
 
 #include <string>
 
+// For alpine compatibility.
+#ifndef __pid_t_defined
+    //  #define __PID_T_TYPE		__S32_TYPE
+    //  __STD_TYPE __PID_T_TYPE __pid_t;
+
+    using pid_t = int32_t;
+    # define __pid_t_defined
+#endif
+
+
+using uint = unsigned int;  // For alpine compatibility.
+
 //=======================================================================================
 namespace impl_vposix
 {

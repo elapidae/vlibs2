@@ -22,5 +22,9 @@ include_directories( "${VLIBS_DIR}/vcan_socket" )
 set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vcan_socket/vcan_socket.h"   )
 set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vcan_socket/vcan_socket.cpp" )
 
+# UPD 2023-02-24 -- moved here because of alpine compatibility
+set( V_HEADERS ${V_HEADERS} "${VLIBS_DIR}/vposix/impl_vposix/wrap_linux_can.h"   )
+set( V_SOURCES ${V_SOURCES} "${VLIBS_DIR}/vposix/impl_vposix/wrap_linux_can.cpp" )
+
 message( STATUS "vcan_socket has included" )
 #========================================================================================

@@ -16,6 +16,8 @@
 
 #include <string>
 
+using uint = unsigned int; // For alpine compatibility.
+
 //=======================================================================================
 class pre_posix
 {

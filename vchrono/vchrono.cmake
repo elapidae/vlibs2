@@ -29,11 +29,32 @@ set( V_SOURCES ${V_SOURCES} "${impl_vchrono_path}/vtime_point.cpp" )
 set( V_HEADERS ${V_HEADERS} "${impl_vchrono_path}/time_point_base.h" )
 set( V_HEADERS ${V_HEADERS} "${impl_vchrono_path}/time_meter.h" )
 
-set( V_HEADERS ${V_HEADERS} "${impl_vchrono_path}/sys_helper_vchrono.h" )
-set( V_SOURCES ${V_SOURCES} "${impl_vchrono_path}/sys_helper_vchrono.cpp" )
-
 set( V_HEADERS ${V_HEADERS} "${impl_vchrono_path}/human_readable_time.h" )
 set( V_SOURCES ${V_SOURCES} "${impl_vchrono_path}/human_readable_time.cpp" )
+
+#-------
+# Important think -- define gmtime_r or gmtime_s in system.
+include( CheckSymbolExists )
+
+# gmtime_[r/s] definition
+set( CMAKE_REQUIRED_DEFINITIONS -D__STDC_WANT_LIB_EXT1__=1 )
+check_symbol_exists( gmtime_r "time.h" have_gmtime_r )
+check_symbol_exists( gmtime_s "time.h" have_gmtime_s )
+if ( have_gmtime_r )
+    add_definitions( "-DV_GMTIME_SAFE=gmtime_r" )
+    message( STATUS "vchrono: found gmtime_r function (the best way)" )
+elseif( have_gmtime_s )
+    add_definitions( "-DV_GMTIME_SAFE=gmtime_s" )
+    message( STATUS "vchrono: found gmtime_s function (c++11 way)" )
+else()
+    message( FATAL_ERROR "vchrono: cannot define gmtime_[r/s] function" )
+endif()
+unset( have_gmtime_r )
+unset( have_gmtime_s )
+
+set( V_HEADERS ${V_HEADERS} "${impl_vchrono_path}/sys_helper_vchrono.h" )
+set( V_SOURCES ${V_SOURCES} "${impl_vchrono_path}/sys_helper_vchrono.cpp" )
+#-------
 
 unset( vchrono_path )
 unset( impl_vchrono_path )
