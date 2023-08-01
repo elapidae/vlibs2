@@ -35,12 +35,20 @@ void poll_context::on_events( impl_vposix::epoll_receiver::events e )
         task_type task { nullptr };
         {
             std::lock_guard<std::mutex> lock( tasks_mutex );
-            assert( !tasks.empty() );
+
+            //  UPD 2023-08-01, depressed assert( !tasks.empty() )
+            //  NB!!! The semaphore may not work correctly in docker!!!
+            //        Sometimes false readings happen!!!
+            if ( tasks.empty() )
+            {
+                break;
+            }
+
             task = std::move( tasks.front() );
             tasks.pop();
         }
 
-        if (task)
+        if ( task )
         {
             task();
         }

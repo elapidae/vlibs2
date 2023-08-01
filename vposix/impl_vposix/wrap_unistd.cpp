@@ -104,7 +104,7 @@ void wrap_unistd::exec( const char *cmd, const char * const * argv )
     while( *argv )
         vfatal.nospace() << '\t' << *argv++;
 
-    ErrNo().do_throw( "wrap_unistd::exec" );
+    ErrNo().do_throw( std::string("wrap_unistd::exec(") + cmd + (")") );
 }
 //=======================================================================================
 pid_t wrap_unistd::get_pid() noexcept

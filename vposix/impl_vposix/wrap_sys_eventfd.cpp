@@ -51,7 +51,7 @@ int impl_vposix::wrap_sys_eventfd::create()
 //=======================================================================================
 bool wrap_sys_eventfd::read( int evfd )
 {
-    eventfd_t buf;
+    eventfd_t buf{ 1 };
     auto res = linux_call::no_err( ::eventfd_read, evfd, &buf );
     if ( res == 0 )
         return true;
