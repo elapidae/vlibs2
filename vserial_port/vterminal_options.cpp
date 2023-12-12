@@ -36,8 +36,9 @@ vterminal_options::vterminal_options()
 {}
 //=======================================================================================
 vterminal_options::vterminal_options( int spd )
-    : _spd( spd )
-{}
+{
+    set( spd ); // set() method is used to_Bspeed() wrapper!
+}
 //=======================================================================================
 vterminal_options::vterminal_options( int spd, parity par, stop_bits stb, flow_ctrl flc )
 {
