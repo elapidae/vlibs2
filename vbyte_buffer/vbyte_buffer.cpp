@@ -285,7 +285,36 @@ vbyte_buffer::vector vbyte_buffer::split( const std::string& data, char splitter
     return res;
 }
 //=======================================================================================
+vbyte_buffer::vector vbyte_buffer::split( const std::string& data,
+                                          const std::string& splitter )
+{
+    vector res;
+
+    if (data.empty()) return res;
+    if (splitter.empty())
+    {
+        res.push_back( vbyte_buffer{ data } );
+        return res;
+    }
+
+    for (int pos = 0; pos < data.size(); )
+    {
+        auto next = data.find( splitter, pos );
+        res.push_back( vbyte_buffer{ data.substr(pos, next - pos) } );
+
+        if ( next == std::string::npos ) break;
+        pos = next + splitter.size();
+    }
+
+    return res;
+}
+//=======================================================================================
 vbyte_buffer::vector vbyte_buffer::split( char splitter ) const
+{
+    return split( *this, splitter );
+}
+//=======================================================================================
+vbyte_buffer::vector vbyte_buffer::split( const std::string& splitter ) const
 {
     return split( *this, splitter );
 }

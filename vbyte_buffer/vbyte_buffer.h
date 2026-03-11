@@ -177,8 +177,10 @@ public:
 
     //  split() режет по splitter, пустые тоже захватывает.
     static vector split( const std::string& data, char splitter );
+    static vector split( const std::string& data, const std::string& splitter );
 
     vector split( char splitter ) const;
+    vector split( const std::string& splitter ) const;
 
     //  Разрезает текст, используя разделители всех мастей (std::isspace).
     //  Выкидывает все пустые, если так режем, по любому, работаем с текстом.

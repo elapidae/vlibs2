@@ -2,10 +2,19 @@
 
 #include "vbyte_buffer.h"
 
+
 using namespace std;
 
 int main()
 {
+    cout << "split dev:" << endl;
+
+    vbyte_buffer buf = "01..23..34..";
+    auto splits = buf.split("..");
+    for (const auto& split : splits)
+        cout << split << endl;
+    cout << "====" << endl;
+
     cout << "is big: " << v::endian::is_big() << endl;
     cout << "is little: " << v::endian::is_little() << endl;
 
