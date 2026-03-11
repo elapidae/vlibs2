@@ -23,7 +23,10 @@ if ( NOT  CPP_11_STANDARD_INCLUDED )
 
     message( "=== from c++11.cmake -- add_definitions(-std=c++11) ===" )
 
-    add_definitions( -std=c++11 )
+    if (CMAKE_CXX_STANDARD LESS 11)
+        add_definitions( -std=c++11 )
+        message( STATUS "-std=c++11 added from file ${CMAKE_CURRENT_LIST_FILE}")
+    endif()
 
 endif() #CPP_11_STANDARD_INCLUDED
 #========================================================================================
