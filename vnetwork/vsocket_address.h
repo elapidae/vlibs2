@@ -2,6 +2,7 @@
 #define VSOCKET_ADDRESS_H
 
 #include <string>
+#include <stdint.h>
 
 //=======================================================================================
 /*  2019-12-10      by elapidae
